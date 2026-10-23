@@ -492,7 +492,7 @@
                 btnAnexos.href = caseUrl;
                 btnAnexos.style.display = 'inline-block'; // Mostramos el botón para el PDF
 
-                // SOLUCIÓN: Pausa para darle tiempo al navegador de renderizar el botón visible
+                // Pausa para que el botón se dibuje antes de la captura
                 await new Promise(resolve => setTimeout(resolve, 300));
 
                 const element = document.getElementById('notificationView');
@@ -503,15 +503,14 @@
                     html2canvas:  { 
                         scale: 2, 
                         useCORS: true,
-                        scrollY: 0,           // SOLUCIÓN: Fuerza a tomar captura desde el tope (arregla PDF cortado)
-                        windowWidth: 1024     // SOLUCIÓN: Fuerza un ancho fijo (evita deformaciones)
+                        scrollY: 0  // Esto arregla que no se corte por culpa del scroll de la página
                     },
                     jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
 
                 await html2pdf().set(opt).from(element).save();
 
-                // Ocultamos el botón nuevamente después de guardar el PDF
+                // Ocultamos el botón nuevamente
                 btnAnexos.style.display = 'none';
                 btnAnexos.href = "#";
 
