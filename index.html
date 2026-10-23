@@ -267,7 +267,6 @@
         /* =======================================================================
            CONFIGURACIÓN BACKEND - SUPABASE
         ======================================================================= */
-        // Usamos las claves de la segunda versión de tu código que parecen ser las válidas
         const SUPABASE_URL = 'https://bsrgiwihfjhdmuvjbkto.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzcmdpd2loZmpoZG11dmpia3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MTM4NDcsImV4cCI6MjEwODE4OTg0N30.7RHmve3qLOYbM5Vz73x7mXqh4h3yctRLrOh0JoKVRCo';
         
@@ -491,19 +490,28 @@
                 
                 const btnAnexos = document.getElementById('btnAnexosPdf');
                 btnAnexos.href = caseUrl;
-                btnAnexos.style.display = 'inline-block'; // Se muestra en el PDF como botón principal
+                btnAnexos.style.display = 'inline-block'; // Mostramos el botón para el PDF
+
+                // SOLUCIÓN: Pausa para darle tiempo al navegador de renderizar el botón visible
+                await new Promise(resolve => setTimeout(resolve, 300));
 
                 const element = document.getElementById('notificationView');
                 const opt = {
                     margin:       [0.2, 0.2, 0.2, 0.2],
                     filename:     `Notificacion_${activeContractType}_${caseData.expedient}.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
+                    html2canvas:  { 
+                        scale: 2, 
+                        useCORS: true,
+                        scrollY: 0,           // SOLUCIÓN: Fuerza a tomar captura desde el tope (arregla PDF cortado)
+                        windowWidth: 1024     // SOLUCIÓN: Fuerza un ancho fijo (evita deformaciones)
+                    },
                     jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
 
                 await html2pdf().set(opt).from(element).save();
 
+                // Ocultamos el botón nuevamente después de guardar el PDF
                 btnAnexos.style.display = 'none';
                 btnAnexos.href = "#";
 
