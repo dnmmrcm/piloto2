@@ -1,595 +1,444 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Judicial - Gestión y Auditoría Dinámica</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-        @media print { .no-print { display: none !important; } body { background-color: white !important; } }
-        #lightboxModal { transition: opacity 0.3s ease-in-out; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gestión de Formatos y Auditoría</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+  </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans">
 
-    <!-- ========================================== -->
-    <!-- LOGIN -->
-    <!-- ========================================== -->
-    <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8">
-            <div class="text-center mb-8">
-                <i class="fa-solid fa-scale-balanced text-5xl text-amber-500 mb-4"></i>
-                <h1 class="text-2xl font-bold text-slate-900">Acceso al Sistema</h1>
-                <p class="text-sm text-slate-500 mt-1">Ingrese sus credenciales</p>
-            </div>
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-5">
-                <div><label class="block text-sm font-medium text-slate-700 mb-1">Correo Electrónico</label><input type="email" id="loginEmail" required class="w-full border border-slate-300 rounded-lg p-3 outline-none"></div>
-                <div><label class="block text-sm font-medium text-slate-700 mb-1">Contraseña</label><input type="password" id="loginPassword" required class="w-full border border-slate-300 rounded-lg p-3 outline-none"></div>
-                <div id="loginError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200"><i class="fa-solid fa-circle-exclamation mr-2"></i><span id="loginErrorText">Error</span></div>
-                <button type="submit" id="btnLoginSubmit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-lg flex justify-center items-center gap-2">Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket"></i></button>
-            </form>
+  <!-- NAVBAR TOP BAR (Visible tras Login) -->
+  <header id="appHeader" class="hidden bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 p-2 rounded-lg text-white">
+          <i class="fa-solid fa-clipboard-check text-xl"></i>
         </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- PANTALLA SELECCIÓN DE CAMPAÑA (SOLO AUDITOR) -->
-    <!-- ========================================== -->
-    <div id="auditorCampaignSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[90] hidden items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center">
-            <div class="mb-6">
-                <i class="fa-solid fa-chart-pie text-5xl text-blue-600 mb-4"></i>
-                <h2 class="text-2xl font-bold text-slate-900">Seleccionar Campaña</h2>
-                <p class="text-slate-500 text-sm mt-2">Elija la campaña que desea auditar durante esta sesión. Solo tendrá acceso a los datos de la opción elegida.</p>
-            </div>
-            <div class="flex flex-col gap-4">
-                <button onclick="setAuditorCampaign('Cobranza')" class="bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 text-slate-800 font-bold py-3 px-6 rounded-lg transition shadow-sm">Cobranza</button>
-                <button onclick="setAuditorCampaign('Retención')" class="bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 text-slate-800 font-bold py-3 px-6 rounded-lg transition shadow-sm">Retención</button>
-                <button onclick="setAuditorCampaign('Sistemas / Administración')" class="bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 text-slate-800 font-bold py-3 px-6 rounded-lg transition shadow-sm">Sistemas / Administración</button>
-            </div>
-            <button onclick="handleLogout()" class="mt-6 text-sm text-red-500 hover:text-red-700 underline font-bold">Cancelar y Salir</button>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">Sistema de Gestión</h1>
+          <p id="userRoleBadge" class="text-xs text-indigo-300 font-medium">Cargando...</p>
         </div>
-    </div>
+      </div>
 
-    <!-- ========================================== -->
-    <!-- PANEL ADMINISTRATIVO Y DE AUDITORÍA        -->
-    <!-- ========================================== -->
-    <div id="adminDashboardView" class="hidden flex-col min-h-screen bg-slate-100 w-full z-[80] absolute inset-0">
-        <header class="bg-slate-900 text-white shadow-md">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16 items-center">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-shield-halved text-amber-500 text-xl"></i>
-                        <span class="font-bold text-lg" id="adminPanelTitle">Panel de Administración</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <!-- Botón exclusivo auditor para cambiar de campaña -->
-                        <button id="btnCambiarCampanaAuditor" onclick="openAuditorCampaignSelector()" class="hidden text-xs bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded text-white font-bold transition border border-blue-500"><i class="fa-solid fa-rotate mr-1"></i> Campaña: <span id="lblAuditorCurrentCampana">N/A</span></button>
-                        
-                        <div class="flex flex-col text-right">
-                            <span class="text-sm font-bold text-slate-200" id="adminHeaderName">Usuario</span>
-                            <span class="text-[10px] text-amber-400 uppercase tracking-widest" id="adminHeaderRole">Rol</span>
-                        </div>
-                        <button onclick="handleLogout()" class="text-sm bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-white transition shadow-sm"><i class="fa-solid fa-power-off"></i></button>
-                    </div>
-                </div>
-                <nav class="flex space-x-4 pb-3 overflow-x-auto">
-                    <button onclick="switchAdminTab('stats')" id="tab-stats" class="admin-tab px-3 py-2 rounded-md text-sm font-medium bg-slate-800 text-white transition">Productividad</button>
-                    <button onclick="switchAdminTab('audit')" id="tab-audit" class="admin-tab px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700 transition">Historial Auditoría</button>
-                    <button onclick="switchAdminTab('formats')" id="tab-formats" class="admin-tab px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700 admin-only transition">Gestión Formatos</button>
-                    <button onclick="switchAdminTab('users')" id="tab-users" class="admin-tab px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700 admin-only transition">Gestión Usuarios</button>
-                </nav>
-            </div>
-        </header>
-
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 w-full">
-            <!-- PRODUCTIVIDAD -->
-            <div id="panel-stats" class="admin-panel space-y-6">
-                <div class="flex justify-between items-end">
-                    <h2 class="text-2xl font-bold text-slate-800">Indicadores Generales <span id="lblStatsCampana" class="text-sm text-slate-500 font-normal"></span></h2>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Total Documentos</p><p class="text-3xl font-bold text-slate-900" id="stat-total">0</p></div>
-                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Doc. Finalizados</p><p class="text-3xl font-bold text-emerald-600" id="stat-finalizados">0</p></div>
-                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Tiempo Promedio</p><p class="text-3xl font-bold text-blue-600" id="stat-promedio">0m 0s</p></div>
-                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Doc. Cancelados</p><p class="text-3xl font-bold text-red-600" id="stat-cancelados">0</p></div>
-                </div>
-            </div>
-
-            <!-- HISTORIAL AUDITORIA -->
-            <div id="panel-audit" class="admin-panel hidden space-y-4">
-                <div class="bg-white p-4 rounded-lg shadow border border-slate-200 flex flex-wrap gap-4 items-end justify-between">
-                    <div class="flex flex-wrap gap-4 items-end">
-                        <div id="divFilterCampana" class="admin-only"><label class="block text-xs font-bold text-slate-500 mb-1">Campaña</label><select id="filter-campana" class="border p-2 rounded text-sm"><option value="ALL">Todas</option><option value="Cobranza">Cobranza</option><option value="Retención">Retención</option><option value="Sistemas / Administración">Sistemas</option></select></div>
-                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Fecha</label><input type="date" id="filter-date" class="border p-2 rounded text-sm"></div>
-                        <button onclick="loadAuditData()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 shadow-sm">Aplicar Filtros</button>
-                    </div>
-                    <button onclick="exportToCSV()" class="bg-emerald-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-emerald-700 shadow-sm"><i class="fa-solid fa-file-csv"></i> Exportar CSV</button>
-                </div>
-                <div class="bg-white rounded-lg shadow border border-slate-200 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200 text-sm" id="auditTable">
-                        <thead class="bg-slate-50"><tr><th class="px-6 py-3 text-left font-bold text-slate-500">Fecha/Hora</th><th class="px-6 py-3 text-left font-bold text-slate-500">Asesor/Usuario</th><th class="px-6 py-3 text-left font-bold text-slate-500">Campaña</th><th class="px-6 py-3 text-left font-bold text-slate-500">Acción/Modelo</th><th class="px-6 py-3 text-left font-bold text-slate-500">Tiempo</th><th class="px-6 py-3 text-left font-bold text-slate-500">Estado</th></tr></thead>
-                        <tbody id="auditTableBody" class="bg-white divide-y divide-slate-200"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- GESTIÓN DE FORMATOS (SOLO ADMIN) -->
-            <div id="panel-formats" class="admin-panel hidden space-y-4">
-                <div class="flex justify-between items-center"><h2 class="text-2xl font-bold text-slate-800">Plantillas y Formatos</h2><button onclick="openFormatModal()" class="bg-emerald-600 text-white px-4 py-2 rounded font-bold hover:bg-emerald-700 text-sm"><i class="fa-solid fa-plus"></i> Nuevo Formato</button></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="formatsGrid"></div>
-            </div>
-
-            <!-- GESTIÓN USUARIOS (SOLO ADMIN) -->
-            <div id="panel-users" class="admin-panel hidden space-y-4">
-                <div class="flex justify-between items-center"><h2 class="text-2xl font-bold text-slate-800">Cuentas de Acceso</h2><button onclick="openUserModal()" class="bg-emerald-600 text-white px-4 py-2 rounded font-bold hover:bg-emerald-700 text-sm"><i class="fa-solid fa-plus"></i> Nuevo Usuario</button></div>
-                <div class="bg-white rounded-lg shadow border border-slate-200 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200 text-sm">
-                        <thead class="bg-slate-50"><tr><th class="px-6 py-3 text-left font-bold text-slate-500">Nombre</th><th class="px-6 py-3 text-left font-bold text-slate-500">Correo</th><th class="px-6 py-3 text-left font-bold text-slate-500">Rol</th><th class="px-6 py-3 text-left font-bold text-slate-500">Campaña</th><th class="px-6 py-3 text-left font-bold text-slate-500">Estado</th><th class="px-6 py-3 text-left font-bold text-slate-500">Acción</th></tr></thead>
-                        <tbody id="usersTableBody" class="bg-white divide-y divide-slate-200"></tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- MODALES ADMINISTRATIVOS                    -->
-    <!-- ========================================== -->
-
-    <!-- MODAL EDITOR DE FORMATOS -->
-    <div id="modalFormat" class="fixed inset-0 bg-black/80 hidden z-[90] items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden">
-            <div class="bg-slate-900 text-white p-4 flex justify-between items-center"><h3 class="font-bold text-lg" id="modalFormatTitle">Editar Formato</h3><button onclick="closeFormatModal()" class="hover:text-red-400"><i class="fa-solid fa-xmark text-xl"></i></button></div>
-            <div class="flex-grow flex overflow-hidden">
-                <div class="w-1/3 border-r border-slate-200 bg-slate-50 p-4 overflow-y-auto space-y-4 text-sm">
-                    <input type="hidden" id="fmt_id">
-                    <div><label class="block font-bold mb-1">Nombre del Formato</label><input type="text" id="fmt_nombre" class="w-full border p-2 rounded"></div>
-                    <div><label class="block font-bold mb-1">Campaña Asociada</label><select id="fmt_campana" class="w-full border p-2 rounded"><option value="GLOBAL">GLOBAL (Todas)</option><option value="Cobranza">Cobranza</option><option value="Retención">Retención</option></select></div>
-                    <div><label class="block font-bold mb-1">Estado</label><select id="fmt_estado" class="w-full border p-2 rounded"><option value="Borrador">Borrador</option><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></div>
-                    <hr class="border-slate-300">
-                    <div>
-                        <div class="flex justify-between items-center mb-2"><label class="font-bold text-blue-800">Variables/Campos Requeridos</label><button type="button" onclick="addFmtField()" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200"><i class="fa-solid fa-plus"></i> Añadir</button></div>
-                        <div id="fmt_campos_list" class="space-y-2"></div>
-                    </div>
-                </div>
-                <div class="w-2/3 p-4 flex flex-col">
-                    <label class="block font-bold mb-2 text-slate-700">Plantilla HTML (Diseño de PDF)</label>
-                    <textarea id="fmt_html" class="flex-grow w-full border border-slate-300 rounded p-4 font-mono text-sm bg-slate-900 text-green-400 focus:outline-none" placeholder="Escribe el HTML aquí... Usa {{variables}}"></textarea>
-                </div>
-            </div>
-            <div class="bg-slate-100 p-4 flex justify-end gap-3 border-t">
-                <button onclick="closeFormatModal()" class="px-6 py-2 bg-slate-300 rounded font-bold hover:bg-slate-400 text-slate-800">Cancelar</button>
-                <button onclick="saveFormat()" class="px-6 py-2 bg-emerald-600 rounded font-bold hover:bg-emerald-700 text-white">Publicar Formato</button>
-            </div>
+      <div class="flex items-center space-x-4">
+        <div class="text-right hidden sm:block">
+          <p id="userNameDisplay" class="text-sm font-semibold">Usuario</p>
+          <p id="userRoleDisplay" class="text-xs text-slate-400">Rol</p>
         </div>
+        <!-- BOTÓN SALIR / CERRAR SESIÓN -->
+        <button id="logoutBtn" onclick="cerrarSesion()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200 flex items-center space-x-2 shadow-md hover:shadow-rose-500/20">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Salir</span>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <!-- MODAL NUEVO USUARIO -->
-    <div id="modalUser" class="fixed inset-0 bg-black/60 hidden z-[90] items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-            <div class="bg-slate-900 text-white p-4 flex justify-between"><h3 class="font-bold">Registrar/Editar Usuario</h3><button onclick="closeUserModal()"><i class="fa-solid fa-xmark"></i></button></div>
-            <form id="formUser" onsubmit="saveUser(event)" class="p-6 space-y-4 text-sm">
-                <div><label class="block font-bold text-slate-700 mb-1">Nombre Completo</label><input type="text" id="nu_nombre" required class="w-full border p-2 rounded"></div>
-                <div><label class="block font-bold text-slate-700 mb-1">Correo Electrónico</label><input type="email" id="nu_email" required class="w-full border p-2 rounded"></div>
-                <div><label class="block font-bold text-slate-700 mb-1">Contraseña Temporal</label><input type="password" id="nu_pass" required class="w-full border p-2 rounded"></div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Rol</label>
-                    <select id="nu_rol" onchange="handleRoleSelection()" class="w-full border p-2 rounded">
-                        <option value="Asesor">Asesor (Operativo)</option>
-                        <option value="Auditor">Auditor (Solo Lectura)</option>
-                        <option value="Administrador">Administrador de Sistemas</option>
-                    </select>
-                </div>
-                <div id="div_nu_campana">
-                    <label class="block font-bold text-slate-700 mb-1">Asignación de Campaña</label>
-                    <select id="nu_campana" required class="w-full border p-2 rounded">
-                        <option value="">Seleccione una...</option>
-                        <option value="Cobranza">Cobranza</option>
-                        <option value="Retención">Retención</option>
-                        <option value="Sistemas / Administración">Sistemas / Administración</option>
-                    </select>
-                    <p class="text-[10px] text-slate-500 mt-1">Obligatorio para Asesores y Administradores.</p>
-                </div>
-                <div class="pt-4"><button type="submit" id="btnSaveUser" class="w-full bg-emerald-600 text-white font-bold py-2 rounded hover:bg-emerald-700">Guardar Cuenta</button></div>
-            </form>
+  <!-- PANTALLA DE LOGIN -->
+  <section id="loginSection" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
+    <div class="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-2xl shadow-2xl text-white">
+      <div class="text-center mb-8">
+        <div class="inline-flex bg-indigo-600 p-4 rounded-2xl mb-3 shadow-lg shadow-indigo-500/30">
+          <i class="fa-solid fa-user-shield text-3xl"></i>
         </div>
-    </div>
+        <h2 class="text-2xl font-bold">Iniciar Sesión</h2>
+        <p class="text-slate-300 text-sm mt-1">Selecciona tu usuario y rol para continuar</p>
+      </div>
 
-    <!-- ========================================== -->
-    <!-- APLICATIVO ASESORES (GENERADOR DE DOCS)    -->
-    <!-- ========================================== -->
-    <div id="appContainer" class="hidden flex-col min-h-screen w-full relative">
-        <header id="asesorHeader" class="no-print bg-slate-900 text-white shadow-lg sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center space-x-4">
-                    <div class="bg-slate-800 px-3 py-1 rounded border border-slate-700 flex flex-col"><span class="text-[10px] text-slate-400 uppercase font-bold" id="headerAsesorNameApp">Asesor</span><span class="text-xs text-amber-400 font-bold" id="headerAsesorCampanaApp">Campaña</span></div>
-                    <span class="font-bold text-sm sm:text-base tracking-wide">Redactor — <span id="lblHeaderModelName" class="text-white font-light">Seleccione Modelo</span></span>
-                </div>
-                <div class="flex items-center flex-wrap gap-2 text-sm">
-                    <button onclick="openModelSelector()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-lg flex items-center gap-2 transition font-medium text-xs"><i class="fa-solid fa-arrow-left"></i> Cambiar Formato</button>
-                    <button onclick="toggleEditor()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition font-medium text-xs"><i class="fa-solid fa-sliders"></i> Datos / Variables</button>
-                    <button id="btnGenerarPDF" onclick="generarPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold transition flex items-center gap-2 shadow-md text-xs sm:text-sm"><i class="fa-solid fa-file-pdf"></i> GENERAR PDF</button>
-                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition ml-2"><i class="fa-solid fa-power-off"></i></button>
-                </div>
-            </div>
-
-            <!-- PANEL DE VARIABLES DINÁMICAS Y ANEXOS -->
-            <div id="editorPanel" class="hidden border-t border-slate-800 bg-slate-950 px-4 py-4 shadow-inner overflow-y-auto max-h-[50vh]">
-                <div class="max-w-7xl mx-auto">
-                    <h3 class="text-blue-400 font-bold mb-3 uppercase text-xs border-b border-slate-700 pb-1">Variables del Documento</h3>
-                    <div id="dynamicFieldsContainer" class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs mb-6"></div>
-                    <h3 class="text-amber-400 font-bold mb-3 uppercase text-xs border-b border-slate-700 pb-1"><i class="fa-solid fa-paperclip"></i> Evidencias Adjuntas</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                        <div class="bg-slate-800/50 p-3 rounded border border-slate-700"><label class="block text-slate-400 mb-1 font-bold">1. Comprobante</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc1')" class="w-full text-slate-300 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc1" checked class="accent-amber-500"> Incluir</label><div id="preview-doc1" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div></div>
-                        <div class="bg-slate-800/50 p-3 rounded border border-slate-700"><label class="block text-slate-400 mb-1 font-bold">2. Contrato</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc2')" class="w-full text-slate-300 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc2" checked class="accent-amber-500"> Incluir</label><div id="preview-doc2" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div></div>
-                        <div class="bg-slate-800/50 p-3 rounded border border-slate-700"><label class="block text-slate-400 mb-1 font-bold">3. Evidencia 1</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc3')" class="w-full text-slate-300 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc3" checked class="accent-amber-500"> Incluir</label><div id="preview-doc3" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div></div>
-                        <div class="bg-slate-800/50 p-3 rounded border border-slate-700"><label class="block text-slate-400 mb-1 font-bold">4. Evidencia 2</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc4')" class="w-full text-slate-300 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc4" checked class="accent-amber-500"> Incluir</label><div id="preview-doc4" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div></div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- SELECTOR DE FORMATOS -->
-        <div id="modelSelectorOverlay" class="flex-grow flex items-center justify-center p-4 bg-slate-100 z-40">
-            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-xl max-w-6xl w-full text-center">
-                <div class="mb-6"><i class="fa-solid fa-layer-group text-4xl text-amber-500 mb-2"></i><h2 class="text-2xl font-bold text-slate-900">Formatos Disponibles</h2><p class="text-sm text-slate-500">Seleccione la plantilla autorizada para su campaña</p></div>
-                <div id="asesorFormatsGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 text-left"></div>
-            </div>
+      <form id="loginForm" onsubmit="iniciarSesion(event)" class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Nombre de Usuario</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+              <i class="fa-solid fa-user"></i>
+            </span>
+            <input type="text" id="usernameInput" required placeholder="Ej: Juan Pérez" class="w-full bg-slate-800/80 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+          </div>
         </div>
 
-        <main class="flex-grow py-6 px-4 sm:px-6 max-w-5xl mx-auto w-full z-10 hidden" id="mainContainer">
-            <section id="notificationView" class="hidden shadow-2xl"></section>
-        </main>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Rol de Acceso</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="cursor-pointer">
+              <input type="radio" name="userRole" value="creador" checked class="peer sr-only">
+              <div class="p-3 border border-slate-700 bg-slate-800/60 rounded-xl text-center peer-checked:border-indigo-500 peer-checked:bg-indigo-600/30 transition">
+                <i class="fa-solid fa-pen-to-square text-indigo-400 text-lg mb-1 block"></i>
+                <span class="text-xs font-semibold block">Creador</span>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="userRole" value="auditor" class="peer sr-only">
+              <div class="p-3 border border-slate-700 bg-slate-800/60 rounded-xl text-center peer-checked:border-emerald-500 peer-checked:bg-emerald-600/30 transition">
+                <i class="fa-solid fa-magnifying-glass text-emerald-400 text-lg mb-1 block"></i>
+                <span class="text-xs font-semibold block">Auditor</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg shadow-lg shadow-indigo-600/30 transition duration-200">
+          Ingresar al Sistema
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main id="appMain" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- BARRA NAVEGACIÓN DE SECCIONES (SOLO CREADOR VUELVE A FORMATOS) -->
+    <div id="navigationTabs" class="flex flex-wrap gap-3 mb-8">
+      <button id="btnTabFormatos" onclick="cambiarTab('formatos')" class="px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-indigo-600 text-white shadow-md">
+        <i class="fa-solid fa-folder-open"></i>
+        <span>Formatos Disponibles</span>
+      </button>
+      <button id="btnTabAuditoria" onclick="cambiarTab('auditoria')" class="px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-slate-200 text-slate-700 hover:bg-slate-300">
+        <i class="fa-solid fa-magnifying-glass font-bold"></i>
+        <span>Módulo de Auditoría</span>
+      </button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- VISTA PÚBLICA (SOLO LECTURA DE DEUDAS)     -->
-    <!-- ========================================== -->
-    <section id="caseDetailView" class="hidden space-y-6 flex-grow py-6 px-4 max-w-5xl mx-auto w-full">
-        <div class="flex items-center justify-end no-print bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><button onclick="window.print()" class="bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2"><i class="fa-solid fa-print"></i> Imprimir Constancia</button></div>
-        <div class="bg-white rounded-lg shadow-xl border border-slate-300 p-6 sm:p-10 space-y-6">
-            <div class="border-b-2 border-slate-800 pb-4"><h2 class="font-extrabold text-slate-900 text-xl uppercase">SISTEMA JUDICIAL ELECTRÓNICO</h2><p class="text-sm text-slate-500">Verificación de Evidencias</p></div>
-            <div class="text-sm text-slate-700 bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-start gap-3"><i class="fa-solid fa-circle-info text-blue-500 mt-0.5 text-lg"></i><p>Se presenta la documentación probatoria asociada. Haga clic en las imágenes para ampliarlas.</p></div>
-            <div id="seccionEvidencias" class="hidden"><h2 class="font-extrabold text-slate-800 text-base uppercase mb-4 border-b pb-2"><i class="fa-solid fa-folder-open text-amber-500"></i> DOCUMENTACIÓN ADJUNTA</h2><div id="galeriaAnexos" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div></div>
+    <!-- SECCIÓN DE FORMATOS (SOLO VISIBLE PARA CREADORES) -->
+    <section id="secFormatos" class="space-y-6">
+      <div class="border-b border-slate-200 pb-4">
+        <h2 class="text-2xl font-bold text-slate-800">Formatos Operativos</h2>
+        <p class="text-slate-500 text-sm">Selecciona el registro que deseas llenar</p>
+      </div>
+
+      <!-- GRID CON LOS 5 FORMATOS ORIGINALES -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- FORMATO 1: Inspección de Seguridad -->
+        <div class="glass-card rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-hard-hat"></i>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-1">1. Inspección de Seguridad</h3>
+            <p class="text-slate-500 text-xs mb-4">Verificación de EPP, condiciones del área de trabajo y riesgos detectados.</p>
+          </div>
+          <button onclick="abrirModalFormato('Formato 1: Inspección de Seguridad', 1)" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-pen"></i>
+            <span>Diligenciar</span>
+          </button>
         </div>
+
+        <!-- FORMATO 2: Control de Calidad -->
+        <div class="glass-card rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-square-check"></i>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-1">2. Control de Calidad</h3>
+            <p class="text-slate-500 text-xs mb-4">Registro de estándares, mediciones de tolerancias y aceptación de producto.</p>
+          </div>
+          <button onclick="abrirModalFormato('Formato 2: Control de Calidad', 2)" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-pen"></i>
+            <span>Diligenciar</span>
+          </button>
+        </div>
+
+        <!-- FORMATO 3: Mantenimiento Preventivo -->
+        <div class="glass-card rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-screwdriver-wrench"></i>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-1">3. Mantenimiento Preventivo</h3>
+            <p class="text-slate-500 text-xs mb-4">Checklist de equipos, lubricación, ajuste de piezas y niveles operativos.</p>
+          </div>
+          <button onclick="abrirModalFormato('Formato 3: Mantenimiento Preventivo', 3)" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-pen"></i>
+            <span>Diligenciar</span>
+          </button>
+        </div>
+
+        <!-- FORMATO 4: Recepción de Materia Prima -->
+        <div class="glass-card rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-truck-ramp-box"></i>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-1">4. Recepción de Materia Prima</h3>
+            <p class="text-slate-500 text-xs mb-4">Validación de lote, proveedor, estado del empaque y cantidad recibida.</p>
+          </div>
+          <button onclick="abrirModalFormato('Formato 4: Recepción de Materia Prima', 4)" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-pen"></i>
+            <span>Diligenciar</span>
+          </button>
+        </div>
+
+        <!-- FORMATO 5: Incidencias y Novedades -->
+        <div class="glass-card rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="font-bold text-lg text-slate-800 mb-1">5. Reporte de Incidencias</h3>
+            <p class="text-slate-500 text-xs mb-4">Registro de paradas no programadas, averías y novedades del turno.</p>
+          </div>
+          <button onclick="abrirModalFormato('Formato 5: Reporte de Incidencias', 5)" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-pen"></i>
+            <span>Diligenciar</span>
+          </button>
+        </div>
+
+      </div>
     </section>
 
-    <!-- LIGHTBOX -->
-    <div id="lightboxModal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-4 cursor-pointer" onclick="closeLightbox()"><span class="absolute top-4 right-6 text-white text-4xl hover:text-red-400">&times;</span><img id="lightboxImg" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg"></div>
+    <!-- SECCIÓN DE AUDITORÍA -->
+    <section id="secAuditoria" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-slate-200 pb-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800">Panel de Auditoría</h2>
+          <p class="text-slate-500 text-sm">Revisiones, evaluaciones y aprobaciones de formatos diligenciados</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xs bg-emerald-100 text-emerald-800 px-3 py-1.5 rounded-full font-medium">
+            <i class="fa-solid fa-shield-halved mr-1"></i> Modo Auditor
+          </span>
+        </div>
+      </div>
 
-    <script>
-        /* =======================================================================
-           CONFIGURACIÓN BACKEND - SUPABASE
-        ======================================================================= */
-        const SUPABASE_URL = 'https://crrlfrlczhihuwxljwru.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNycmxmcmxjemhpaHV3eGxqd3J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2OTY4NjUsImV4cCI6MjEwODI3Mjg2NX0.goqWlSuj-DtfU26dEnKNU6q48AsrIoCMpkFsm6Rtn-Q';
+      <!-- TABLA DE REGISTROS PARA AUDITAR -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-slate-700 uppercase text-xs font-semibold border-b border-slate-200">
+              <tr>
+                <th class="p-4">ID</th>
+                <th class="p-4">Formato</th>
+                <th class="p-4">Creado por</th>
+                <th class="p-4">Fecha</th>
+                <th class="p-4">Estado</th>
+                <th class="p-4 text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tablaAuditoriaBody" class="divide-y divide-slate-100">
+              <!-- Se puebla dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DE LLENADO DE FORMATO -->
+  <div id="modalFormato" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+        <h3 id="modalTitulo" class="font-bold text-lg text-slate-800">Formato</h3>
+        <button onclick="cerrarModalFormato()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <form id="formRegistro" onsubmit="guardarFormato(event)" class="space-y-4">
+        <input type="hidden" id="formatoTipoId">
         
-        let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Área / Ubicación</label>
+          <input type="text" id="campoArea" required placeholder="Ej: Planta A - Línea 2" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
 
-        let currentUser = null;
-        let auditorActiveCampaign = null;
-        let auditData = { startTime: null, modelId: null, modelName: null };
-        let activeFormatConfig = null; 
-        let activeFormatTemplate = ""; 
-        let anexosData = { doc1: null, doc2: null, doc3: null, doc4: null };
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Detalle / Observaciones</label>
+          <textarea id="campoDetalle" rows="4" required placeholder="Escriba las observaciones correspondientes..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+        </div>
 
-        /* =======================================================================
-           RUTAS Y LOGIN
-        ======================================================================= */
-        window.onload = async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('id')) {
-                hideAllViews(); document.getElementById('caseDetailView').classList.remove('hidden'); document.getElementById('caseDetailView').classList.add('flex-grow');
-                const caseData = await getCaseData(urlParams.get('id'));
-                if (caseData) populateClientView(caseData); else document.getElementById('caseDetailView').innerHTML = `<h2 class="text-center mt-20 font-bold text-xl">Expediente No Encontrado</h2>`;
-                return;
-            }
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) await loadUserProfile(session.user.id);
-            else document.getElementById('loginView').classList.remove('hidden');
-        };
+        <div class="flex justify-end space-x-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="cerrarModalFormato()" class="px-4 py-2 text-sm text-slate-600 font-medium hover:bg-slate-100 rounded-lg">Cancelar</button>
+          <button type="submit" class="px-5 py-2 text-sm text-white bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg shadow-md">Guardar Registro</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-        function hideAllViews() {
-            document.querySelectorAll('#loginView, #adminDashboardView, #appContainer, #caseDetailView, #auditorCampaignSelectorOverlay').forEach(el => { el.classList.add('hidden'); if(el.id === 'adminDashboardView' || el.id === 'appContainer') el.classList.remove('flex'); });
+  <!-- SCRIPT DE FUNCIONALIDAD COMPLETA -->
+  <script>
+    // ESTADO GLOBAL DE LA APLICACIÓN
+    let currentUser = null; // { name: '', role: 'creador' | 'auditor' }
+    let registros = JSON.parse(localStorage.getItem('registros_formatos')) || [
+      { id: 101, formato: 'Formato 1: Inspección de Seguridad', creador: 'Carlos Ruiz', fecha: '2026-10-25', area: 'Planta Principal', detalle: 'EPP completo en orden.', estado: 'Pendiente' },
+      { id: 102, formato: 'Formato 2: Control de Calidad', creador: 'Ana Gómez', fecha: '2026-10-26', area: 'Empaque', detalle: 'Dimensiones dentro de tolerancia.', estado: 'Aprobado' }
+    ];
+
+    // INICIAR SESIÓN
+    function iniciarSesion(e) {
+      e.preventDefault();
+      const username = document.getElementById('usernameInput').value.trim();
+      const role = document.querySelector('input[name="userRole"]:checked').value;
+
+      if (!username) return;
+
+      currentUser = { name: username, role: role };
+      localStorage.setItem('session_user', JSON.stringify(currentUser));
+      actualizarInterfaz();
+    }
+
+    // CERRAR SESIÓN (Botón Salir funciona para Creador y Auditor)
+    function cerrarSesion() {
+      currentUser = null;
+      localStorage.removeItem('session_user');
+      
+      // Ocultar App, Mostrar Login
+      document.getElementById('appHeader').classList.add('hidden');
+      document.getElementById('appMain').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('loginForm').reset();
+    }
+
+    // REVISAR SESIÓN AL CARGAR
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUser = localStorage.getItem('session_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        actualizarInterfaz();
+      }
+    });
+
+    // ACTUALIZAR INTERFAZ SEGÚN EL ROL
+    function actualizarInterfaz() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('appHeader').classList.remove('hidden');
+      document.getElementById('appMain').classList.remove('hidden');
+
+      document.getElementById('userNameDisplay').textContent = currentUser.name;
+      document.getElementById('userRoleDisplay').textContent = currentUser.role.toUpperCase();
+      document.getElementById('userRoleBadge').textContent = `Rol: ${currentUser.role.toUpperCase()}`;
+
+      if (currentUser.role === 'auditor') {
+        // AUDITOR: Ocultar botón de tab 'Formatos', mostrar solo 'Auditoría'
+        document.getElementById('btnTabFormatos').classList.add('hidden');
+        cambiarTab('auditoria');
+      } else {
+        // CREADOR: Mostrar ambas pestañas, ir a 'Formatos' por defecto
+        document.getElementById('btnTabFormatos').classList.remove('hidden');
+        cambiarTab('formatos');
+      }
+
+      renderizarTablaAuditoria();
+    }
+
+    // NAVEGACIÓN ENTRE TABS
+    function cambiarTab(tab) {
+      const secFormatos = document.getElementById('secFormatos');
+      const secAuditoria = document.getElementById('secAuditoria');
+      const btnFormatos = document.getElementById('btnTabFormatos');
+      const btnAuditoria = document.getElementById('btnTabAuditoria');
+
+      if (tab === 'formatos' && currentUser.role !== 'auditor') {
+        secFormatos.classList.remove('hidden');
+        secAuditoria.classList.add('hidden');
+        btnFormatos.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-indigo-600 text-white shadow-md";
+        btnAuditoria.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-slate-200 text-slate-700 hover:bg-slate-300";
+      } else {
+        secFormatos.classList.add('hidden');
+        secAuditoria.classList.remove('hidden');
+        btnAuditoria.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-emerald-600 text-white shadow-md";
+        btnFormatos.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 bg-slate-200 text-slate-700 hover:bg-slate-300";
+      }
+    }
+
+    // MODAL DE FORMATOS
+    function abrirModalFormato(titulo, id) {
+      document.getElementById('modalTitulo').textContent = titulo;
+      document.getElementById('formatoTipoId').value = id;
+      document.getElementById('modalFormato').classList.remove('hidden');
+      document.getElementById('modalFormato').classList.add('flex');
+    }
+
+    function cerrarModalFormato() {
+      document.getElementById('modalFormato').classList.add('hidden');
+      document.getElementById('modalFormato').classList.remove('flex');
+      document.getElementById('formRegistro').reset();
+    }
+
+    // GUARDAR FORMATO (CREADOR)
+    function guardarFormato(e) {
+      e.preventDefault();
+      const area = document.getElementById('campoArea').value;
+      const detalle = document.getElementById('campoDetalle').value;
+      const titulo = document.getElementById('modalTitulo').textContent;
+
+      const nuevoRegistro = {
+        id: Date.now(),
+        formato: titulo,
+        creador: currentUser.name,
+        fecha: new Date().toISOString().split('T')[0],
+        area: area,
+        detalle: detalle,
+        estado: 'Pendiente'
+      };
+
+      registros.unshift(nuevoRegistro);
+      localStorage.setItem('registros_formatos', JSON.stringify(registros));
+      
+      cerrarModalFormato();
+      alert('Formato guardado exitosamente.');
+      renderizarTablaAuditoria();
+    }
+
+    // RENDERIZAR TABLA DE AUDITORÍA
+    function renderizarTablaAuditoria() {
+      const tbody = document.getElementById('tablaAuditoriaBody');
+      tbody.innerHTML = '';
+
+      if (registros.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">No hay formatos registrados aún.</td></tr>`;
+        return;
+      }
+
+      registros.forEach(reg => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+
+        let badgeEstado = '<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Pendiente</span>';
+        if (reg.estado === 'Aprobado') badgeEstado = '<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Aprobado</span>';
+        if (reg.estado === 'Rechazado') badgeEstado = '<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800">Rechazado</span>';
+
+        // Acciones solo para Auditor
+        let acciones = `<span class="text-xs text-slate-400">Solo lectura</span>`;
+        if (currentUser && currentUser.role === 'auditor') {
+          acciones = `
+            <div class="flex justify-center space-x-2">
+              <button onclick="cambiarEstadoRegistro(${reg.id}, 'Aprobado')" class="p-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg text-xs font-bold" title="Aprobar">
+                <i class="fa-solid fa-check"></i>
+              </button>
+              <button onclick="cambiarEstadoRegistro(${reg.id}, 'Rechazado')" class="p-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg text-xs font-bold" title="Rechazar">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          `;
         }
 
-        async function handleLogin(e) {
-            e.preventDefault(); const btn = document.getElementById('btnLoginSubmit'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Entrando...'; btn.disabled = true;
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value });
-            if (error) { document.getElementById('loginError').classList.remove('hidden'); document.getElementById('loginErrorText').textContent = error.message; btn.innerHTML = 'Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket"></i>'; btn.disabled = false; } 
-            else await loadUserProfile(data.user.id);
-        }
+        tr.innerHTML = `
+          <td class="p-4 font-mono text-xs text-slate-500">#${reg.id.toString().slice(-4)}</td>
+          <td class="p-4 font-semibold text-slate-800">${reg.formato}</td>
+          <td class="p-4">${reg.creador}</td>
+          <td class="p-4 text-xs text-slate-500">${reg.fecha}</td>
+          <td class="p-4">${badgeEstado}</td>
+          <td class="p-4 text-center">${acciones}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
 
-        async function handleLogout() {
-            if(currentUser && currentUser.rol === 'Asesor') await registrarTiempoSiAplica('Cancelado');
-            await supabaseClient.auth.signOut(); window.location.reload();
-        }
-
-        async function loadUserProfile(userId) {
-            const { data, error } = await supabaseClient.from('perfiles').select('*').eq('id', userId).single();
-            if (error || !data || !data.activo) { alert("Usuario desactivado o no encontrado."); await supabaseClient.auth.signOut(); window.location.reload(); return; }
-            currentUser = data; hideAllViews();
-
-            if (currentUser.rol === 'Auditor') {
-                openAuditorCampaignSelector(); // Obliga al auditor a elegir campaña antes de entrar
-            } else if (currentUser.rol === 'Administrador') {
-                initAdminDashboard();
-            } else {
-                initAsesorApp();
-            }
-        }
-
-        /* =======================================================================
-           LÓGICA ESPECÍFICA DEL ROL AUDITOR
-        ======================================================================= */
-        function openAuditorCampaignSelector() {
-            hideAllViews();
-            document.getElementById('auditorCampaignSelectorOverlay').classList.remove('hidden');
-            document.getElementById('auditorCampaignSelectorOverlay').classList.add('flex');
-        }
-
-        async function setAuditorCampaign(campana) {
-            // Guardar contexto en backend para asegurar que RLS filtre todo
-            const { error } = await supabaseClient.from('auditor_sesiones').upsert({ usuario_id: currentUser.id, campana_activa: campana, actualizado_en: new Date().toISOString() });
-            if (error) { alert("Error estableciendo sesión de auditoría."); return; }
-            
-            auditorActiveCampaign = campana;
-            
-            // Log de auditoría
-            await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: campana, modelo: 'SISTEMA', hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: 'Inicio Sesión Auditoría' }]);
-
-            document.getElementById('auditorCampaignSelectorOverlay').classList.add('hidden');
-            document.getElementById('auditorCampaignSelectorOverlay').classList.remove('flex');
-            initAdminDashboard(); // Utiliza la misma vista pero con restricciones
-        }
-
-        /* =======================================================================
-           INICIALIZACIÓN DE PANELES Y NAVEGACIÓN
-        ======================================================================= */
-        function initAdminDashboard() {
-            document.getElementById('adminDashboardView').classList.remove('hidden');
-            document.getElementById('adminDashboardView').classList.add('flex');
-            document.getElementById('adminHeaderName').textContent = currentUser.nombre;
-            document.getElementById('adminHeaderRole').textContent = currentUser.rol;
-            
-            if (currentUser.rol === 'Auditor') {
-                document.getElementById('adminPanelTitle').textContent = "Panel de Auditoría";
-                document.getElementById('btnCambiarCampanaAuditor').classList.remove('hidden');
-                document.getElementById('lblAuditorCurrentCampana').textContent = auditorActiveCampaign;
-                
-                // Ocultar configuraciones y filtros
-                document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
-                document.getElementById('lblStatsCampana').textContent = `(Filtrado a: ${auditorActiveCampaign})`;
-            } else {
-                document.getElementById('adminPanelTitle').textContent = "Panel de Administración";
-                document.getElementById('btnCambiarCampanaAuditor').classList.add('hidden');
-                document.getElementById('lblStatsCampana').textContent = "";
-                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
-            }
-            switchAdminTab('stats');
-        }
-
-        function initAsesorApp() {
-            document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('appContainer').classList.add('flex');
-            document.getElementById('modelSelectorOverlay').classList.remove('hidden');
-            document.getElementById('headerAsesorNameApp').textContent = currentUser.nombre;
-            document.getElementById('headerAsesorCampanaApp').textContent = currentUser.campana;
-            loadAsesorFormats();
-        }
-
-        function switchAdminTab(tab) {
-            document.querySelectorAll('.admin-panel').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.admin-tab').forEach(el => { el.classList.remove('bg-slate-800', 'text-white'); el.classList.add('text-slate-300'); });
-            document.getElementById(`panel-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('bg-slate-800', 'text-white');
-            document.getElementById(`tab-${tab}`).classList.remove('text-slate-300');
-            
-            if(tab === 'users' && currentUser.rol === 'Administrador') loadUsersList();
-            if(tab === 'audit' || tab === 'stats') loadAuditData();
-            if(tab === 'formats' && currentUser.rol === 'Administrador') loadAdminFormats();
-        }
-
-        /* =======================================================================
-           PRODUCTIVIDAD Y AUDITORÍA (FRONTEND)
-        ======================================================================= */
-        async function loadAuditData() {
-            let query = supabaseClient.from('auditoria').select('*, perfiles(nombre)').order('hora_fin', { ascending: false });
-            
-            if (currentUser.rol === 'Administrador') {
-                const campFilter = document.getElementById('filter-campana').value;
-                if (campFilter !== 'ALL') query = query.eq('campana', campFilter);
-            }
-            // Para el auditor, NO pasamos .eq('campana') porque el RLS del backend ya lo restringe
-            // obligatoriamente usando la tabla auditor_sesiones. (Seguridad real).
-            
-            const dateFilter = document.getElementById('filter-date').value;
-            if (dateFilter) {
-                // Filtro básico de fecha (asumiendo inicio del día a fin del día UTC)
-                const start = new Date(dateFilter); start.setHours(0,0,0,0);
-                const end = new Date(dateFilter); end.setHours(23,59,59,999);
-                query = query.gte('hora_fin', start.toISOString()).lte('hora_fin', end.toISOString());
-            }
-
-            const { data, error } = await query;
-            if (error) { console.error(error); return; }
-
-            const tbody = document.getElementById('auditTableBody'); tbody.innerHTML = '';
-            let totalT = 0, fin = 0, docsTot = 0, canceled = 0;
-
-            (data||[]).forEach(r => {
-                const isDoc = r.estado === 'Finalizado' || r.estado === 'Cancelado';
-                if(isDoc) docsTot++;
-                if(r.estado === 'Finalizado') { totalT += r.tiempo_segundos; fin++; }
-                if(r.estado === 'Cancelado') { canceled++; }
-                
-                const tStr = isDoc ? `${Math.floor(r.tiempo_segundos/60)}m ${r.tiempo_segundos%60}s` : '-';
-                tbody.innerHTML += `<tr><td class="px-6 py-3 whitespace-nowrap text-[11px]">${new Date(r.hora_fin).toLocaleString()}</td><td class="px-6 py-3 font-bold">${r.perfiles?.nombre || 'SISTEMA'}</td><td class="px-6 py-3">${r.campana||'-'}</td><td class="px-6 py-3 text-xs">${isDoc ? r.modelo : r.estado}</td><td class="px-6 py-3 font-mono text-xs">${tStr}</td><td class="px-6 py-3"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${r.estado==='Finalizado'?'bg-emerald-100 text-emerald-800':r.estado==='Cancelado'?'bg-red-100 text-red-800':'bg-blue-100 text-blue-800'}">${isDoc ? r.estado : 'Log'}</span></td></tr>`;
-            });
-
-            document.getElementById('stat-total').textContent = docsTot;
-            document.getElementById('stat-finalizados').textContent = fin;
-            document.getElementById('stat-cancelados').textContent = canceled;
-            const avg = fin > 0 ? Math.floor(totalT / fin) : 0;
-            document.getElementById('stat-promedio').textContent = `${Math.floor(avg/60)}m ${avg%60}s`;
-        }
-
-        function exportToCSV() {
-            let csv = [];
-            const rows = document.querySelectorAll("#auditTable tr");
-            for (let i = 0; i < rows.length; i++) {
-                let row = [], cols = rows[i].querySelectorAll("td, th");
-                for (let j = 0; j < cols.length; j++) row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
-                csv.push(row.join(","));
-            }
-            const csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
-            const link = document.createElement("a"); link.download = `Auditoria_${currentUser.rol === 'Auditor' ? auditorActiveCampaign : 'Admin'}_${new Date().toISOString().slice(0,10)}.csv`;
-            link.href = window.URL.createObjectURL(csvFile); link.style.display = "none";
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        }
-
-        async function logAdminAction(accion, modelo = 'SISTEMA') {
-            await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: currentUser.campana || 'SISTEMAS', modelo: modelo, hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: accion }]);
-        }
-
-        /* =======================================================================
-           GESTIÓN DE USUARIOS (LOGICA DINÁMICA DE ROLES)
-        ======================================================================= */
-        async function loadUsersList() {
-            const { data } = await supabaseClient.from('perfiles').select('*').order('creado_en', { ascending: false });
-            const tbody = document.getElementById('usersTableBody'); tbody.innerHTML = '';
-            data.forEach(u => {
-                tbody.innerHTML += `<tr><td class="px-6 py-3 font-bold">${u.nombre}</td><td class="px-6 py-3">${u.email}</td><td class="px-6 py-3 font-bold ${u.rol==='Auditor'?'text-purple-600':u.rol==='Administrador'?'text-amber-600':'text-blue-600'}">${u.rol}</td><td class="px-6 py-3">${u.campana||'N/A'}</td><td class="px-6 py-3"><span class="px-2 py-1 rounded text-xs font-bold ${u.activo?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${u.activo?'Activo':'Inactivo'}</span></td><td class="px-6 py-3"><button onclick="toggleUser('${u.id}', ${!u.activo})" class="text-xs bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded border border-slate-300">Cambiar</button></td></tr>`;
-            });
-        }
-        async function toggleUser(id, estado) { await supabaseClient.from('perfiles').update({ activo: estado }).eq('id', id); loadUsersList(); logAdminAction(estado ? 'Usuario Activado' : 'Usuario Desactivado'); }
-        
-        function openUserModal() { 
-            document.getElementById('formUser').reset(); handleRoleSelection();
-            document.getElementById('modalUser').classList.remove('hidden'); document.getElementById('modalUser').classList.add('flex'); 
-        }
-        function closeUserModal() { document.getElementById('modalUser').classList.add('hidden'); document.getElementById('modalUser').classList.remove('flex'); }
-
-        // Muestra/Oculta la campaña según el rol (Auditor NO tiene campaña fija)
-        function handleRoleSelection() {
-            const rol = document.getElementById('nu_rol').value;
-            const campDiv = document.getElementById('div_nu_campana');
-            const campInput = document.getElementById('nu_campana');
-            if (rol === 'Auditor') {
-                campDiv.classList.add('hidden');
-                campInput.required = false;
-                campInput.value = "";
-            } else {
-                campDiv.classList.remove('hidden');
-                campInput.required = true;
-            }
-        }
-
-        async function saveUser(e) {
-            e.preventDefault(); const btn = document.getElementById('btnSaveUser'); btn.disabled = true;
-            const rolSel = document.getElementById('nu_rol').value;
-            const campSel = document.getElementById('nu_campana').value;
-            try {
-                const { data: { session: aSession } } = await supabaseClient.auth.getSession();
-                const { data: nu, error: e1 } = await supabaseClient.auth.signUp({ email: document.getElementById('nu_email').value, password: document.getElementById('nu_pass').value });
-                if(e1) throw e1;
-                await supabaseClient.from('perfiles').update({ nombre: document.getElementById('nu_nombre').value, rol: rolSel, campana: rolSel === 'Auditor' ? null : campSel }).eq('id', nu.user.id);
-                await supabaseClient.auth.setSession({ access_token: aSession.access_token, refresh_token: aSession.refresh_token });
-                closeUserModal(); loadUsersList(); logAdminAction('Usuario Creado');
-            } catch (err) { alert("Error: " + err.message); } finally { btn.disabled = false; }
-        }
-
-        /* =======================================================================
-           RESTO DEL APLICATIVO: FORMATOS, EDITOR DE PDF Y VISTA PÚBLICA
-           (Mantiene la funcionalidad del Asesor y la configuración del Admin)
-        ======================================================================= */
-        let editingFormatId = null; let dynFieldsCache = [];
-        async function loadAdminFormats() {
-            const { data } = await supabaseClient.from('formatos').select('*').order('estado', { ascending: true });
-            const grid = document.getElementById('formatsGrid'); grid.innerHTML = '';
-            data.forEach(f => {
-                grid.innerHTML += `<div class="border border-slate-200 bg-white p-4 rounded-lg shadow-sm flex flex-col justify-between"><div class="mb-3"><div class="flex justify-between"><h4 class="font-bold text-slate-800">${f.nombre}</h4><span class="text-[10px] font-bold px-2 py-1 rounded uppercase ${f.estado==='Activo'?'bg-emerald-100 text-emerald-800':f.estado==='Borrador'?'bg-amber-100 text-amber-800':'bg-red-100 text-red-800'}">${f.estado}</span></div><p class="text-[10px] text-slate-400 mt-2">Campaña: ${f.campana} | Vers.: ${f.version}</p></div><button onclick="editFormat('${f.id}')" class="w-full bg-slate-800 text-white text-xs py-2 rounded">Editar Configuración</button></div>`;
-            });
-        }
-        function openFormatModal() { editingFormatId = null; dynFieldsCache = []; document.getElementById('fmt_id').value = ''; document.getElementById('fmt_nombre').value = ''; document.getElementById('fmt_html').value = ''; renderFmtFieldsUI(); document.getElementById('modalFormat').classList.remove('hidden'); document.getElementById('modalFormat').classList.add('flex'); }
-        function closeFormatModal() { document.getElementById('modalFormat').classList.add('hidden'); document.getElementById('modalFormat').classList.remove('flex'); }
-        async function editFormat(id) {
-            const { data } = await supabaseClient.from('formatos').select('*').eq('id', id).single(); editingFormatId = id;
-            document.getElementById('fmt_id').value = id; document.getElementById('fmt_nombre').value = data.nombre; document.getElementById('fmt_campana').value = data.campana; document.getElementById('fmt_estado').value = data.estado; document.getElementById('fmt_html').value = data.html_template; dynFieldsCache = data.campos_config || []; renderFmtFieldsUI();
-            document.getElementById('modalFormat').classList.remove('hidden'); document.getElementById('modalFormat').classList.add('flex');
-        }
-        function addFmtField() { dynFieldsCache.push({ id: 'f_' + Date.now(), label: 'Nuevo Campo', type: 'text', req: true }); renderFmtFieldsUI(); }
-        function removeFmtField(idx) { dynFieldsCache.splice(idx, 1); renderFmtFieldsUI(); }
-        function renderFmtFieldsUI() {
-            const c = document.getElementById('fmt_campos_list'); c.innerHTML = '';
-            dynFieldsCache.forEach((f, i) => { c.innerHTML += `<div class="bg-white p-2 border rounded text-xs"><div class="flex justify-between mb-1"><input type="text" value="${f.id}" onchange="dynFieldsCache[${i}].id=this.value" class="w-1/3 border p-1"><input type="text" value="${f.label}" onchange="dynFieldsCache[${i}].label=this.value" class="w-1/2 border p-1"></div><div class="flex justify-between items-center"><select onchange="dynFieldsCache[${i}].type=this.value" class="border p-1"><option value="text" ${f.type==='text'?'selected':''}>Texto</option><option value="date" ${f.type==='date'?'selected':''}>Fecha</option></select><label><input type="checkbox" onchange="dynFieldsCache[${i}].req=this.checked" ${f.req?'checked':''}> Req</label><button type="button" onclick="removeFmtField(${i})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`; });
-        }
-        async function saveFormat() {
-            const payload = { nombre: document.getElementById('fmt_nombre').value, campana: document.getElementById('fmt_campana').value, estado: document.getElementById('fmt_estado').value, html_template: document.getElementById('fmt_html').value, campos_config: dynFieldsCache };
-            if(editingFormatId) { const { data } = await supabaseClient.from('formatos').select('version').eq('id', editingFormatId).single(); payload.version = (data.version || 1) + 1; payload.actualizado_en = new Date().toISOString(); await supabaseClient.from('formatos').update(payload).eq('id', editingFormatId); logAdminAction('Edición Formato', payload.nombre); } 
-            else { await supabaseClient.from('formatos').insert([payload]); logAdminAction('Creación Formato', payload.nombre); }
-            closeFormatModal(); loadAdminFormats();
-        }
-
-        async function loadAsesorFormats() {
-            let query = supabaseClient.from('formatos').select('*').eq('estado', 'Activo');
-            if (currentUser.campana !== 'Sistemas / Administración') query = query.in('campana', [currentUser.campana, 'GLOBAL']);
-            const { data } = await query; const grid = document.getElementById('asesorFormatsGrid'); grid.innerHTML = '';
-            data.forEach(f => { grid.innerHTML += `<button onclick='initEditor("${f.id}")' class="p-6 border-2 border-slate-200 hover:border-blue-500 rounded-xl transition text-left flex flex-col justify-between bg-white"><h3 class="font-bold text-lg text-blue-900 mb-2"><i class="fa-regular fa-file-pdf text-blue-500 mr-2"></i>${f.nombre}</h3><p class="text-[10px] text-slate-400 mt-2">Click para redactar.</p></button>`; });
-        }
-        function openModelSelector() { registrarTiempoSiAplica('Cancelado'); document.getElementById('notificationView').classList.add('hidden'); document.getElementById('mainContainer').classList.add('hidden'); document.getElementById('modelSelectorOverlay').classList.remove('hidden'); }
-        
-        async function initEditor(fId) {
-            await registrarTiempoSiAplica('Cancelado'); 
-            const { data } = await supabaseClient.from('formatos').select('*').eq('id', fId).single();
-            activeFormatConfig = data.campos_config || []; activeFormatTemplate = data.html_template;
-            document.getElementById('modelSelectorOverlay').classList.add('hidden'); document.getElementById('mainContainer').classList.remove('hidden'); document.getElementById('notificationView').classList.remove('hidden'); document.getElementById('lblHeaderModelName').textContent = data.nombre;
-            const c = document.getElementById('dynamicFieldsContainer'); c.innerHTML = '';
-            activeFormatConfig.forEach(f => { c.innerHTML += `<div><label class="block text-slate-400 mb-1">${f.label}</label><input type="${f.type}" id="dyn_${f.id}" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700" oninput="updateDynamicPDF()"></div>`; });
-            iniciarMedicion(data.id, data.nombre); updateDynamicPDF();
-        }
-        function toggleEditor() { document.getElementById('editorPanel').classList.toggle('hidden'); }
-        function compressImage(evt, fld) { const fl = evt.target.files[0]; if(!fl)return; const r = new FileReader(); r.readAsDataURL(fl); r.onload = e => { const img = new Image(); img.src = e.target.result; img.onload = () => { const cv = document.createElement('canvas'); let w=img.width, h=img.height; if(w>1200){h*=1200/w; w=1200;} cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h); const b64 = cv.toDataURL('image/jpeg', 0.8); anexosData[fld] = b64; document.getElementById(`preview-${fld}`).style.backgroundImage = `url(${b64})`; document.getElementById(`preview-${fld}`).classList.remove('hidden'); } } }
-        function updateDynamicPDF() { let html = activeFormatTemplate; activeFormatConfig.forEach(f => { const v = document.getElementById(`dyn_${f.id}`)?.value || `[${f.label}]`; html = html.replace(new RegExp(`\\{\\{${f.id}\\}\\}`, 'g'), v); }); document.getElementById('notificationView').innerHTML = html; }
-        
-        async function generarPDF() {
-            let isValid = true; activeFormatConfig.forEach(f => { if(f.req && !document.getElementById(`dyn_${f.id}`).value) isValid = false; });
-            if(!isValid) { alert("Complete todos los campos requeridos."); return; }
-            const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML; btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btnGen.disabled = true;
-            try {
-                updateDynamicPDF(); const formVals = {}; activeFormatConfig.forEach(f => { formVals[f.id] = document.getElementById(`dyn_${f.id}`).value; });
-                const caseData = { valores: formVals, anexosConfig: { doc1: { show: document.getElementById('chk_doc1').checked, data: anexosData.doc1 }, doc2: { show: document.getElementById('chk_doc2').checked, data: anexosData.doc2 }, doc3: { show: document.getElementById('chk_doc3').checked, data: anexosData.doc3 }, doc4: { show: document.getElementById('chk_doc4').checked, data: anexosData.doc4 } } };
-                const payloadBD = { data: caseData, creado_por: currentUser.id, campana: currentUser.campana, formato_id: auditData.modelId, formato_snapshot: { config: activeFormatConfig, html: activeFormatTemplate } };
-                const { data, error } = await supabaseClient.from('casos').insert([payloadBD]).select(); if (error) throw error; 
-                const uuid = data[0].id; await registrarTiempoSiAplica('Finalizado', uuid);
-                
-                const caseUrl = `${window.location.origin}${window.location.pathname}?id=${uuid}`; const btnAnexos = document.getElementById('btnAnexosPdf'); if(btnAnexos) { btnAnexos.href = caseUrl; btnAnexos.style.display = 'inline-block'; }
-                const element = document.getElementById('notificationView'); await html2pdf().set({ margin: 0.2, filename: `${uuid.substring(0,8)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).from(element).save();
-                if(btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = "#"; }
-                iniciarMedicion(auditData.modelId, auditData.modelName); 
-            } catch (e) { alert("Error al generar: " + e.message); } finally { btnGen.innerHTML = oldText; btnGen.disabled = false; }
-        }
-
-        async function getCaseData(uuid) { const { data } = await supabaseClient.from('casos').select('*').eq('id', uuid).single(); return data; }
-        function populateClientView(cr) {
-            const cd = cr.data, s = cr.formato_snapshot; if(!s || !cd.valores) { alert("Documento muy antiguo no compatible."); return; }
-            const g = document.getElementById('galeriaAnexos'); g.innerHTML = ''; let hI = false;
-            if(cd.anexosConfig) { const c = cd.anexosConfig;
-                if (c.doc1 && c.doc1.show && c.doc1.data) { g.innerHTML += crearTarjeta('Comprobante', c.doc1.data); hI = true; }
-                if (c.doc2 && c.doc2.show && c.doc2.data) { g.innerHTML += crearTarjeta('Contrato', c.doc2.data); hI = true; }
-                if (c.doc3 && c.doc3.show && c.doc3.data) { g.innerHTML += crearTarjeta('Evidencia 1', c.doc3.data); hI = true; }
-                if (c.doc4 && c.doc4.show && c.doc4.data) { g.innerHTML += crearTarjeta('Evidencia 2', c.doc4.data); hI = true; }
-            }
-            if(hI) document.getElementById('seccionEvidencias').classList.remove('hidden');
-        }
-        function crearTarjeta(tit, b64) { return `<div class="border rounded p-4 bg-slate-50 text-center cursor-pointer hover:shadow-lg" onclick="openLightbox('${b64}')"><h4 class="text-xs font-bold mb-3">${tit}</h4><img src="${b64}" class="mx-auto max-h-56 object-contain"></div>`; }
-        function openLightbox(s) { document.getElementById('lightboxImg').src = s; document.getElementById('lightboxModal').classList.remove('hidden'); document.getElementById('lightboxModal').classList.add('flex'); }
-        function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); document.getElementById('lightboxModal').classList.remove('flex'); }
-    </script>
+    // CAMBIAR ESTADO DE AUDITORÍA (AUDITOR)
+    function cambiarEstadoRegistro(id, nuevoEstado) {
+      registros = registros.map(r => r.id === id ? { ...r, estado: nuevoEstado } : r);
+      localStorage.setItem('registros_formatos', JSON.stringify(registros));
+      renderizarTablaAuditoria();
+    }
+  </script>
 </body>
 </html>
