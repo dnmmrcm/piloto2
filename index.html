@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Judicial - Multi-Modelo Notificaciones</title>
+    <title>Sistema Judicial - Gestión y Auditoría</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Fuente Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- html2pdf.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -17,483 +16,620 @@
     
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        institutional: { 800: '#1e3a8a', 900: '#0f172a', navy: '#1b365d', header: '#132842' }
-                    }
-                }
-            }
+            theme: { extend: { colors: { institutional: { 800: '#1e3a8a', 900: '#0f172a' } }, fontFamily: { sans: ['Inter', 'sans-serif'] } } }
         }
     </script>
     <style>
         body { background-color: #f1f5f9; }
-        @media print {
-            .no-print { display: none !important; }
-            body { background-color: white !important; }
-        }
-        #notificationView { padding-bottom: 20px; }
+        @media print { .no-print { display: none !important; } body { background-color: white !important; } }
         #lightboxModal { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between relative font-sans">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col font-sans">
 
-    <!-- SELECCIÓN DE MODELO DE NOTIFICACIÓN -->
-    <div id="modelSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[70] flex items-center justify-center p-4">
-        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl max-w-4xl w-full text-center max-h-[90vh] overflow-y-auto">
-            <div class="mb-6">
-                <i class="fa-solid fa-layer-group text-4xl text-amber-500 mb-2"></i>
-                <h2 class="text-2xl font-bold text-slate-900">Seleccione el Modelo de Notificación</h2>
-                <p class="text-slate-500 text-xs sm:text-sm mt-1">Cada modelo generará un documento PDF con un diseño visual y formato legal distinto.</p>
+    <!-- ========================================== -->
+    <!-- PANTALLA DE INICIO DE SESIÓN               -->
+    <!-- ========================================== -->
+    <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8">
+            <div class="text-center mb-8">
+                <i class="fa-solid fa-scale-balanced text-5xl text-amber-500 mb-4"></i>
+                <h1 class="text-2xl font-bold text-slate-900">Acceso al Sistema</h1>
+                <p class="text-sm text-slate-500 mt-1">Ingrese sus credenciales corporativas</p>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
-                <!-- Modelo 1 -->
-                <button onclick="selectModel(1)" class="p-4 border-2 border-slate-200 hover:border-blue-500 rounded-lg hover:bg-blue-50 transition group flex flex-col h-full">
-                    <div class="flex items-center justify-between mb-3"><span class="text-[10px] font-bold text-blue-800 bg-blue-100 px-2 py-1 rounded uppercase tracking-wider">Diseño Clásico</span><i class="fa-solid fa-scale-balanced text-blue-400 text-lg"></i></div>
-                    <h3 class="font-bold text-slate-800 text-sm group-hover:text-blue-900 mb-1">Citación Laboral</h3>
-                    <p class="text-xs text-slate-500 flex-grow">Estilo corporativo azul tradicional. Ideal para notificaciones estándar.</p>
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Correo Electrónico / Usuario</label>
+                    <input type="email" id="loginEmail" required class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Contraseña</label>
+                    <input type="password" id="loginPassword" required class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition">
+                </div>
+                <div id="loginError" class="hidden bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-200">
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i><span id="loginErrorText">Credenciales incorrectas.</span>
+                </div>
+                <button type="submit" id="btnLoginSubmit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2">
+                    Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket"></i>
                 </button>
-                <!-- Modelo 2 -->
-                <button onclick="selectModel(2)" class="p-4 border-2 border-slate-200 hover:border-red-600 rounded-lg hover:bg-red-50 transition group flex flex-col h-full">
-                    <div class="flex items-center justify-between mb-3"><span class="text-[10px] font-bold text-red-800 bg-red-100 px-2 py-1 rounded uppercase tracking-wider">Diseño Urgente</span><i class="fa-solid fa-triangle-exclamation text-red-400 text-lg"></i></div>
-                    <h3 class="font-bold text-slate-800 text-sm group-hover:text-red-900 mb-1">Orden de Embargo</h3>
-                    <p class="text-xs text-slate-500 flex-grow">Estilo de alto impacto visual (rojo) para medidas cautelares.</p>
-                </button>
-                <!-- Modelo 3 -->
-                <button onclick="selectModel(3)" class="p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-lg hover:bg-emerald-50 transition group flex flex-col h-full">
-                    <div class="flex items-center justify-between mb-3"><span class="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-1 rounded uppercase tracking-wider">Diseño Amigable</span><i class="fa-solid fa-handshake text-emerald-400 text-lg"></i></div>
-                    <h3 class="font-bold text-slate-800 text-sm group-hover:text-emerald-900 mb-1">Conciliación Extrajudicial</h3>
-                    <p class="text-xs text-slate-500 flex-grow">Estilo suavizado en tonos verdes, promueve la mediación voluntaria.</p>
-                </button>
-                <!-- Modelo 4 -->
-                <button onclick="selectModel(4)" class="p-4 border-2 border-slate-200 hover:border-slate-800 rounded-lg hover:bg-slate-100 transition group flex flex-col h-full">
-                    <div class="flex items-center justify-between mb-3"><span class="text-[10px] font-bold text-slate-800 bg-slate-200 px-2 py-1 rounded uppercase tracking-wider">Diseño Moderno</span><i class="fa-solid fa-file-contract text-slate-500 text-lg"></i></div>
-                    <h3 class="font-bold text-slate-800 text-sm group-hover:text-slate-900 mb-1">Incumplimiento Mercantil</h3>
-                    <p class="text-xs text-slate-500 flex-grow">Estilo tipo factura/contrato (monocromático) con tablas estructuradas.</p>
-                </button>
-                <!-- Modelo 5 -->
-                <button onclick="selectModel(5)" class="p-4 border-2 border-slate-200 hover:border-purple-600 rounded-lg hover:bg-purple-50 transition group flex flex-col h-full md:col-span-2 lg:col-span-1">
-                    <div class="flex items-center justify-between mb-3"><span class="text-[10px] font-bold text-purple-800 bg-purple-100 px-2 py-1 rounded uppercase tracking-wider">Diseño Formal / Notarial</span><i class="fa-solid fa-landmark text-purple-400 text-lg"></i></div>
-                    <h3 class="font-bold text-slate-800 text-sm group-hover:text-purple-900 mb-1">Citación Provincial</h3>
-                    <p class="text-xs text-slate-500 flex-grow">Estilo clásico notarial, tipografía Serif elegante con formato de carta.</p>
-                </button>
-            </div>
+            </form>
         </div>
     </div>
 
-    <!-- BARRA SUPERIOR DE CONTROL -->
-    <header id="adminHeader" class="no-print bg-slate-900 text-white shadow-lg sticky top-0 z-50 hidden">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-layer-group text-amber-400 text-xl"></i>
-                <span class="font-bold text-sm sm:text-base tracking-wide">
-                    <span id="lblHeaderModelName" class="text-white font-light">Modelo</span>
-                </span>
-            </div>
-            
-            <div class="flex items-center flex-wrap gap-2 text-sm">
-                <!-- Botón para regresar a elegir otro formato -->
-                <button onclick="openModelSelector()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-lg flex items-center gap-2 transition font-medium text-xs shadow-inner">
-                    <i class="fa-solid fa-arrow-left"></i> Cambiar Formato
-                </button>
-                <button onclick="toggleEditor()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition font-medium text-xs">
-                    <i class="fa-solid fa-sliders"></i> Configurar Datos
-                </button>
-                <button id="btnGenerarPDF" onclick="generarPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold transition flex items-center gap-2 shadow-md text-xs sm:text-sm">
-                    <i class="fa-solid fa-file-pdf"></i> GENERAR PDF
-                </button>
-            </div>
-        </div>
-
-        <!-- PANEL DE EDICIÓN DE DATOS Y ANEXOS -->
-        <div id="editorPanel" class="hidden border-t border-slate-800 bg-slate-950 px-4 py-4 transition-all shadow-inner">
-            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                <!-- Datos Básicos -->
-                <div><label class="block text-slate-400 mb-1">Nombre Destinatario</label><input type="text" id="inputClientName" value="ALMACÉN CRECOS / JUAN PÉREZ" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700"></div>
-                <div><label class="block text-slate-400 mb-1">Cédula / RUC</label><input type="text" id="inputRuc" value="0992345678001" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700"></div>
-                <div><label class="block text-slate-400 mb-1">Nº Expediente</label><input type="text" id="inputExpedient" value="7191926-22.9.35.0585" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700"></div>
-                <div><label class="block text-slate-400 mb-1">Fecha de Radicación</label><input type="text" id="inputDate" value="19 de octubre, 2026" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700"></div>
-
-                <!-- CARGA UNIFICADA DE ANEXOS -->
-                <div class="col-span-full border-t border-slate-700 pt-3 mt-2">
-                    <h3 class="text-amber-400 font-bold mb-2 uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-paperclip"></i> Evidencias y Anexos Adjuntos
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-slate-800/50 p-3 rounded border border-slate-700">
-                            <label class="block text-slate-400 mb-1 font-bold">1. Comprobante/Cédula</label>
-                            <input type="file" accept="image/*" onchange="compressImage(event, 'doc1')" class="w-full text-slate-300 text-[10px] mb-2">
-                            <label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc1" checked class="accent-amber-500"> Incluir</label>
-                            <div id="preview-doc1" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div>
-                        </div>
-                        <div class="bg-slate-800/50 p-3 rounded border border-slate-700">
-                            <label class="block text-slate-400 mb-1 font-bold">2. Contrato/Pagaré</label>
-                            <input type="file" accept="image/*" onchange="compressImage(event, 'doc2')" class="w-full text-slate-300 text-[10px] mb-2">
-                            <label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc2" checked class="accent-amber-500"> Incluir</label>
-                            <div id="preview-doc2" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div>
-                        </div>
-                        <div class="bg-slate-800/50 p-3 rounded border border-slate-700">
-                            <label class="block text-slate-400 mb-1 font-bold">3. Evidencia 1</label>
-                            <input type="file" accept="image/*" onchange="compressImage(event, 'doc3')" class="w-full text-slate-300 text-[10px] mb-2">
-                            <label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc3" checked class="accent-amber-500"> Incluir</label>
-                            <div id="preview-doc3" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div>
-                        </div>
-                        <div class="bg-slate-800/50 p-3 rounded border border-slate-700">
-                            <label class="block text-slate-400 mb-1 font-bold">4. Evidencia 2</label>
-                            <input type="file" accept="image/*" onchange="compressImage(event, 'doc4')" class="w-full text-slate-300 text-[10px] mb-2">
-                            <label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc4" checked class="accent-amber-500"> Incluir</label>
-                            <div id="preview-doc4" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div>
-                        </div>
+    <!-- ========================================== -->
+    <!-- PANEL ADMINISTRATIVO (SISTEMAS)            -->
+    <!-- ========================================== -->
+    <div id="adminDashboardView" class="hidden flex-col min-h-screen bg-slate-100 w-full z-[80] absolute inset-0">
+        <header class="bg-slate-900 text-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-shield-halved text-amber-500 text-xl"></i>
+                        <span class="font-bold text-lg">Panel de Administración - Sistemas</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm text-slate-300" id="adminHeaderName">Administrador</span>
+                        <button onclick="handleLogout()" class="text-sm bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-white transition"><i class="fa-solid fa-power-off"></i> Salir</button>
                     </div>
                 </div>
+                <nav class="flex space-x-4 pb-3">
+                    <button onclick="switchAdminTab('stats')" id="tab-stats" class="admin-tab px-3 py-2 rounded-md text-sm font-medium bg-slate-800 text-white">Productividad</button>
+                    <button onclick="switchAdminTab('audit')" id="tab-audit" class="admin-tab px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700">Historial de Auditoría</button>
+                    <button onclick="switchAdminTab('users')" id="tab-users" class="admin-tab px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700">Gestión de Usuarios</button>
+                </nav>
             </div>
-            <div id="devModeWarning" class="hidden mt-4 bg-amber-900/50 border border-amber-500 text-amber-200 p-2 rounded text-xs font-mono text-center">
-                <i class="fa-solid fa-triangle-exclamation"></i> MODO DESARROLLO LOCAL
-            </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="flex-grow py-6 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full" id="mainContainer">
-
-        <!-- ========================================== -->
-        <!-- VISTA 1: CONTENEDOR DINÁMICO PARA EL PDF   -->
-        <!-- El HTML interno cambiará según el modelo   -->
-        <!-- ========================================== -->
-        <section id="notificationView" class="hidden"></section>
-
-        <!-- ========================================== -->
-        <!-- VISTA 2: DETALLE WEB INDIVIDUAL DEL CLIENTE-->
-        <!-- ========================================== -->
-        <section id="caseDetailView" class="hidden space-y-6">
-            <div class="flex flex-wrap items-center justify-between gap-4 no-print bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div class="flex items-center gap-2 ml-auto">
-                    <button onclick="window.print()" class="bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition"><i class="fa-solid fa-print"></i> Guardar Constancia</button>
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 w-full">
+            <!-- TAB: ESTADÍSTICAS -->
+            <div id="panel-stats" class="admin-panel space-y-6">
+                <h2 class="text-2xl font-bold text-slate-800">Indicadores Generales</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Total Documentos</p><p class="text-3xl font-bold text-slate-900" id="stat-total">0</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Doc. Finalizados</p><p class="text-3xl font-bold text-emerald-600" id="stat-finalizados">0</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Tiempo Promedio</p><p class="text-3xl font-bold text-blue-600" id="stat-promedio">0m 0s</p></div>
+                    <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Doc. Cancelados</p><p class="text-3xl font-bold text-red-600" id="stat-cancelados">0</p></div>
                 </div>
             </div>
 
-            <!-- Panel de Documentación Web -->
-            <div class="bg-white rounded-lg shadow-xl border border-slate-300 p-6 sm:p-10 text-slate-800 space-y-6">
-                <div class="border-b-2 border-slate-800 pb-4 flex justify-between items-center">
-                    <div>
-                        <h2 class="font-extrabold text-slate-900 text-lg uppercase tracking-wider" id="dispClientViewHeaderTitle">SISTEMA JUDICIAL</h2>
-                        <p class="text-xs text-slate-500 uppercase tracking-widest">Unidad Judicial Electrónica</p>
+            <!-- TAB: AUDITORÍA -->
+            <div id="panel-audit" class="admin-panel hidden space-y-4">
+                <div class="bg-white p-4 rounded-lg shadow border border-slate-200 flex flex-wrap gap-4 items-end">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Campaña</label><select id="filter-campana" class="border p-2 rounded text-sm"><option value="ALL">Todas</option><option value="Cobranza">Cobranza</option><option value="Retención">Retención</option></select></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Fecha</label><input type="date" id="filter-date" class="border p-2 rounded text-sm"></div>
+                    <button onclick="loadAuditData()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700">Filtrar</button>
+                </div>
+                <div class="bg-white rounded-lg shadow border border-slate-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm">
+                        <thead class="bg-slate-50"><tr><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Fecha / Hora</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Asesor</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Campaña</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Modelo</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Tiempo</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Estado</th></tr></thead>
+                        <tbody id="auditTableBody" class="bg-white divide-y divide-slate-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: USUARIOS -->
+            <div id="panel-users" class="admin-panel hidden space-y-4">
+                <div class="flex justify-between items-center"><h2 class="text-2xl font-bold text-slate-800">Cuentas de Acceso</h2><button onclick="openUserModal()" class="bg-emerald-600 text-white px-4 py-2 rounded font-bold hover:bg-emerald-700 text-sm"><i class="fa-solid fa-plus"></i> Nuevo Usuario</button></div>
+                <div class="bg-white rounded-lg shadow border border-slate-200 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm">
+                        <thead class="bg-slate-50"><tr><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Nombre</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Correo</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Rol</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Campaña</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Estado</th><th class="px-6 py-3 text-left font-bold text-slate-500 uppercase">Acción</th></tr></thead>
+                        <tbody id="usersTableBody" class="bg-white divide-y divide-slate-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL NUEVO USUARIO -->
+    <div id="modalUser" class="fixed inset-0 bg-black/60 hidden z-[90] items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="bg-slate-900 text-white p-4 flex justify-between"><h3 class="font-bold">Registrar Usuario</h3><button onclick="closeUserModal()"><i class="fa-solid fa-xmark"></i></button></div>
+            <form id="formUser" onsubmit="saveUser(event)" class="p-6 space-y-4 text-sm">
+                <div><label class="block font-bold text-slate-700 mb-1">Nombre Completo</label><input type="text" id="nu_nombre" required class="w-full border p-2 rounded"></div>
+                <div><label class="block font-bold text-slate-700 mb-1">Correo Electrónico</label><input type="email" id="nu_email" required class="w-full border p-2 rounded"></div>
+                <div><label class="block font-bold text-slate-700 mb-1">Contraseña Temporal</label><input type="password" id="nu_pass" required class="w-full border p-2 rounded"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block font-bold text-slate-700 mb-1">Rol</label><select id="nu_rol" class="w-full border p-2 rounded"><option value="Asesor">Asesor</option><option value="Administrador">Administrador</option></select></div>
+                    <div><label class="block font-bold text-slate-700 mb-1">Campaña</label><select id="nu_campana" class="w-full border p-2 rounded"><option value="Cobranza">Cobranza</option><option value="Retención">Retención</option><option value="Sistemas / Administración">Sistemas</option></select></div>
+                </div>
+                <div class="pt-4"><button type="submit" id="btnSaveUser" class="w-full bg-emerald-600 text-white font-bold py-2 rounded hover:bg-emerald-700">Guardar Cuenta</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- APLICATIVO PRINCIPAL (ASESORES)            -->
+    <!-- ========================================== -->
+    <div id="appContainer" class="hidden flex-col min-h-screen w-full relative">
+        
+        <!-- BARRA SUPERIOR DE CONTROL -->
+        <header id="adminHeader" class="no-print bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-slate-800 px-3 py-1 rounded border border-slate-700 flex flex-col">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold" id="headerAsesorName">Asesor</span>
+                        <span class="text-xs text-amber-400 font-bold" id="headerAsesorCampana">Campaña</span>
                     </div>
+                    <span class="font-bold text-sm sm:text-base tracking-wide">
+                        Sistema Judicial — <span id="lblHeaderModelName" class="text-white font-light">Seleccione Modelo</span>
+                    </span>
                 </div>
                 
-                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <div><span class="text-slate-500 block text-xs">Destinatario / Demandado:</span><span class="font-bold text-slate-900 dispClientName"></span></div>
-                    <div><span class="text-slate-500 block text-xs">Identificación (RUC/C.I.):</span><span class="font-semibold text-slate-900 dispRuc"></span></div>
-                    <div><span class="text-slate-500 block text-xs">Referencia de Expediente:</span><span class="font-semibold text-slate-900 dispExpedient"></span></div>
-                    <div><span class="text-slate-500 block text-xs">Fecha de Emisión:</span><span class="font-semibold text-slate-900 dispDate"></span></div>
-                </div>
-
-                <div class="text-sm text-slate-700 bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-start gap-3">
-                    <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 text-lg"></i>
-                    <p><strong>Resumen del expediente:</strong> Se presenta a continuación la documentación probatoria y anexos correspondientes al presente expediente. Haga clic sobre cualquier imagen para ampliarla y revisarla detalladamente.</p>
-                </div>
-
-                <div id="seccionEvidencias" class="hidden">
-                    <div class="border-b border-slate-300 pb-2 mb-6 mt-8">
-                        <h2 class="font-extrabold text-slate-800 text-base uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-folder-open text-amber-500"></i> DOCUMENTACIÓN ADJUNTA
-                        </h2>
-                    </div>
-                    <!-- Galería Dinámica -->
-                    <div id="galeriaAnexos" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+                <div class="flex items-center flex-wrap gap-2 text-sm">
+                    <button onclick="openModelSelector()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-3 py-2 rounded-lg flex items-center gap-2 transition font-medium text-xs">
+                        <i class="fa-solid fa-arrow-left"></i> Cambiar Formato
+                    </button>
+                    <button onclick="toggleEditor()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition font-medium text-xs">
+                        <i class="fa-solid fa-sliders"></i> Configurar Datos
+                    </button>
+                    <button id="btnGenerarPDF" onclick="generarPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold transition flex items-center gap-2 shadow-md text-xs sm:text-sm">
+                        <i class="fa-solid fa-file-pdf"></i> GENERAR PDF
+                    </button>
+                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition ml-2"><i class="fa-solid fa-power-off"></i></button>
                 </div>
             </div>
-        </section>
-    </main>
 
-    <!-- LIGHTBOX MODAL PARA IMÁGENES -->
-    <div id="lightboxModal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-4 cursor-pointer" onclick="closeLightbox()">
-        <span class="absolute top-4 right-6 text-white text-4xl hover:text-red-400">&times;</span>
-        <img id="lightboxImg" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl border border-slate-600 cursor-zoom-out">
+            <!-- PANEL DE EDICIÓN DE DATOS Y ANEXOS -->
+            <div id="editorPanel" class="hidden border-t border-slate-800 bg-slate-950 px-4 py-4 transition-all shadow-inner">
+                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                    <div><label class="block text-slate-400 mb-1">Nombre Destinatario</label><input type="text" id="inputClientName" value="ALMACÉN CRECOS / JUAN PÉREZ" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700"></div>
+                    <div><label class="block text-slate-400 mb-1">Cédula / RUC</label><input type="text" id="inputRuc" value="0992345678001" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700"></div>
+                    <div><label class="block text-slate-400 mb-1">Nº Expediente</label><input type="text" id="inputExpedient" value="7191926-22.9.35.0585" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700"></div>
+                    <div><label class="block text-slate-400 mb-1">Fecha de Radicación</label><input type="text" id="inputDate" value="19 de octubre, 2026" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700"></div>
+
+                    <div class="col-span-full border-t border-slate-700 pt-3 mt-2">
+                        <h3 class="text-amber-400 font-bold mb-2 uppercase flex items-center gap-2"><i class="fa-solid fa-paperclip"></i> Evidencias y Anexos Adjuntos</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-slate-800/50 p-3 rounded border border-slate-700">
+                                <label class="block text-slate-400 mb-1 font-bold">1. Comprobante/Cédula</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc1')" class="w-full text-slate-300 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc1" checked class="accent-amber-500"> Incluir</label><div id="preview-doc1" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div>
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded border border-slate-700">
+                                <label class="block text-slate-400 mb-1 font-bold">2. Contrato/Pagaré</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc2')" class="w-full text-slate-300 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc2" checked class="accent-amber-500"> Incluir</label><div id="preview-doc2" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div>
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded border border-slate-700">
+                                <label class="block text-slate-400 mb-1 font-bold">3. Evidencia 1</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc3')" class="w-full text-slate-300 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc3" checked class="accent-amber-500"> Incluir</label><div id="preview-doc3" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div>
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded border border-slate-700">
+                                <label class="block text-slate-400 mb-1 font-bold">4. Evidencia 2</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc4')" class="w-full text-slate-300 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1"><input type="checkbox" id="chk_doc4" checked class="accent-amber-500"> Incluir</label><div id="preview-doc4" class="w-full h-20 bg-slate-800 rounded border border-slate-600 bg-cover bg-center mt-2 hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- SELECCIÓN DE MODELOS -->
+        <div id="modelSelectorOverlay" class="flex-grow flex items-center justify-center p-4 bg-slate-100 z-40">
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-xl max-w-4xl w-full text-center">
+                <div class="mb-6"><i class="fa-solid fa-layer-group text-4xl text-amber-500 mb-2"></i><h2 class="text-2xl font-bold text-slate-900">Seleccione el Modelo de Notificación</h2></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
+                    <button onclick="selectModel(1)" class="p-4 border-2 border-slate-200 hover:border-blue-500 rounded-lg transition"><h3 class="font-bold text-sm text-blue-900">1. Citación Laboral</h3></button>
+                    <button onclick="selectModel(2)" class="p-4 border-2 border-slate-200 hover:border-red-600 rounded-lg transition"><h3 class="font-bold text-sm text-red-900">2. Orden de Embargo</h3></button>
+                    <button onclick="selectModel(3)" class="p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-lg transition"><h3 class="font-bold text-sm text-emerald-900">3. Conciliación Extrajudicial</h3></button>
+                    <button onclick="selectModel(4)" class="p-4 border-2 border-slate-200 hover:border-slate-800 rounded-lg transition"><h3 class="font-bold text-sm text-slate-900">4. Incumplimiento Mercantil</h3></button>
+                    <button onclick="selectModel(5)" class="p-4 border-2 border-slate-200 hover:border-purple-600 rounded-lg transition"><h3 class="font-bold text-sm text-purple-900">5. Citación Provincial</h3></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENEDOR PDF -->
+        <main class="flex-grow py-6 px-4 sm:px-6 max-w-5xl mx-auto w-full z-10 hidden" id="mainContainer">
+            <section id="notificationView" class="hidden"></section>
+        </main>
     </div>
+
+    <!-- ========================================== -->
+    <!-- VISTA CLIENTE WEB (SOLO LECTURA DE DEUDAS) -->
+    <!-- ========================================== -->
+    <section id="caseDetailView" class="hidden space-y-6 flex-grow py-6 px-4 max-w-5xl mx-auto w-full">
+        <div class="flex items-center justify-between no-print bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><button onclick="window.print()" class="bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm ml-auto"><i class="fa-solid fa-print"></i> Guardar Constancia</button></div>
+        <div class="bg-white rounded-lg shadow-xl border border-slate-300 p-6 sm:p-10 space-y-6">
+            <div class="border-b-2 border-slate-800 pb-4"><h2 class="font-extrabold text-slate-900 text-lg uppercase" id="dispClientViewHeaderTitle">SISTEMA JUDICIAL</h2><p class="text-xs text-slate-500 uppercase">Unidad Judicial Electrónica</p></div>
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div><span class="text-slate-500 block text-xs">Demandado:</span><span class="font-bold text-slate-900 dispClientName"></span></div>
+                <div><span class="text-slate-500 block text-xs">Identificación:</span><span class="font-semibold text-slate-900 dispRuc"></span></div>
+                <div><span class="text-slate-500 block text-xs">Expediente:</span><span class="font-semibold text-slate-900 dispExpedient"></span></div>
+                <div><span class="text-slate-500 block text-xs">Fecha:</span><span class="font-semibold text-slate-900 dispDate"></span></div>
+            </div>
+            <div id="seccionEvidencias" class="hidden"><h2 class="font-extrabold text-slate-800 text-base uppercase mb-4 border-b pb-2"><i class="fa-solid fa-folder-open"></i> EVIDENCIA ADJUNTA</h2><div id="galeriaAnexos" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div></div>
+        </div>
+    </section>
+
+    <!-- LIGHTBOX -->
+    <div id="lightboxModal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-4 cursor-pointer" onclick="closeLightbox()"><span class="absolute top-4 right-6 text-white text-4xl hover:text-red-400">&times;</span><img id="lightboxImg" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg"></div>
 
     <script>
         /* =======================================================================
-           PLANTILLAS HTML (5 DISEÑOS DIFERENTES)
-        ======================================================================= */
-        const MODELOS = {
-            1: {
-                nombre: "Citación Judicial (Diseño Clásico Azul)",
-                headerClient: "Tribunal Regional del Trabajo",
-                template: () => `
-                <div class="bg-slate-50 rounded-lg shadow-xl border border-slate-300 overflow-hidden font-sans">
-                    <div class="text-xs sm:text-sm font-semibold text-slate-600 tracking-wide uppercase border-b border-slate-300 pb-2 pt-4 px-4 bg-white">
-                        CORTE SUPREMA — EXPEDIENTE <span class="dispExpedientCode text-blue-800 font-bold"></span>
-                    </div>
-                    <div class="bg-[#1b365d] text-white text-center py-8 px-4">
-                        <h1 class="text-3xl font-bold tracking-tight">Tribunal Regional del Trabajo</h1>
-                        <p class="text-slate-300 text-sm mt-2 font-light tracking-widest uppercase">Aviso Electrónico Judicial</p>
-                    </div>
-                    <div class="p-8 space-y-6">
-                        <div>
-                            <h2 class="text-xl font-black text-[#1b365d] tracking-wide uppercase">NOTIFICACIÓN URGENTE</h2>
-                            <div class="w-full h-1 bg-blue-900/20 my-3"></div>
-                            <h3 class="text-sm font-bold text-slate-700 tracking-wide uppercase">CITACIÓN JUDICIAL — SOLICITUD DE INFORMACIÓN</h3>
-                        </div>
-                        <div class="bg-white p-5 border border-slate-200 rounded shadow-sm space-y-3 text-sm">
-                            <div class="grid grid-cols-12 gap-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Destinatario:</span><span class="col-span-8 text-slate-900 font-bold dispClientName"></span></div>
-                            <div class="grid grid-cols-12 gap-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Expediente:</span><span class="col-span-8 text-slate-900 font-medium dispExpedient"></span></div>
-                            <div class="grid grid-cols-12 gap-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Fecha:</span><span class="col-span-8 text-slate-900 font-medium dispDate"></span></div>
-                        </div>
-                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 text-sm text-amber-900 shadow-sm">
-                            <strong class="font-black uppercase block mb-1">Advertencia Legal:</strong> El incumplimiento de esta notificación puede resultar en consecuencias legales graves y multas según la ley aplicable.
-                        </div>
-                        <p class="text-sm text-slate-600 text-center italic mt-4">A fin de revisar las evidencias documentales, sírvase hacer clic en el botón inferior:</p>
-                        <div class="text-center pt-2">
-                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-[#1b365d] hover:bg-[#0f1f38] text-white font-bold py-4 px-10 rounded uppercase text-sm shadow-lg tracking-wider inline-block">VER ANEXOS Y EVIDENCIAS</a>
-                        </div>
-                    </div>
-                </div>`
-            },
-            2: {
-                nombre: "Orden de Embargo (Diseño Urgente Rojo)",
-                headerClient: "Unidad Judicial de Ejecución Coactiva",
-                template: () => `
-                <div class="bg-white border-8 border-red-900 p-8 sm:p-12 font-sans relative">
-                    <div class="absolute top-0 right-0 bg-red-900 text-white px-4 py-1 font-bold text-xs uppercase">Prioridad Alta</div>
-                    <div class="text-center border-b-4 border-red-900 pb-6 mb-8">
-                        <i class="fa-solid fa-triangle-exclamation text-5xl text-red-700 mb-4"></i>
-                        <h1 class="text-3xl font-black text-red-900 uppercase tracking-tighter">UNIDAD JUDICIAL DE EJECUCIÓN COACTIVA</h1>
-                        <p class="text-red-700 font-bold tracking-widest mt-2 text-lg">ORDEN DE EJECUCIÓN URGENTE</p>
-                    </div>
-                    <div class="space-y-6">
-                        <h3 class="bg-red-900 text-white text-center py-2 font-bold uppercase tracking-widest text-sm">Notificación de Medida Preventiva de Embargo</h3>
-                        <div class="bg-red-50 p-6 border-2 border-red-200 text-sm space-y-4">
-                            <div><span class="block font-black text-red-800 uppercase text-[10px]">Deudor / Demandado:</span><span class="text-lg font-bold text-slate-900 dispClientName"></span></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><span class="block font-black text-red-800 uppercase text-[10px]">Identificación:</span><span class="font-bold text-slate-900 dispRuc"></span></div>
-                                <div><span class="block font-black text-red-800 uppercase text-[10px]">Nº Expediente:</span><span class="font-bold text-slate-900 dispExpedient"></span></div>
-                            </div>
-                        </div>
-                        <div class="bg-red-100 border-l-8 border-red-700 p-5 text-sm text-red-900 font-bold leading-relaxed">
-                            SE CONMINA AL CUMPLIMIENTO INMEDIATO. La omisión o retardo dará lugar al bloqueo de productos financieros, cuentas bancarias y retención de bienes a nivel nacional.
-                        </div>
-                        <div class="text-center pt-6">
-                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-red-700 hover:bg-red-900 text-white font-black py-4 px-8 rounded shadow-2xl uppercase text-base tracking-widest inline-block w-full">REVISAR PRUEBAS Y ANEXOS</a>
-                        </div>
-                    </div>
-                </div>`
-            },
-            3: {
-                nombre: "Conciliación Extrajudicial (Diseño Amigable Verde)",
-                headerClient: "Tribunal Arbitral de Mediación",
-                template: () => `
-                <div class="bg-[#f0fdf4] border-2 border-emerald-500 rounded-3xl p-8 sm:p-10 font-sans shadow-lg">
-                    <div class="text-center mb-8">
-                        <div class="inline-block bg-emerald-100 rounded-full p-6 mb-4">
-                            <i class="fa-solid fa-handshake text-6xl text-emerald-600"></i>
-                        </div>
-                        <h1 class="text-3xl font-extrabold text-emerald-900">Tribunal Arbitral de Mediación</h1>
-                        <p class="text-emerald-700 font-semibold mt-2 text-lg">Convocatoria a Diligencia de Conciliación</p>
-                    </div>
-                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-emerald-100 space-y-5 text-center">
-                        <p class="text-sm text-slate-500 uppercase font-bold tracking-wider">Invitación formal extendida a:</p>
-                        <h2 class="text-2xl font-black text-slate-800 dispClientName"></h2>
-                        <p class="text-slate-600 font-medium">RUC/CI: <span class="dispRuc"></span></p>
-                        <div class="inline-block bg-slate-50 border border-slate-200 px-6 py-2 rounded-full text-sm font-mono text-slate-700">Expediente: <span class="dispExpedient"></span></div>
-                    </div>
-                    <div class="bg-emerald-800 text-white p-6 rounded-2xl text-center text-sm font-medium mt-6 shadow-inner leading-relaxed">
-                        Esta notificación le permite acudir a una vía de solución directa, pacífica y acordada antes de iniciar una demanda formal punitiva en los tribunales ordinarios.
-                    </div>
-                    <div class="text-center pt-8">
-                        <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-10 rounded-full uppercase text-sm tracking-widest inline-block shadow-[0_10px_20px_rgba(16,185,129,0.3)] transition-all">ACCEDER A LA DOCUMENTACIÓN</a>
-                    </div>
-                </div>`
-            },
-            4: {
-                nombre: "Incumplimiento Mercantil (Diseño Moderno Gris)",
-                headerClient: "Juzgado de lo Civil y Mercantil",
-                template: () => `
-                <div class="bg-white border border-slate-800 font-mono text-slate-800 shadow-2xl">
-                    <div class="bg-slate-900 text-white p-6 flex justify-between items-center">
-                        <h1 class="text-xl font-bold tracking-tight">JUZGADO DE LO CIVIL Y MERCANTIL</h1>
-                        <span class="text-xs border border-slate-500 px-3 py-1 font-bold bg-slate-800">REQ-CUMP</span>
-                    </div>
-                    <div class="p-8 sm:p-12">
-                        <h2 class="text-2xl font-black mb-2 uppercase text-slate-900">Notificación Contractual</h2>
-                        <p class="text-sm text-slate-500 mb-8 border-b-2 border-slate-900 pb-4">REQUERIMIENTO DE CUMPLIMIENTO DE OBLIGACIONES</p>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-0 border-t border-l border-slate-300 mb-8">
-                            <div class="border-r border-b border-slate-300 p-4 bg-slate-50"><span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Destinatario</span><span class="font-bold text-sm dispClientName"></span></div>
-                            <div class="border-r border-b border-slate-300 p-4"><span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Identificación fiscal</span><span class="font-bold text-sm dispRuc"></span></div>
-                            <div class="border-r border-b border-slate-300 p-4"><span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">No. Documento / Ref</span><span class="font-bold text-sm dispExpedient"></span></div>
-                            <div class="border-r border-b border-slate-300 p-4 bg-slate-50"><span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Fecha Emisión</span><span class="font-bold text-sm dispDate"></span></div>
-                        </div>
-                        
-                        <div class="bg-slate-100 p-5 border-l-4 border-slate-900 text-sm font-medium">
-                            <i class="fa-solid fa-circle-info mr-2"></i> El retardo en la respuesta o regularización facultará a la parte actora a exigir la resolución unilateral del contrato con la respectiva indemnización de daños y perjuicios.
-                        </div>
-                        <div class="text-right pt-10">
-                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-slate-900 text-white font-bold py-3 px-8 uppercase text-xs inline-block tracking-widest hover:bg-slate-700">VISUALIZAR EVIDENCIA ADJUNTA &#8594;</a>
-                        </div>
-                    </div>
-                </div>`
-            },
-            5: {
-                nombre: "Citación Provincial (Diseño Formal Serif)",
-                headerClient: "Tribunal Distrital de lo Civil",
-                template: () => `
-                <div class="bg-white border-[12px] border-double border-slate-300 p-10 sm:p-16 text-slate-900" style="font-family: 'Times New Roman', Times, serif;">
-                    <div class="text-center mb-10 border-b border-slate-300 pb-10">
-                        <i class="fa-solid fa-scale-balanced text-5xl text-slate-300 mb-6"></i>
-                        <h1 class="text-2xl font-bold text-slate-900 tracking-[0.2em] uppercase">Tribunal Distrital de lo Civil</h1>
-                        <p class="text-slate-600 italic mt-3 text-lg">Sala Civil y Comercial — Corte Provincial de Justicia</p>
-                    </div>
-                    <div class="space-y-6 text-justify leading-loose text-lg">
-                        <p>Por medio del presente documento oficial, se emite <strong>CITACIÓN ORDINARIA</strong> dentro del proceso judicial correspondiente, instaurado formalmente en contra de <strong class="dispClientName uppercase"></strong>, portador del documento de identidad número <strong class="dispRuc"></strong>.</p>
-                        <p>Se deja constancia que la referencia asignada a este expediente es <strong class="dispExpedient"></strong>, emitido con fecha <strong class="dispDate"></strong>.</p>
-                        <p class="font-bold text-slate-800 mt-6 text-center border-y border-slate-200 py-4 italic">
-                            "Se le hace saber que cuenta con el término legal establecido en la normativa vigente para presentar su contestación debidamente motivada en la Secretaría de esta Unidad Judicial."
-                        </p>
-                        <div class="text-center pt-12">
-                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none; font-family: sans-serif;" class="bg-black text-white font-bold py-3 px-10 rounded-sm uppercase text-xs inline-block tracking-widest hover:bg-slate-800">CONSULTAR FOJAS Y ANEXOS DEL EXPEDIENTE</a>
-                        </div>
-                    </div>
-                </div>`
-            }
-        };
-
-        /* =======================================================================
-           CONFIGURACIÓN BACKEND - SUPABASE
+           CONFIGURACIÓN BACKEND - SUPABASE (PEGA TUS CLAVES AQUÍ)
         ======================================================================= */
         const SUPABASE_URL = 'https://bsrgiwihfjhdmuvjbkto.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzcmdpd2loZmpoZG11dmpia3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MTM4NDcsImV4cCI6MjEwODE4OTg0N30.7RHmve3qLOYbM5Vz73x7mXqh4h3yctRLrOh0JoKVRCo';
         
-        let supabaseClient = null;
-        if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } else {
-            document.getElementById('devModeWarning')?.classList.remove('hidden');
-        }
+        let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         /* =======================================================================
-           ESTADOS Y LÓGICA PRINCIPAL
+           ESTADOS GLOBALES DE AUTENTICACIÓN Y AUDITORÍA
         ======================================================================= */
+        let currentUser = null;
+        let activeProfile = null;
+        let auditData = { startTime: null, modelName: null };
+        
         let selectedModelId = 1;
         let anexosData = { doc1: null, doc2: null, doc3: null, doc4: null };
 
+        /* =======================================================================
+           PLANTILLAS HTML (5 DISEÑOS)
+        ======================================================================= */
+        const MODELOS = {
+            1: { nombre: "Citación Judicial (Diseño Clásico)", headerClient: "Tribunal Regional del Trabajo", template: () => `
+                <div class="bg-slate-50 rounded-lg shadow-xl border border-slate-300 overflow-hidden font-sans">
+                    <div class="bg-[#1b365d] text-white text-center py-8 px-4"><h1 class="text-3xl font-bold">Tribunal Regional del Trabajo</h1></div>
+                    <div class="p-8 space-y-6">
+                        <h2 class="text-xl font-black text-[#1b365d] uppercase">NOTIFICACIÓN URGENTE</h2>
+                        <div class="grid grid-cols-12 gap-2 text-sm"><span class="col-span-4 font-bold uppercase">Destinatario:</span><span class="col-span-8 font-bold dispClientName"></span><span class="col-span-4 font-bold uppercase">Expediente:</span><span class="col-span-8 dispExpedient"></span></div>
+                        <div class="text-center pt-2"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-[#1b365d] text-white font-bold py-4 px-10 rounded uppercase text-sm inline-block">VER ANEXOS Y EVIDENCIAS</a></div>
+                    </div></div>` },
+            2: { nombre: "Orden de Embargo (Urgente)", headerClient: "Unidad Ejecutiva Coactiva", template: () => `
+                <div class="bg-white border-8 border-red-900 p-8 font-sans text-center">
+                    <h1 class="text-3xl font-black text-red-900 uppercase">UNIDAD JUDICIAL DE EJECUCIÓN COACTIVA</h1>
+                    <div class="text-left bg-red-50 p-6 border-2 border-red-200 mt-6"><span class="block font-black text-red-800 uppercase text-[10px]">Deudor / Demandado:</span><span class="text-lg font-bold dispClientName"></span><span class="block font-black text-red-800 uppercase text-[10px] mt-2">Expediente:</span><span class="font-bold dispExpedient"></span></div>
+                    <div class="text-center pt-6"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-red-700 text-white font-black py-4 px-8 rounded uppercase inline-block w-full">REVISAR PRUEBAS Y ANEXOS</a></div>
+                </div>` },
+            3: { nombre: "Conciliación (Amigable)", headerClient: "Centro de Mediación", template: () => `
+                <div class="bg-[#f0fdf4] border-2 border-emerald-500 rounded-3xl p-8 font-sans text-center">
+                    <h1 class="text-3xl font-extrabold text-emerald-900">Tribunal Arbitral de Mediación</h1>
+                    <div class="bg-white rounded-2xl p-8 mt-6 border border-emerald-100"><p class="text-sm font-bold">Invitación a:</p><h2 class="text-2xl font-black dispClientName"></h2><p>Expediente: <span class="dispExpedient"></span></p></div>
+                    <div class="text-center pt-8"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-emerald-500 text-white font-bold py-4 px-10 rounded-full uppercase inline-block">ACCEDER A LA DOCUMENTACIÓN</a></div>
+                </div>` },
+            4: { nombre: "Incumplimiento (Moderno)", headerClient: "Juzgado de lo Civil", template: () => `
+                <div class="bg-white border border-slate-800 font-mono text-slate-800 shadow-2xl">
+                    <div class="bg-slate-900 text-white p-6"><h1 class="text-xl font-bold tracking-tight">JUZGADO DE LO CIVIL Y MERCANTIL</h1></div>
+                    <div class="p-8">
+                        <div class="grid grid-cols-2 border border-slate-300 mb-8 text-sm"><div class="p-4 border-r border-b"><span class="block font-bold">Destinatario</span><span class="dispClientName"></span></div><div class="p-4 border-b"><span class="block font-bold">Expediente</span><span class="dispExpedient"></span></div></div>
+                        <div class="text-right pt-4"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-slate-900 text-white font-bold py-3 px-8 uppercase inline-block">VISUALIZAR EVIDENCIA &#8594;</a></div>
+                    </div></div>` },
+            5: { nombre: "Citación Provincial (Formal)", headerClient: "Corte Provincial", template: () => `
+                <div class="bg-white border-[12px] border-double border-slate-300 p-10" style="font-family: 'Times New Roman', serif;">
+                    <div class="text-center mb-10 border-b border-slate-300 pb-10"><h1 class="text-2xl font-bold tracking-[0.2em] uppercase">Tribunal Distrital de lo Civil</h1></div>
+                    <p class="text-lg leading-loose">Notificación formal contra <strong class="dispClientName uppercase"></strong>. Expediente <strong class="dispExpedient"></strong>.</p>
+                    <div class="text-center pt-12"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none; font-family: sans-serif;" class="bg-black text-white font-bold py-3 px-10 uppercase inline-block">CONSULTAR FOJAS Y ANEXOS</a></div>
+                </div>` }
+        };
+
+        /* =======================================================================
+           LÓGICA DE INICIO Y RUTAS
+        ======================================================================= */
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const caseId = urlParams.get('id');
 
             if (caseId) {
-                // MODO CLIENTE: Consultar expediente web
-                document.getElementById('modelSelectorOverlay').classList.add('hidden');
-                document.getElementById('adminHeader').style.display = 'none';
-                document.getElementById('notificationView').classList.add('hidden');
+                // RUTA PÚBLICA (VISUALIZAR DEUDA/CLIENTE) - Requiere RLS abierto para lectura por ID
+                hideAllViews();
                 document.getElementById('caseDetailView').classList.remove('hidden');
-                
+                document.getElementById('caseDetailView').classList.add('flex-grow');
                 const caseData = await getCaseData(caseId);
-                if (caseData) {
-                    populateClientView(caseData);
-                } else {
-                    document.getElementById('mainContainer').innerHTML = `<div class="text-center mt-20 p-8 bg-white rounded shadow border border-red-200"><h2>Expediente No Encontrado</h2></div>`;
-                }
+                if (caseData) populateClientView(caseData);
+                else document.getElementById('caseDetailView').innerHTML = `<h2 class="text-center mt-20 font-bold text-xl">Expediente No Encontrado</h2>`;
+                return;
+            }
+
+            // RUTA PRIVADA (SISTEMA)
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                await loadUserProfile(session.user.id);
             } else {
-                // MODO ADMIN: Elegir diseño inicial
-                document.getElementById('modelSelectorOverlay').classList.remove('hidden');
+                hideAllViews();
+                document.getElementById('loginView').classList.remove('hidden');
             }
         };
 
-        // --- MANEJO DE MODELOS ---
-        function selectModel(id) {
+        function hideAllViews() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('adminDashboardView').classList.add('hidden');
+            document.getElementById('adminDashboardView').classList.remove('flex');
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('caseDetailView').classList.add('hidden');
+            document.getElementById('modelSelectorOverlay').classList.add('hidden');
+        }
+
+        /* =======================================================================
+           AUTENTICACIÓN Y PERFILES
+        ======================================================================= */
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnLoginSubmit');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Entrando...';
+            btn.disabled = true;
+            
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+            if (error) {
+                document.getElementById('loginError').classList.remove('hidden');
+                document.getElementById('loginErrorText').textContent = error.message;
+                btn.innerHTML = 'Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket"></i>';
+                btn.disabled = false;
+            } else {
+                await loadUserProfile(data.user.id);
+            }
+        }
+
+        async function handleLogout() {
+            await registrarTiempoSiAplica('Cancelado'); // Guardar tiempo si había algo abierto
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+
+        async function loadUserProfile(userId) {
+            const { data, error } = await supabaseClient.from('perfiles').select('*').eq('id', userId).single();
+            if (error || !data || !data.activo) {
+                alert("Usuario no encontrado o desactivado.");
+                await supabaseClient.auth.signOut();
+                window.location.reload();
+                return;
+            }
+            
+            currentUser = data;
+            hideAllViews();
+
+            if (currentUser.rol === 'Administrador') {
+                document.getElementById('adminDashboardView').classList.remove('hidden');
+                document.getElementById('adminDashboardView').classList.add('flex');
+                document.getElementById('adminHeaderName').textContent = currentUser.nombre;
+                loadAuditData(); // Cargar stats
+            } else {
+                document.getElementById('appContainer').classList.remove('hidden');
+                document.getElementById('appContainer').classList.add('flex');
+                document.getElementById('modelSelectorOverlay').classList.remove('hidden');
+                document.getElementById('headerAsesorName').textContent = currentUser.nombre;
+                document.getElementById('headerAsesorCampana').textContent = currentUser.campana;
+            }
+        }
+
+        /* =======================================================================
+           AUDITORÍA Y MEDICIÓN DE TIEMPOS (SEGUNDO PLANO)
+        ======================================================================= */
+        function iniciarMedicion(modeloNombre) {
+            auditData.startTime = new Date();
+            auditData.modelName = modeloNombre;
+        }
+
+        async function registrarTiempoSiAplica(estado, documentoId = null) {
+            if (!auditData.startTime || !currentUser) return;
+            
+            const endTime = new Date();
+            const diffSeconds = Math.floor((endTime - auditData.startTime) / 1000);
+            
+            // Insertar en la BD silenciosamente
+            await supabaseClient.from('auditoria').insert([{
+                documento_id: documentoId,
+                usuario_id: currentUser.id,
+                campana: currentUser.campana,
+                modelo: auditData.modelName,
+                hora_inicio: auditData.startTime.toISOString(),
+                hora_fin: endTime.toISOString(),
+                tiempo_segundos: diffSeconds,
+                estado: estado
+            }]);
+
+            auditData.startTime = null; // Reset
+        }
+
+        /* =======================================================================
+           LÓGICA DEL ASESOR (CREACIÓN DE DOCUMENTOS)
+        ======================================================================= */
+        async function selectModel(id) {
+            await registrarTiempoSiAplica('Cancelado'); // Si cambia de modelo, cancelar el anterior
+
             selectedModelId = id;
             document.getElementById('modelSelectorOverlay').classList.add('hidden');
-            document.getElementById('adminHeader').style.display = 'block';
+            document.getElementById('mainContainer').classList.remove('hidden');
             document.getElementById('notificationView').classList.remove('hidden');
-            document.getElementById('caseDetailView').classList.add('hidden');
             
-            document.getElementById('lblHeaderModelName').textContent = MODELOS[selectedModelId].nombre;
+            const m = MODELOS[selectedModelId];
+            document.getElementById('lblHeaderModelName').textContent = m.nombre;
+            document.getElementById('notificationView').innerHTML = m.template();
             
-            // Inyectar la plantilla HTML seleccionada
-            document.getElementById('notificationView').innerHTML = MODELOS[selectedModelId].template();
-            
-            updateData(); // Sincronizar datos con el nuevo HTML inyectado
+            updateData();
+            iniciarMedicion(m.nombre); // INICIA CRONÓMETRO INVISIBLE
         }
 
         function openModelSelector() {
-            document.getElementById('adminHeader').style.display = 'none';
             document.getElementById('notificationView').classList.add('hidden');
+            document.getElementById('mainContainer').classList.add('hidden');
             document.getElementById('modelSelectorOverlay').classList.remove('hidden');
+            registrarTiempoSiAplica('Cancelado'); // Detener y guardar como cancelado
         }
 
         function toggleEditor() { document.getElementById('editorPanel').classList.toggle('hidden'); }
 
-        // --- COMPRESIÓN IMÁGENES ---
         function compressImage(event, field) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = function(e) {
+            reader.onload = e => {
                 const img = new Image();
                 img.src = e.target.result;
-                img.onload = function() {
+                img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX = 1200;
                     let w = img.width, h = img.height;
-                    if (w > MAX) { h *= MAX / w; w = MAX; }
+                    if (w > 1200) { h *= 1200 / w; w = 1200; }
                     canvas.width = w; canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     const base64 = canvas.toDataURL('image/jpeg', 0.8);
                     
                     anexosData[field] = base64;
-                    const preview = document.getElementById(`preview-${field}`);
-                    preview.style.backgroundImage = `url(${base64})`;
-                    preview.classList.remove('hidden');
+                    document.getElementById(`preview-${field}`).style.backgroundImage = `url(${base64})`;
+                    document.getElementById(`preview-${field}`).classList.remove('hidden');
                 }
             }
         }
 
-        // --- SINCRONIZAR DATOS EN EL DOM ---
         function updateData() {
-            const data = {
-                c: document.getElementById('inputClientName').value || '-',
-                r: document.getElementById('inputRuc').value || '-',
-                e: document.getElementById('inputExpedient').value || '-',
-                d: document.getElementById('inputDate').value || '-'
+            const d = {
+                c: document.getElementById('inputClientName').value || '-', r: document.getElementById('inputRuc').value || '-',
+                e: document.getElementById('inputExpedient').value || '-', f: document.getElementById('inputDate').value || '-'
             };
-            document.querySelectorAll('.dispClientName').forEach(el => el.textContent = data.c);
-            document.querySelectorAll('.dispRuc').forEach(el => el.textContent = data.r);
-            document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = data.e);
-            document.querySelectorAll('.dispDate').forEach(el => el.textContent = data.d);
-            
-            const expCode = data.e.split('-')[0] || 'REF';
-            document.querySelectorAll('.dispExpedientCode').forEach(el => el.textContent = expCode);
+            document.querySelectorAll('.dispClientName').forEach(el => el.textContent = d.c);
+            document.querySelectorAll('.dispRuc').forEach(el => el.textContent = d.r);
+            document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = d.e);
+            document.querySelectorAll('.dispDate').forEach(el => el.textContent = d.f);
+            document.querySelectorAll('.dispExpedientCode').forEach(el => el.textContent = (d.e.split('-')[0] || 'REF'));
         }
 
-        // --- BASE DE DATOS SUPABASE ---
         async function saveCaseData(dataObj) {
-            if (supabaseClient) {
-                const { data, error } = await supabaseClient.from('casos').insert([{ data: dataObj }]).select();
-                if (error) throw error;
-                return data[0].id;
-            } else {
-                const uuid = 'dev-' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('caso_' + uuid, JSON.stringify(dataObj));
-                return uuid;
-            }
+            const { data, error } = await supabaseClient.from('casos').insert([{ data: dataObj, creado_por: currentUser.id, campana: currentUser.campana }]).select();
+            if (error) throw error; return data[0].id;
         }
         async function getCaseData(uuid) {
-            if (supabaseClient) {
-                const { data, error } = await supabaseClient.from('casos').select('data').eq('id', uuid).single();
-                if (error || !data) return null;
-                return data.data;
-            } else {
-                return JSON.parse(localStorage.getItem('caso_' + uuid));
+            const { data, error } = await supabaseClient.from('casos').select('data').eq('id', uuid).single();
+            if (error || !data) return null; return data.data;
+        }
+
+        async function generarPDF() {
+            const btnGen = document.getElementById('btnGenerarPDF');
+            const oldText = btnGen.innerHTML;
+            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btnGen.disabled = true;
+
+            try {
+                const caseData = {
+                    modelId: selectedModelId, clientName: document.getElementById('inputClientName').value,
+                    ruc: document.getElementById('inputRuc').value, expedient: document.getElementById('inputExpedient').value, date: document.getElementById('inputDate').value,
+                    anexosConfig: {
+                        doc1: { show: document.getElementById('chk_doc1').checked, data: anexosData.doc1 },
+                        doc2: { show: document.getElementById('chk_doc2').checked, data: anexosData.doc2 },
+                        doc3: { show: document.getElementById('chk_doc3').checked, data: anexosData.doc3 },
+                        doc4: { show: document.getElementById('chk_doc4').checked, data: anexosData.doc4 }
+                    }
+                };
+
+                const uuid = await saveCaseData(caseData);
+                await registrarTiempoSiAplica('Finalizado', uuid); // FINALIZA CRONÓMETRO INVISIBLE
+                
+                const caseUrl = `${window.location.origin}${window.location.pathname}?id=${uuid}`;
+                const btnAnexos = document.getElementById('btnAnexosPdf');
+                if(btnAnexos) { btnAnexos.href = caseUrl; btnAnexos.style.display = 'inline-block'; }
+
+                const element = document.getElementById('notificationView');
+                await html2pdf().set({ margin: 0.2, filename: `${caseData.expedient}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).from(element).save();
+
+                if(btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = "#"; }
+                
+                // Reiniciar para siguiente doc
+                iniciarMedicion(MODELOS[selectedModelId].nombre);
+            } catch (e) {
+                alert("Error al generar: " + e.message);
+            } finally {
+                btnGen.innerHTML = oldText; btnGen.disabled = false;
             }
         }
 
-        // --- POBLAR VISTA CLIENTE ---
-        function populateClientView(data) {
-            const modeloText = MODELOS[data.modelId || 1];
-            document.getElementById('dispClientViewHeaderTitle').textContent = modeloText.headerClient;
+        /* =======================================================================
+           LÓGICA PANEL ADMINISTRADOR
+        ======================================================================= */
+        function switchAdminTab(tab) {
+            document.querySelectorAll('.admin-panel').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab').forEach(el => { el.classList.remove('bg-slate-800', 'text-white'); el.classList.add('text-slate-300'); });
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('bg-slate-800', 'text-white');
+            document.getElementById(`tab-${tab}`).classList.remove('text-slate-300');
+            if(tab === 'users') loadUsersList();
+            if(tab === 'audit') loadAuditData();
+        }
 
+        async function loadAuditData() {
+            const campFilter = document.getElementById('filter-campana').value;
+            const dateFilter = document.getElementById('filter-date').value;
+            
+            let query = supabaseClient.from('auditoria').select('*, perfiles(nombre)').order('hora_fin', { ascending: false });
+            if (campFilter !== 'ALL') query = query.eq('campana', campFilter);
+            if (dateFilter) query = query.eq('fecha', dateFilter);
+
+            const { data, error } = await query;
+            if (error) { console.error(error); return; }
+
+            // Procesar tabla
+            const tbody = document.getElementById('auditTableBody');
+            tbody.innerHTML = '';
+            let totalTime = 0, finished = 0;
+
+            data.forEach(r => {
+                const tr = document.createElement('tr');
+                const tStr = `${Math.floor(r.tiempo_segundos/60)}m ${r.tiempo_segundos%60}s`;
+                if(r.estado === 'Finalizado') { totalTime += r.tiempo_segundos; finished++; }
+                
+                tr.innerHTML = `<td class="px-6 py-4">${new Date(r.hora_fin).toLocaleString()}</td><td class="px-6 py-4">${r.perfiles?.nombre || 'N/A'}</td><td class="px-6 py-4">${r.campana}</td><td class="px-6 py-4">${r.modelo}</td><td class="px-6 py-4 font-mono">${tStr}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${r.estado==='Finalizado'?'bg-emerald-100 text-emerald-800':'bg-red-100 text-red-800'}">${r.estado}</span></td>`;
+                tbody.appendChild(tr);
+            });
+
+            // Actualizar Estadísticas
+            document.getElementById('stat-total').textContent = data.length;
+            document.getElementById('stat-finalizados').textContent = finished;
+            document.getElementById('stat-cancelados').textContent = data.length - finished;
+            const avg = finished > 0 ? Math.floor(totalTime / finished) : 0;
+            document.getElementById('stat-promedio').textContent = `${Math.floor(avg/60)}m ${avg%60}s`;
+        }
+
+        async function loadUsersList() {
+            const { data } = await supabaseClient.from('perfiles').select('*').order('creado_en', { ascending: false });
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            data.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="px-6 py-4 font-bold">${u.nombre}</td><td class="px-6 py-4">${u.email}</td><td class="px-6 py-4">${u.rol}</td><td class="px-6 py-4">${u.campana}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${u.activo?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${u.activo?'Activo':'Inactivo'}</span></td><td class="px-6 py-4"><button onclick="toggleUser('${u.id}', ${!u.activo})" class="text-xs bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded">Cambiar Estado</button></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function toggleUser(id, estado) {
+            await supabaseClient.from('perfiles').update({ activo: estado }).eq('id', id);
+            loadUsersList();
+        }
+
+        function openUserModal() { document.getElementById('modalUser').classList.remove('hidden'); document.getElementById('modalUser').classList.add('flex'); }
+        function closeUserModal() { document.getElementById('modalUser').classList.add('hidden'); document.getElementById('modalUser').classList.remove('flex'); }
+
+        // Crear usuario desde el Frontend usando el truco de restaurar sesión admin
+        async function saveUser(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveUser'); btn.disabled = true; btn.textContent = "Procesando...";
+            
+            const email = document.getElementById('nu_email').value;
+            const pass = document.getElementById('nu_pass').value;
+            const nombre = document.getElementById('nu_nombre').value;
+            const rol = document.getElementById('nu_rol').value;
+            const campana = document.getElementById('nu_campana').value;
+
+            try {
+                // 1. Guardar sesión de admin actual
+                const { data: { session: adminSession } } = await supabaseClient.auth.getSession();
+                // 2. Crear nuevo Auth User (Supabase autologuea al nuevo usuario)
+                const { data: newUser, error: signUpError } = await supabaseClient.auth.signUp({ email, password: pass });
+                if (signUpError) throw signUpError;
+                // 3. El Trigger de DB creó el perfil. Ahora lo actualizamos con los roles.
+                await supabaseClient.from('perfiles').update({ nombre, rol, campana }).eq('id', newUser.user.id);
+                // 4. Restaurar la sesión del Admin
+                await supabaseClient.auth.setSession({ access_token: adminSession.access_token, refresh_token: adminSession.refresh_token });
+                
+                closeUserModal();
+                loadUsersList();
+                document.getElementById('formUser').reset();
+            } catch (err) {
+                alert("Error al crear usuario: " + err.message);
+            } finally {
+                btn.disabled = false; btn.textContent = "Guardar Cuenta";
+            }
+        }
+
+        /* =======================================================================
+           LÓGICA VISTA CLIENTE WEB Y EVIDENCIAS
+        ======================================================================= */
+        function populateClientView(data) {
+            const m = MODELOS[data.modelId || 1];
+            document.getElementById('dispClientViewHeaderTitle').textContent = m.headerClient;
             document.querySelectorAll('.dispClientName').forEach(el => el.textContent = data.clientName);
             document.querySelectorAll('.dispRuc').forEach(el => el.textContent = data.ruc);
             document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = data.expedient);
@@ -505,95 +641,19 @@
 
             if (data.anexosConfig) {
                 const c = data.anexosConfig;
-                if (c.doc1 && c.doc1.show && c.doc1.data) { galeria.innerHTML += crearTarjeta('1. Comprobante / Cédula', c.doc1.data); hasImages = true; }
-                if (c.doc2 && c.doc2.show && c.doc2.data) { galeria.innerHTML += crearTarjeta('2. Contrato / Documento', c.doc2.data); hasImages = true; }
-                if (c.doc3 && c.doc3.show && c.doc3.data) { galeria.innerHTML += crearTarjeta('3. Evidencia Adjunta 1', c.doc3.data); hasImages = true; }
-                if (c.doc4 && c.doc4.show && c.doc4.data) { galeria.innerHTML += crearTarjeta('4. Evidencia Adjunta 2', c.doc4.data); hasImages = true; }
+                if (c.doc1 && c.doc1.show && c.doc1.data) { galeria.innerHTML += crearTarjeta('1. Comprobante', c.doc1.data); hasImages = true; }
+                if (c.doc2 && c.doc2.show && c.doc2.data) { galeria.innerHTML += crearTarjeta('2. Contrato', c.doc2.data); hasImages = true; }
+                if (c.doc3 && c.doc3.show && c.doc3.data) { galeria.innerHTML += crearTarjeta('3. Evidencia 1', c.doc3.data); hasImages = true; }
+                if (c.doc4 && c.doc4.show && c.doc4.data) { galeria.innerHTML += crearTarjeta('4. Evidencia 2', c.doc4.data); hasImages = true; }
             }
-
             if(hasImages) document.getElementById('seccionEvidencias').classList.remove('hidden');
         }
 
         function crearTarjeta(titulo, base64) {
-            return `
-                <div class="border border-slate-200 rounded p-4 bg-slate-50 text-center cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all group" onclick="openLightbox('${base64}')">
-                    <h4 class="text-xs font-bold text-slate-700 mb-3 uppercase group-hover:text-blue-600">${titulo}</h4>
-                    <div class="relative overflow-hidden rounded bg-white p-2 border border-slate-200">
-                        <img src="${base64}" class="mx-auto max-h-56 object-contain">
-                        <div class="absolute inset-0 bg-blue-900/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-solid fa-magnifying-glass-plus text-3xl text-blue-700 drop-shadow-md"></i>
-                        </div>
-                    </div>
-                </div>`;
+            return `<div class="border rounded p-4 bg-slate-50 text-center cursor-pointer hover:shadow-lg" onclick="openLightbox('${base64}')"><h4 class="text-xs font-bold text-slate-700 mb-3">${titulo}</h4><img src="${base64}" class="mx-auto max-h-56 object-contain"></div>`;
         }
-
-        // --- LIGHTBOX ---
-        function openLightbox(src) {
-            document.getElementById('lightboxImg').src = src;
-            document.getElementById('lightboxModal').classList.remove('hidden');
-            document.getElementById('lightboxModal').classList.add('flex');
-        }
-        function closeLightbox() {
-            document.getElementById('lightboxModal').classList.add('hidden');
-            document.getElementById('lightboxModal').classList.remove('flex');
-        }
-
-        // --- GENERACIÓN PDF ---
-        async function generarPDF() {
-            const btnGen = document.getElementById('btnGenerarPDF');
-            const oldText = btnGen.innerHTML;
-            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
-            btnGen.disabled = true;
-
-            try {
-                const caseData = {
-                    modelId: selectedModelId,
-                    clientName: document.getElementById('inputClientName').value,
-                    ruc: document.getElementById('inputRuc').value,
-                    expedient: document.getElementById('inputExpedient').value,
-                    date: document.getElementById('inputDate').value,
-                    anexosConfig: {
-                        doc1: { show: document.getElementById('chk_doc1').checked, data: anexosData.doc1 },
-                        doc2: { show: document.getElementById('chk_doc2').checked, data: anexosData.doc2 },
-                        doc3: { show: document.getElementById('chk_doc3').checked, data: anexosData.doc3 },
-                        doc4: { show: document.getElementById('chk_doc4').checked, data: anexosData.doc4 }
-                    }
-                };
-
-                const uuid = await saveCaseData(caseData);
-                const caseUrl = `${window.location.origin}${window.location.pathname}?id=${uuid}`;
-                
-                // Buscar el botón dinámico inyectado en el DOM
-                const btnAnexos = document.getElementById('btnAnexosPdf');
-                if(btnAnexos) {
-                    btnAnexos.href = caseUrl;
-                    btnAnexos.style.display = 'inline-block';
-                }
-
-                const element = document.getElementById('notificationView');
-                const opt = {
-                    margin:       [0.2, 0.2, 0.2, 0.2],
-                    filename:     `Notificacion_Mod${selectedModelId}_${caseData.expedient}.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
-                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-                };
-
-                await html2pdf().set(opt).from(element).save();
-
-                if(btnAnexos) {
-                    btnAnexos.style.display = 'none';
-                    btnAnexos.href = "#";
-                }
-
-            } catch (error) {
-                console.error(error);
-                alert("Error al generar PDF.");
-            } finally {
-                btnGen.innerHTML = oldText;
-                btnGen.disabled = false;
-            }
-        }
+        function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxModal').classList.remove('hidden'); document.getElementById('lightboxModal').classList.add('flex'); }
+        function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); document.getElementById('lightboxModal').classList.remove('flex'); }
     </script>
 </body>
 </html>
