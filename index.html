@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Judicial - Gestión de Anexos</title>
+    <title>Sistema Judicial - Multi-Modelo Notificaciones</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
@@ -34,19 +34,91 @@
             body { background-color: white !important; }
         }
         #notificationView { background: #f1f5f9; padding-bottom: 20px; }
-        /* Animación suave para el lightbox */
         #lightboxModal { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between relative">
 
-    <!-- OVERLAY DE SELECCIÓN DE TIPO DE CONTRATO (Solo Admin) -->
-    <div id="typeSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[60] flex items-center justify-center hidden">
+    <!-- PASO 1: SELECCIÓN DE MODELO / PLANTILLA DE NOTIFICACIÓN -->
+    <div id="modelSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[70] flex items-center justify-center p-4">
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl max-w-3xl w-full text-center max-h-[90vh] overflow-y-auto">
+            <div class="mb-6">
+                <i class="fa-solid fa-folder-tree text-4xl text-amber-500 mb-2"></i>
+                <h2 class="text-2xl font-bold text-slate-900">Paso 1: Seleccione el Modelo de Notificación</h2>
+                <p class="text-slate-500 text-xs sm:text-sm mt-1">Elija la plantilla con el formato legal y texto predefinido que desea utilizar.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                <!-- Modelo 1 -->
+                <button onclick="selectModel(1)" class="p-4 border-2 border-slate-200 hover:border-amber-500 rounded-lg hover:bg-amber-50/50 transition group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">Modelo 1</span>
+                            <i class="fa-solid fa-gavel text-slate-400 group-hover:text-amber-600"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm group-hover:text-amber-900">Citación Judicial por Deuda Laboral</h3>
+                        <p class="text-xs text-slate-500 mt-1">Tribunal del Trabajo - Notificación de saldo y citación urgente.</p>
+                    </div>
+                </button>
+
+                <!-- Modelo 2 -->
+                <button onclick="selectModel(2)" class="p-4 border-2 border-slate-200 hover:border-red-500 rounded-lg hover:bg-red-50/50 transition group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-red-800 bg-red-100 px-2 py-0.5 rounded">Modelo 2</span>
+                            <i class="fa-solid fa-triangle-exclamation text-slate-400 group-hover:text-red-600"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm group-hover:text-red-900">Orden Ejecutiva de Embargo Preventivo</h3>
+                        <p class="text-xs text-slate-500 mt-1">Unidad Coactiva - Medida cautelar de retención de valores y cuentas.</p>
+                    </div>
+                </button>
+
+                <!-- Modelo 3 -->
+                <button onclick="selectModel(3)" class="p-4 border-2 border-slate-200 hover:border-emerald-500 rounded-lg hover:bg-emerald-50/50 transition group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Modelo 3</span>
+                            <i class="fa-solid fa-handshake text-slate-400 group-hover:text-emerald-600"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm group-hover:text-emerald-900">Conciliación Extrajudicial</h3>
+                        <p class="text-xs text-slate-500 mt-1">Centro de Mediación - Invitación a arreglo directo antes de demanda.</p>
+                    </div>
+                </button>
+
+                <!-- Modelo 4 -->
+                <button onclick="selectModel(4)" class="p-4 border-2 border-slate-200 hover:border-blue-500 rounded-lg hover:bg-blue-50/50 transition group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-blue-800 bg-blue-100 px-2 py-0.5 rounded">Modelo 4</span>
+                            <i class="fa-solid fa-file-signature text-slate-400 group-hover:text-blue-600"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm group-hover:text-blue-900">Incumplimiento de Contrato Mercantil</h3>
+                        <p class="text-xs text-slate-500 mt-1">Juzgado Civil - Requerimiento de cumplimiento contractual.</p>
+                    </div>
+                </button>
+
+                <!-- Modelo 5 -->
+                <button onclick="selectModel(5)" class="p-4 border-2 border-slate-200 hover:border-purple-500 rounded-lg hover:bg-purple-50/50 transition group flex flex-col justify-between sm:col-span-2">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-purple-800 bg-purple-100 px-2 py-0.5 rounded">Modelo 5</span>
+                            <i class="fa-solid fa-landmark text-slate-400 group-hover:text-purple-600"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm group-hover:text-purple-900">Citación Ordinaria de Corte Provincial</h3>
+                        <p class="text-xs text-slate-500 mt-1">Sala Civil y Comercial - Notificación formal de procedimiento ordinario.</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASO 2: SELECCIÓN DE TIPO DE CONTRATO (INTERNO / EXTERNO) -->
+    <div id="typeSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[60] flex items-center justify-center p-4 hidden">
         <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center">
             <div class="mb-6">
                 <i class="fa-solid fa-file-contract text-5xl text-slate-800 mb-4"></i>
-                <h2 class="text-2xl font-bold text-slate-900">Tipo de Proceso</h2>
-                <p class="text-slate-500 text-sm mt-2">Seleccione la modalidad para cargar los anexos correspondientes antes de generar la notificación.</p>
+                <h2 class="text-2xl font-bold text-slate-900">Paso 2: Tipo de Contrato</h2>
+                <p class="text-slate-500 text-sm mt-2">Seleccione la modalidad para estructurar la carga de anexos antes de generar el PDF.</p>
             </div>
             <div class="flex flex-col gap-4">
                 <button onclick="initApp('externo')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition shadow-md flex items-center justify-center gap-3">
@@ -56,6 +128,7 @@
                     <i class="fa-solid fa-id-card"></i> CONTRATO INTERNO
                 </button>
             </div>
+            <button onclick="resetModelSelection()" class="mt-4 text-xs text-slate-500 hover:text-slate-800 underline">← Volver a elegir Modelo</button>
         </div>
     </div>
 
@@ -64,7 +137,9 @@
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center space-x-3">
                 <i class="fa-solid fa-scale-balanced text-amber-400 text-xl"></i>
-                <span class="font-bold text-lg tracking-wide">Notificaciones y Evidencias (<span id="lblHeaderType" class="uppercase text-amber-400"></span>)</span>
+                <span class="font-bold text-sm sm:text-base tracking-wide">
+                    [<span id="lblHeaderModelName" class="text-amber-400">Modelo</span>] — Notificaciones (<span id="lblHeaderType" class="uppercase text-amber-400"></span>)
+                </span>
             </div>
             
             <div class="flex items-center flex-wrap gap-3 text-sm">
@@ -77,7 +152,7 @@
             </div>
         </div>
 
-        <!-- PANEL DE EDICIÓN -->
+        <!-- PANEL DE EDICIÓN DE DATOS -->
         <div id="editorPanel" class="hidden border-t border-slate-800 bg-slate-950 px-4 py-4 transition-all shadow-inner">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
                 <!-- Datos Básicos -->
@@ -162,23 +237,21 @@
         <!-- ========================================== -->
         <section id="notificationView" class="space-y-4 hidden">
             <div class="text-xs sm:text-sm font-semibold text-slate-600 tracking-wide uppercase border-b border-slate-300 pb-2 pt-2 px-2 flex justify-between">
-                <span>CORTE SUPREMA — EXPEDIENTE <span class="dispExpedientCode">VEBTYDIN</span></span>
+                <span id="dispCorteHeader">CORTE SUPREMA — EXPEDIENTE <span class="dispExpedientCode">VEBTYDIN</span></span>
                 <span class="text-slate-400 dispTipoContrato"></span>
             </div>
 
             <div class="bg-slate-50 rounded-lg shadow-xl border border-slate-300 overflow-hidden">
-                <!-- CABECERA EN VERDE CLARO -->
-                <div class="bg-emerald-500 text-white text-center py-6 px-4">
-                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Tribunal Regional del Trabajo</h1>
-                    <p class="text-emerald-100 text-sm mt-1 font-light">Aviso Electrónico Judicial</p>
+                <div class="bg-[#1b365d] text-white text-center py-6 px-4">
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight" id="dispHeaderTitle">Tribunal Regional del Trabajo</h1>
+                    <p class="text-slate-300 text-sm mt-1 font-light" id="dispHeaderSubtitle">Aviso Electrónico Judicial</p>
                 </div>
 
                 <div class="p-6 sm:p-10 space-y-6">
                     <div>
-                        <!-- TÍTULO EN VERDE CLARO -->
-                        <h2 class="text-lg font-bold text-emerald-600 tracking-wide uppercase">NOTIFICACIÓN URGENTE</h2>
+                        <h2 class="text-lg font-bold text-[#1b365d] tracking-wide uppercase" id="dispNotifTitle">NOTIFICACIÓN URGENTE</h2>
                         <div class="w-full h-0.5 bg-slate-200 my-2"></div>
-                        <h3 class="text-sm font-bold text-slate-700 tracking-wide uppercase mt-3">CITACIÓN JUDICIAL — SOLICITUD DE INFORMACIÓN</h3>
+                        <h3 class="text-sm font-bold text-slate-700 tracking-wide uppercase mt-3" id="dispNotifSubtitle">CITACIÓN JUDICIAL — SOLICITUD DE INFORMACIÓN</h3>
                     </div>
 
                     <div class="space-y-2.5 text-sm sm:text-base">
@@ -189,58 +262,16 @@
                     </div>
 
                     <div class="bg-amber-50 border border-amber-300 rounded-md p-4 text-xs sm:text-sm text-amber-900 leading-relaxed shadow-sm">
-                        <strong class="font-bold">ADVERTENCIA:</strong> El incumplimiento de esta notificación puede resultar en consecuencias legales graves.
+                        <strong class="font-bold">ADVERTENCIA:</strong> <span id="dispAdvertencia">El incumplimiento de esta notificación puede resultar en consecuencias legales graves.</span>
                     </div>
 
-                    <!-- SECCIÓN DE PAGOS Y CONTACTO PARA EL PDF (ESTRUCTURA RÍGIDA PARA QUE NO FALLE EN EL PDF) -->
-                    <div class="bg-slate-100 border border-slate-300 rounded-md p-4 text-xs sm:text-sm text-slate-800 shadow-sm mt-4">
-                        <h4 class="font-bold text-emerald-600 mb-2 uppercase border-b border-slate-300 pb-1 flex items-center gap-2">
-                            <i class="fa-solid fa-money-bill-transfer"></i> Datos para Pagos y Contacto Legal
-                        </h4>
-                        <!-- Flex sin responsivo para garantizar 2 columnas en la foto del PDF -->
-                        <div class="flex flex-row justify-between gap-4 mt-2">
-                            <div class="w-1/2">
-                                <p class="font-bold text-slate-700">Cuentas Bancarias Autorizadas:</p>
-                                <ul class="list-none text-slate-600 mt-2 space-y-2 text-xs">
-                                    <li class="flex items-start gap-2">
-                                        <i class="fa-solid fa-building-columns text-slate-400 mt-1"></i>
-                                        <div>
-                                            <strong>Banco Pichincha</strong> - Ahorros 2200000000<br>
-                                            <span class="text-[10px]">Titular: Estudio Jurídico (RUC: 0990000000001)</span>
-                                        </div>
-                                    </li>
-                                    <li class="flex items-start gap-2">
-                                        <i class="fa-solid fa-building-columns text-slate-400 mt-1"></i>
-                                        <div>
-                                            <strong>Banco Guayaquil</strong> - Corriente 110000000<br>
-                                            <span class="text-[10px]">Titular: Estudio Jurídico (RUC: 0990000000001)</span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="w-1/2 border-l border-slate-300 pl-4">
-                                <p class="font-bold text-slate-700">Contacto Directo:</p>
-                                <div class="mt-2 space-y-3">
-                                    <p class="text-slate-600 flex items-center gap-2">
-                                        <i class="fa-brands fa-whatsapp text-green-500 text-lg"></i> 
-                                        <span class="font-bold text-sm">+593 99 999 9999</span>
-                                    </p>
-                                    <p class="text-slate-600 flex items-center gap-2">
-                                        <i class="fa-solid fa-phone text-blue-600 text-base ml-0.5"></i> 
-                                        <span class="font-bold text-sm ml-0.5">04 299 9999</span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="text-xs sm:text-sm text-slate-600 leading-relaxed pt-2">
+                    <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                         A fin de revisar los antecedentes y evidencias documentales, sírvase hacer clic en el botón inferior:
                     </p>
 
-                    <!-- CONTENEDOR DE BOTONES (Solo visible en PDF) - Botón en rojo -->
+                    <!-- CONTENEDOR DE BOTÓN PARA PDF -->
                     <div class="pt-2 flex flex-col gap-3 items-center justify-center">
-                        <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration: none;" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-8 rounded-md tracking-wider uppercase text-sm shadow-md transition-all inline-block w-full sm:w-auto text-center cursor-pointer">
+                        <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration: none;" class="bg-[#2d3a7c] hover:bg-[#1e2858] text-white font-bold py-3.5 px-8 rounded-md tracking-wider uppercase text-sm shadow-md transition-all inline-block w-full sm:w-auto text-center cursor-pointer">
                             VER ANEXOS Y EVIDENCIAS
                         </a>
                     </div>
@@ -252,17 +283,22 @@
         <!-- VISTA 2: DETALLE WEB INDIVIDUAL DEL CLIENTE-->
         <!-- ========================================== -->
         <section id="caseDetailView" class="hidden space-y-6">
-            
+            <div class="flex flex-wrap items-center justify-between gap-4 no-print bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-2 ml-auto">
+                    <button onclick="window.print()" class="bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition"><i class="fa-solid fa-print"></i> Guardar Constancia</button>
+                </div>
+            </div>
+
             <!-- Panel de Documentación -->
             <div class="bg-white rounded-lg shadow-xl border border-slate-300 p-6 sm:p-10 text-slate-800 space-y-6">
                 <div class="border-b-2 border-slate-800 pb-4 flex justify-between items-center">
                     <div>
-                        <h2 class="font-extrabold text-slate-900 text-lg uppercase tracking-wider">FUNCIÓN JUDICIAL - TRIBUNAL DEL TRABAJO</h2>
+                        <h2 class="font-extrabold text-slate-900 text-lg uppercase tracking-wider" id="dispClientViewHeaderTitle">FUNCIÓN JUDICIAL - TRIBUNAL DEL TRABAJO</h2>
                         <p class="text-xs text-slate-500 uppercase tracking-widest">Unidad Judicial de Comercio (<span class="dispTipoContrato"></span>)</p>
                     </div>
                 </div>
                 
-                <!-- Pequeño Resumen de Datos -->
+                <!-- Resumen de Datos -->
                 <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                     <div><span class="text-slate-500 block text-xs">Demandado:</span><span class="font-bold text-slate-900 dispClientName"></span></div>
                     <div><span class="text-slate-500 block text-xs">Identificación:</span><span class="font-semibold text-slate-900 dispRuc"></span></div>
@@ -273,50 +309,7 @@
                 <!-- Mensaje de contexto -->
                 <div class="text-sm text-slate-700 bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-start gap-3">
                     <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 text-lg"></i>
-                    <p><strong>Resumen del caso:</strong> Se presenta a continuación la documentación probatoria y anexos correspondientes al expediente referenciado. Por favor, haga clic sobre cualquier imagen para ampliarla y revisarla detalladamente.</p>
-                </div>
-
-                <!-- DATOS DE PAGO Y CONTACTO EN LA WEB DEL CLIENTE -->
-                <div class="bg-slate-50 border border-slate-200 rounded-lg p-5">
-                    <h3 class="font-extrabold text-slate-800 text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-building-columns text-emerald-600"></i> Información de Pago y Contacto Legal
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                        <div class="space-y-4">
-                            <div class="flex gap-3 items-start">
-                                <i class="fa-solid fa-money-check text-slate-400 mt-1"></i>
-                                <div>
-                                    <p class="font-bold text-slate-700">Banco Pichincha</p>
-                                    <p class="text-slate-600">Cuenta de Ahorros: <span class="font-medium text-slate-800">2200000000</span></p>
-                                    <p class="text-slate-500 text-xs mt-0.5">Titular: Estudio Jurídico - RUC: 0990000000001</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3 items-start">
-                                <i class="fa-solid fa-money-check text-slate-400 mt-1"></i>
-                                <div>
-                                    <p class="font-bold text-slate-700">Banco Guayaquil</p>
-                                    <p class="text-slate-600">Cuenta Corriente: <span class="font-medium text-slate-800">110000000</span></p>
-                                    <p class="text-slate-500 text-xs mt-0.5">Titular: Estudio Jurídico - RUC: 0990000000001</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="space-y-4 border-t md:border-t-0 md:border-l border-slate-200 md:pl-6 pt-4 md:pt-0">
-                            <div class="flex gap-3 items-center">
-                                <i class="fa-brands fa-whatsapp text-2xl text-green-500"></i>
-                                <div>
-                                    <p class="text-xs text-slate-500 uppercase font-bold">Atención vía WhatsApp</p>
-                                    <p class="font-bold text-slate-800 text-base">+593 99 999 9999</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3 items-center">
-                                <i class="fa-solid fa-phone text-xl text-blue-600 mx-0.5"></i>
-                                <div>
-                                    <p class="text-xs text-slate-500 uppercase font-bold">Llamadas Telefónicas</p>
-                                    <p class="font-bold text-slate-800 text-base">04 299 9999</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p><strong>Resumen del expediente:</strong> Se presenta a continuación la documentación probatoria y anexos correspondientes al presente expediente. Por favor, haga clic sobre cualquier imagen para ampliarla y revisarla detalladamente.</p>
                 </div>
 
                 <!-- SECCIÓN DE ANEXOS Y EVIDENCIAS -->
@@ -327,9 +320,7 @@
                         </h2>
                     </div>
                     <!-- Galería Dinámica -->
-                    <div id="galeriaAnexos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-                        <!-- Las imágenes se inyectan aquí mediante JavaScript -->
-                    </div>
+                    <div id="galeriaAnexos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6"></div>
                 </div>
             </div>
         </section>
@@ -347,6 +338,57 @@
 
     <script>
         /* =======================================================================
+           DEFINICIÓN DE MODELOS Y PLANTILLAS
+        ======================================================================= */
+        const MODELOS = {
+            1: {
+                nombre: "Citación Judicial - Unidad del Trabajo",
+                corte: "CORTE SUPREMA — COMUNICADO JUDICIAL",
+                headerTitle: "Tribunal Regional del Trabajo",
+                headerSubtitle: "Aviso Electrónico Judicial",
+                notifTitle: "NOTIFICACIÓN URGENTE",
+                notifSubtitle: "CITACIÓN JUDICIAL — SOLICITUD DE INFORMACIÓN",
+                advertencia: "El incumplimiento de esta notificación puede resultar en consecuencias legales graves y multas según la ley aplicable."
+            },
+            2: {
+                nombre: "Orden Ejecutiva de Embargo Preventivo",
+                corte: "UNIDAD JUDICIAL EJECUTIVA — MEDIDA CAUTELAR",
+                headerTitle: "Unidad Judicial de Ejecución Coactiva",
+                headerSubtitle: "Proceso de Embargo y Retención de Valores",
+                notifTitle: "ORDEN DE EJECUCIÓN URGENTE",
+                notifSubtitle: "NOTIFICACIÓN DE MEDIDA PREVENTIVA DE EMBARGO",
+                advertencia: "Se conmina al cumplimiento inmediato. La omisión dará lugar al bloqueo de productos financieros y retención de bienes."
+            },
+            3: {
+                nombre: "Conciliación y Mediación Extrajudicial",
+                corte: "CENTRO DE ARBITRAJE Y CONCILIACIÓN JUDICIAL",
+                headerTitle: "Tribunal Arbitral de Mediación",
+                headerSubtitle: "Convocatoria a Diligencia de Conciliación",
+                notifTitle: "CITACIÓN A AUDIENCIA DE CONCILIACIÓN",
+                notifSubtitle: "MECANISMO ALTERNATIVO DE RESOLUCIÓN DE CONFLICTOS",
+                advertencia: "Esta notificación le permite acudir a una vía de solución directa y acordada antes de iniciar la demanda formal en tribunales."
+            },
+            4: {
+                nombre: "Incumplimiento de Contrato Mercantil",
+                corte: "JUZGADO MERCANTIL — NOTIFICACIÓN CONTRACTUAL",
+                headerTitle: "Juzgado de lo Civil y Mercantil",
+                headerSubtitle: "Diligencia de Requerimiento de Obligaciones",
+                notifTitle: "REQUERIMIENTO DE CUMPLIMIENTO",
+                notifSubtitle: "NOTIFICACIÓN POR INCUMPLIMIENTO DE CONTRATO",
+                advertencia: "El retardo en la respuesta facultará a la parte actora a exigir la resolución unilateral con indemnización de daños y perjuicios."
+            },
+            5: {
+                nombre: "Citación Ordinaria de Corte Provincial",
+                corte: "CORTE PROVINCIAL DE JUSTICIA — SALA CIVIL",
+                headerTitle: "Tribunal Distrital de lo Civil",
+                headerSubtitle: "Notificación Ordinaria de Providencia",
+                notifTitle: "NOTIFICACIÓN OFICIAL",
+                notifSubtitle: "CITACIÓN ORDINARIA DENTRO DEL PROCESO",
+                advertencia: "Se le hace saber que cuenta con el término legal establecido para presentar su contestación motivada en la Secretaría Judicial."
+            }
+        };
+
+        /* =======================================================================
            CONFIGURACIÓN BACKEND - SUPABASE
         ======================================================================= */
         const SUPABASE_URL = 'https://bsrgiwihfjhdmuvjbkto.supabase.co'; 
@@ -362,6 +404,7 @@
         /* =======================================================================
            ESTADOS DE DATOS
         ======================================================================= */
+        let selectedModelId = 1;
         let activeContractType = null; // 'interno' | 'externo'
         let anexosData = { comprobante: null, cedula: null, contrato: null, evidencia1: null, evidencia2: null };
 
@@ -370,7 +413,8 @@
             const caseId = urlParams.get('id');
 
             if (caseId) {
-                // MODO CLIENTE: Consultar
+                // MODO CLIENTE: Consultar expediente
+                document.getElementById('modelSelectorOverlay').classList.add('hidden');
                 document.getElementById('typeSelectorOverlay').classList.add('hidden');
                 document.getElementById('adminHeader').style.display = 'none';
                 document.getElementById('notificationView').classList.add('hidden');
@@ -378,18 +422,30 @@
                 
                 const caseData = await getCaseData(caseId);
                 if (caseData) {
+                    selectedModelId = caseData.modelId || 1;
                     activeContractType = caseData.tipoContrato;
                     populateClientView(caseData);
                 } else {
                     document.getElementById('mainContainer').innerHTML = `<div class="text-center mt-20 p-8 bg-white rounded shadow border border-red-200"><h2>Expediente No Encontrado</h2></div>`;
                 }
             } else {
-                // MODO ADMIN: Mostrar modal inicial
-                document.getElementById('typeSelectorOverlay').classList.remove('hidden');
+                // MODO ADMIN: Mostrar Paso 1 (Selección de Modelo)
+                document.getElementById('modelSelectorOverlay').classList.remove('hidden');
             }
         };
 
-        // --- INICIALIZADOR DE ADMIN ---
+        // --- MANEJO DE PASOS ADMIN ---
+        function selectModel(id) {
+            selectedModelId = id;
+            document.getElementById('modelSelectorOverlay').classList.add('hidden');
+            document.getElementById('typeSelectorOverlay').classList.remove('hidden');
+        }
+
+        function resetModelSelection() {
+            document.getElementById('typeSelectorOverlay').classList.add('hidden');
+            document.getElementById('modelSelectorOverlay').classList.remove('hidden');
+        }
+
         function initApp(type) {
             activeContractType = type;
             document.getElementById('typeSelectorOverlay').classList.add('hidden');
@@ -397,6 +453,7 @@
             document.getElementById('notificationView').classList.remove('hidden');
             document.getElementById('caseDetailView').classList.add('hidden');
             
+            document.getElementById('lblHeaderModelName').textContent = `Modelo ${selectedModelId}`;
             document.getElementById('lblHeaderType').textContent = type;
             
             if(type === 'externo') {
@@ -408,7 +465,19 @@
                 document.getElementById('panelExterno').classList.add('hidden');
                 document.getElementById('btnAnexosPdf').textContent = "VER ANEXOS Y EVIDENCIAS";
             }
+            applyModelText(selectedModelId);
             updateData();
+        }
+
+        function applyModelText(mId) {
+            const m = MODELOS[mId] || MODELOS[1];
+            document.getElementById('dispCorteHeader').childNodes[0].nodeValue = `${m.corte} — EXPEDIENTE `;
+            document.getElementById('dispHeaderTitle').textContent = m.headerTitle;
+            document.getElementById('dispHeaderSubtitle').textContent = m.headerSubtitle;
+            document.getElementById('dispNotifTitle').textContent = m.notifTitle;
+            document.getElementById('dispNotifSubtitle').textContent = m.notifSubtitle;
+            document.getElementById('dispAdvertencia').textContent = m.advertencia;
+            document.getElementById('dispClientViewHeaderTitle').textContent = m.headerTitle;
         }
 
         function toggleEditor() { document.getElementById('editorPanel').classList.toggle('hidden'); }
@@ -425,7 +494,7 @@
                 img.src = e.target.result;
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 1200; // Calidad más alta para anexos
+                    const MAX_WIDTH = 1200;
                     let width = img.width;
                     let height = img.height;
                     
@@ -449,7 +518,7 @@
             }
         }
 
-        // --- SINCRONIZACIÓN DE CAMPOS DE TEXTO ---
+        // --- SINCRONIZACIÓN DE CAMPOS ---
         function updateData() {
             const clientName = document.getElementById('inputClientName').value || '-';
             const ruc = document.getElementById('inputRuc').value || '-';
@@ -466,7 +535,7 @@
             document.querySelectorAll('.dispExpedientCode').forEach(el => el.textContent = expCode);
         }
 
-        // --- MANEJO BD ---
+        // --- BASE DE DATOS ---
         async function saveCaseData(dataObj) {
             if (supabaseClient) {
                 const { data, error } = await supabaseClient.from('casos').insert([{ data: dataObj }]).select();
@@ -478,7 +547,6 @@
                 return uuid;
             }
         }
-        
         async function getCaseData(uuid) {
             if (supabaseClient) {
                 const { data, error } = await supabaseClient.from('casos').select('data').eq('id', uuid).single();
@@ -491,6 +559,8 @@
 
         // --- POBLAR VISTA CLIENTE ---
         function populateClientView(data) {
+            applyModelText(data.modelId || 1);
+
             document.querySelectorAll('.dispClientName').forEach(el => el.textContent = data.clientName);
             document.querySelectorAll('.dispRuc').forEach(el => el.textContent = data.ruc);
             document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = data.expedient);
@@ -532,7 +602,7 @@
             `;
         }
 
-        // --- LÓGICA LIGHTBOX ---
+        // --- LIGHTBOX ---
         function openLightbox(src) {
             document.getElementById('lightboxImg').src = src;
             document.getElementById('lightboxModal').classList.remove('hidden');
@@ -552,6 +622,7 @@
 
             try {
                 const caseData = {
+                    modelId: selectedModelId,
                     clientName: document.getElementById('inputClientName').value,
                     ruc: document.getElementById('inputRuc').value,
                     expedient: document.getElementById('inputExpedient').value,
@@ -572,27 +643,19 @@
                 
                 const btnAnexos = document.getElementById('btnAnexosPdf');
                 btnAnexos.href = caseUrl;
-                btnAnexos.style.display = 'inline-block'; // Mostramos el botón rojo en pantalla
-
-                // Pausa corta de 300ms para asegurar que el botón se renderice en el DOM antes del PDF
-                await new Promise(resolve => setTimeout(resolve, 300));
+                btnAnexos.style.display = 'inline-block'; // Activar botón en el PDF
 
                 const element = document.getElementById('notificationView');
                 const opt = {
                     margin:       [0.2, 0.2, 0.2, 0.2],
-                    filename:     `Notificacion_${activeContractType}_${caseData.expedient}.pdf`,
+                    filename:     `Notificacion_Modelo${selectedModelId}_${caseData.expedient}.pdf`,
                     image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { 
-                        scale: 2, 
-                        useCORS: true,
-                        scrollY: 0
-                    },
+                    html2canvas:  { scale: 2, useCORS: true },
                     jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
 
                 await html2pdf().set(opt).from(element).save();
 
-                // Ocultamos el botón nuevamente
                 btnAnexos.style.display = 'none';
                 btnAnexos.href = "#";
 
