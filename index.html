@@ -17,7 +17,9 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
 
-    <!-- LOGIN -->
+    <!-- ========================================== -->
+    <!-- LOGIN DE ACCESO                            -->
+    <!-- ========================================== -->
     <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8">
             <div class="text-center mb-8">
@@ -44,24 +46,27 @@
         </div>
     </div>
 
-    <!-- SELECTOR DE CAMPAÑA PARA AUDITOR -->
+    <!-- ========================================== -->
+    <!-- SELECTOR DE CAMPAÑA PARA AUDITOR           -->
+    <!-- ========================================== -->
     <div id="auditorCampaignSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center">
             <div class="mb-6">
                 <i class="fa-solid fa-chart-pie text-5xl text-blue-600 mb-4"></i>
                 <h2 class="text-2xl font-bold text-slate-900">Seleccionar Campaña</h2>
-                <p class="text-slate-500 text-sm mt-2">Elija el área que auditará en esta sesión.</p>
+                <p class="text-slate-500 text-sm mt-2">Elija el área operativa a auditar (Sistemas excluido).</p>
             </div>
             <div class="flex flex-col gap-4">
                 <button onclick="setAuditorCampaign('Cobranza')" class="bg-slate-50 hover:bg-blue-50 border border-slate-300 hover:border-blue-500 text-slate-800 font-bold py-3 px-6 rounded-lg transition shadow-sm">Cobranza</button>
                 <button onclick="setAuditorCampaign('Retención')" class="bg-slate-50 hover:bg-blue-50 border border-slate-300 hover:border-blue-500 text-slate-800 font-bold py-3 px-6 rounded-lg transition shadow-sm">Retención</button>
-                <button onclick="setAuditorCampaign('Sistemas / Administración')" class="bg-slate-50 hover:bg-blue-50 border border-slate-300 hover:border-blue-500 text-slate-800 font-bold py-3 px-6 rounded-lg transition shadow-sm">Sistemas / Administración</button>
             </div>
             <button onclick="handleLogout()" class="mt-6 text-sm text-red-500 hover:text-red-700 font-bold">Cancelar y Salir</button>
         </div>
     </div>
 
-    <!-- PANEL DE ADMINISTRACIÓN Y AUDITORÍA -->
+    <!-- ========================================== -->
+    <!-- PANEL DE ADMINISTRACIÓN Y AUDITORÍA        -->
+    <!-- ========================================== -->
     <div id="adminDashboardView" class="hidden flex-col min-h-screen bg-slate-100 w-full z-[80] absolute inset-0">
         <header class="bg-slate-900 text-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -135,7 +140,7 @@
                 <div class="bg-white rounded-lg shadow border border-slate-200 overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200 text-sm">
                         <thead class="bg-slate-50">
-                            <tr><th class="px-6 py-3 text-left font-bold text-slate-500">Nombre</th><th class="px-6 py-3 text-left font-bold text-slate-500">Correo Electrónico</th><th class="px-6 py-3 text-left font-bold text-slate-500">Rol de Sistema</th><th class="px-6 py-3 text-left font-bold text-slate-500">Asignación Operativa</th><th class="px-6 py-3 text-left font-bold text-slate-500">Estado</th><th class="px-6 py-3 text-left font-bold text-slate-500">Controles</th></tr>
+                            <tr><th class="px-6 py-3 text-left font-bold text-slate-500">Nombre</th><th class="px-6 py-3 text-left font-bold text-slate-500">Correo Electrónico</th><th class="px-6 py-3 text-left font-bold text-slate-500">Rol de Sistema</th><th class="px-6 py-3 text-left font-bold text-slate-500">Asignación Operativa</th><th class="px-6 py-3 text-left font-bold text-slate-500">Estado</th><th class="px-6 py-3 text-left font-bold text-slate-500">Acciones</th></tr>
                         </thead>
                         <tbody id="usersTableBody" class="bg-white divide-y divide-slate-200"></tbody>
                     </table>
@@ -144,16 +149,18 @@
         </main>
     </div>
 
-    <!-- MODAL NUEVO USUARIO -->
+    <!-- ========================================== -->
+    <!-- MODAL CREAR USUARIO                        -->
+    <!-- ========================================== -->
     <div id="modalUser" class="fixed inset-0 bg-black/70 hidden z-[90] items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
             <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold">Formulario de Usuario</h3>
+                <h3 class="font-bold">Crear Nuevo Usuario</h3>
                 <button onclick="closeUserModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <form id="formUser" onsubmit="saveUser(event)" class="p-6 space-y-4 text-sm">
                 <div><label class="block font-bold text-slate-700 mb-1">Nombre Completo</label><input type="text" id="nu_nombre" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"></div>
-                <div><label class="block font-bold text-slate-700 mb-1">Correo Electrónico / ID</label><input type="email" id="nu_email" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                <div><label class="block font-bold text-slate-700 mb-1">Correo Electrónico</label><input type="email" id="nu_email" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"></div>
                 <div><label class="block font-bold text-slate-700 mb-1">Contraseña Inicial</label><input type="password" id="nu_pass" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"></div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Rol Autorizado</label>
@@ -170,14 +177,51 @@
                         <option value="Cobranza">Cobranza</option>
                         <option value="Retención">Retención</option>
                     </select>
-                    <p class="text-[10px] text-slate-500 mt-1 font-medium">Obligatorio para Asesores.</p>
                 </div>
-                <div class="pt-4"><button type="submit" id="btnSaveUser" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition">Guardar Configuración</button></div>
+                <div class="pt-4"><button type="submit" id="btnSaveUser" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition">Guardar Usuario</button></div>
             </form>
         </div>
     </div>
 
-    <!-- APLICATIVO ASESORES (GENERACIÓN Y FORMATOS) -->
+    <!-- ========================================== -->
+    <!-- MODAL EDITAR USUARIO (NUEVO)               -->
+    <!-- ========================================== -->
+    <div id="modalEditUser" class="fixed inset-0 bg-black/70 hidden z-[90] items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="bg-blue-900 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold"><i class="fa-solid fa-user-pen mr-2"></i>Editar Perfil de Usuario</h3>
+                <button onclick="closeEditUserModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="formEditUser" onsubmit="updateUser(event)" class="p-6 space-y-4 text-sm">
+                <input type="hidden" id="eu_id">
+                <div><label class="block font-bold text-slate-700 mb-1">Nombre Completo</label><input type="text" id="eu_nombre" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Rol Autorizado</label>
+                    <select id="eu_rol" onchange="handleEditRoleSelection()" class="w-full border p-2 rounded bg-slate-50">
+                        <option value="Asesor">Asesor</option>
+                        <option value="Auditor">Auditor</option>
+                        <option value="Sistemas">Sistemas</option>
+                    </select>
+                </div>
+                <div id="div_eu_campana">
+                    <label class="block font-bold text-slate-700 mb-1">Campaña Asignada</label>
+                    <select id="eu_campana" class="w-full border p-2 rounded bg-slate-50">
+                        <option value="Cobranza">Cobranza</option>
+                        <option value="Retención">Retención</option>
+                        <option value="Sistemas / Administración">Sistemas / Administración</option>
+                    </select>
+                </div>
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeEditUserModal()" class="w-1/2 bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-300 transition">Cancelar</button>
+                    <button type="submit" id="btnUpdateUser" class="w-1/2 bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 transition">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- APLICATIVO ASESORES (GENERACIÓN Y FORMATOS)-->
+    <!-- ========================================== -->
     <div id="appContainer" class="hidden flex-col min-h-screen w-full relative bg-slate-100">
         <header class="no-print bg-slate-900 text-white shadow-lg sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
@@ -221,34 +265,37 @@
                 <div class="mb-8 border-b pb-6">
                     <i class="fa-solid fa-layer-group text-4xl text-blue-600 mb-3"></i>
                     <h2 class="text-2xl font-bold text-slate-900">Formatos Estándar de Documentación</h2>
-                    <p class="text-sm text-slate-500 mt-1">Seleccione el instrumento a redactar (Disponibles para toda la red operativa).</p>
+                    <p class="text-sm text-slate-500 mt-1">Seleccione un formato para comenzar el registro de tiempo.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
-                    <button onclick="selectModel(1)" class="p-6 border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-500 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-slate-800 group-hover:text-blue-700 mb-1"><i class="fa-solid fa-file-contract text-blue-500 mr-2"></i>1. Citación Laboral</h3><p class="text-[10px] text-slate-500">Formato formal de notificación.</p>
+                    <button onclick="selectModel(1)" class="p-6 border-2 border-blue-200 bg-blue-50/40 hover:bg-blue-100/50 hover:border-blue-600 rounded-xl transition shadow-sm group">
+                        <h3 class="font-bold text-sm text-blue-900 group-hover:text-blue-700 mb-1"><i class="fa-solid fa-file-contract text-blue-600 mr-2"></i>1. Citación Laboral</h3><p class="text-[10px] text-slate-500">Notificación formal laboral con formato judicial azul.</p>
                     </button>
-                    <button onclick="selectModel(2)" class="p-6 border border-slate-200 bg-slate-50 hover:bg-white hover:border-red-500 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-slate-800 group-hover:text-red-700 mb-1"><i class="fa-solid fa-gavel text-red-500 mr-2"></i>2. Orden de Embargo</h3><p class="text-[10px] text-slate-500">Medida cautelar de alta prioridad.</p>
+                    <button onclick="selectModel(2)" class="p-6 border-2 border-red-200 bg-red-50/40 hover:bg-red-100/50 hover:border-red-600 rounded-xl transition shadow-sm group">
+                        <h3 class="font-bold text-sm text-red-900 group-hover:text-red-700 mb-1"><i class="fa-solid fa-gavel text-red-600 mr-2"></i>2. Orden de Embargo</h3><p class="text-[10px] text-slate-500">Documento de urgencia con marco rojo y severo.</p>
                     </button>
-                    <button onclick="selectModel(3)" class="p-6 border border-slate-200 bg-slate-50 hover:bg-white hover:border-emerald-500 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-slate-800 group-hover:text-emerald-700 mb-1"><i class="fa-solid fa-handshake text-emerald-500 mr-2"></i>3. Conciliación Extrajudicial</h3><p class="text-[10px] text-slate-500">Resolución alternativa de conflictos.</p>
+                    <button onclick="selectModel(3)" class="p-6 border-2 border-emerald-200 bg-emerald-50/40 hover:bg-emerald-100/50 hover:border-emerald-600 rounded-xl transition shadow-sm group">
+                        <h3 class="font-bold text-sm text-emerald-900 group-hover:text-emerald-700 mb-1"><i class="fa-solid fa-handshake text-emerald-600 mr-2"></i>3. Conciliación Extrajudicial</h3><p class="text-[10px] text-slate-500">Diseño verde redondeado y amigable de mediación.</p>
                     </button>
-                    <button onclick="selectModel(4)" class="p-6 border border-slate-200 bg-slate-50 hover:bg-white hover:border-slate-800 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-slate-800 group-hover:text-slate-900 mb-1"><i class="fa-solid fa-building text-slate-600 mr-2"></i>4. Incumplimiento Mercantil</h3><p class="text-[10px] text-slate-500">Notificación comercial civil.</p>
+                    <button onclick="selectModel(4)" class="p-6 border-2 border-slate-300 bg-slate-100 hover:bg-slate-200 hover:border-slate-800 rounded-xl transition shadow-sm group">
+                        <h3 class="font-bold text-sm text-slate-900 mb-1"><i class="fa-solid fa-building text-slate-800 mr-2"></i>4. Incumplimiento Mercantil</h3><p class="text-[10px] text-slate-500">Formato industrial en fuente monospaciada.</p>
                     </button>
-                    <button onclick="selectModel(5)" class="p-6 border border-slate-200 bg-slate-50 hover:bg-white hover:border-purple-500 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-slate-800 group-hover:text-purple-700 mb-1"><i class="fa-solid fa-map-location-dot text-purple-500 mr-2"></i>5. Citación Provincial</h3><p class="text-[10px] text-slate-500">Requerimiento distrital formal.</p>
+                    <button onclick="selectModel(5)" class="p-6 border-2 border-purple-200 bg-purple-50/40 hover:bg-purple-100/50 hover:border-purple-600 rounded-xl transition shadow-sm group">
+                        <h3 class="font-bold text-sm text-purple-900 group-hover:text-purple-700 mb-1"><i class="fa-solid fa-map-location-dot text-purple-600 mr-2"></i>5. Citación Provincial</h3><p class="text-[10px] text-slate-500">Corte provincial clásica en tipografía Serif.</p>
                     </button>
                 </div>
             </div>
         </div>
 
         <main class="flex-grow py-8 px-4 sm:px-6 max-w-5xl mx-auto w-full z-10 hidden" id="mainContainer">
-            <section id="notificationView" class="hidden shadow-2xl bg-white"></section>
+            <div class="mb-3 text-right"><span class="text-xs bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold uppercase" id="lblHeaderModelName">Formato</span></div>
+            <section id="notificationView" class="hidden shadow-2xl bg-white rounded-lg overflow-hidden"></section>
         </main>
     </div>
 
-    <!-- VISTA PÚBLICA (LECTURA CLIENTE) -->
+    <!-- ========================================== -->
+    <!-- VISTA PÚBLICA (LECTURA CLIENTE)            -->
+    <!-- ========================================== -->
     <section id="caseDetailView" class="hidden space-y-6 flex-grow py-6 px-4 max-w-5xl mx-auto w-full">
         <div class="flex items-center justify-end no-print bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition"><i class="fa-solid fa-print"></i> Guardar Constancia</button></div>
         <div class="bg-white rounded-xl shadow-xl border border-slate-300 p-8 sm:p-12 space-y-6">
@@ -268,11 +315,13 @@
 
     <script>
         /* =======================================================================
-           CONFIGURACIÓN Y ESTADOS
+           CONFIGURACIÓN Y ESTADOS GLOBALES
         ======================================================================= */
-        // INSERTA TUS CREDENCIALES AQUÍ
+        
+        // ¡¡ COLOCA AQUÍ TUS CREDENCIALES DE SUPABASE !!
         const SUPABASE_URL = 'https://crrlfrlczhihuwxljwru.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNycmxmcmxjemhpaHV3eGxqd3J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2OTY4NjUsImV4cCI6MjEwODI3Mjg2NX0.goqWlSuj-DtfU26dEnKNU6q48AsrIoCMpkFsm6Rtn-Q';
+        
         let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentUser = null;
@@ -281,13 +330,136 @@
         let selectedModelId = null;
         let anexosData = { doc1: null, doc2: null, doc3: null, doc4: null };
 
-        // LOS 5 FORMATOS ORIGINALES RESTAURADOS
+        // 5 FORMATOS CON DISEÑOS ESTILÍSTICOS COMPLETAMENTE DIFERENCIADOS
         const MODELOS = {
-            1: { nombre: "Citación Laboral", header: "Tribunal Regional del Trabajo", html: () => `<div class="font-sans"><div class="bg-[#1b365d] text-white text-center py-10 px-4"><h1 class="text-3xl font-bold tracking-tight">Tribunal Regional del Trabajo</h1><p class="text-slate-300 text-sm mt-2 font-light tracking-widest uppercase">Aviso Electrónico Judicial</p></div><div class="p-10 space-y-6"><h2 class="text-xl font-black text-[#1b365d] tracking-wide uppercase border-b-2 border-blue-900 pb-2">NOTIFICACIÓN URGENTE</h2><div class="bg-slate-50 p-6 border border-slate-200 text-sm space-y-3"><div class="grid grid-cols-12 gap-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Destinatario:</span><span class="col-span-8 text-slate-900 font-bold dispClientName"></span></div><div class="grid grid-cols-12 gap-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Expediente:</span><span class="col-span-8 text-slate-900 font-medium dispExpedient"></span></div><div class="grid grid-cols-12 gap-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Fecha:</span><span class="col-span-8 text-slate-900 font-medium dispDate"></span></div></div><div class="bg-amber-50 border-l-4 border-amber-500 p-4 text-sm text-amber-900"><strong class="font-black uppercase block mb-1">Advertencia Legal:</strong> El incumplimiento puede resultar en consecuencias legales.</div><div class="text-center pt-6"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-[#1b365d] text-white font-bold py-4 px-10 rounded uppercase text-sm inline-block">VER ANEXOS Y EVIDENCIAS</a></div></div></div>` },
-            2: { nombre: "Orden de Embargo", header: "Unidad Ejecutiva Coactiva", html: () => `<div class="font-sans bg-white border-8 border-red-900 p-12 relative"><div class="absolute top-0 right-0 bg-red-900 text-white px-4 py-1 font-bold text-xs uppercase">Prioridad Alta</div><div class="text-center border-b-4 border-red-900 pb-6 mb-8"><h1 class="text-3xl font-black text-red-900 uppercase tracking-tighter">UNIDAD JUDICIAL COACTIVA</h1><p class="text-red-700 font-bold tracking-widest mt-2 text-lg">ORDEN DE EJECUCIÓN</p></div><div class="space-y-6"><div class="bg-red-50 p-6 border-2 border-red-200 text-sm space-y-4"><div><span class="block font-black text-red-800 uppercase text-[10px]">Deudor / Demandado:</span><span class="text-lg font-bold text-slate-900 dispClientName"></span></div><div class="grid grid-cols-2 gap-4"><div><span class="block font-black text-red-800 uppercase text-[10px]">Identificación:</span><span class="font-bold text-slate-900 dispRuc"></span></div><div><span class="block font-black text-red-800 uppercase text-[10px]">Expediente:</span><span class="font-bold text-slate-900 dispExpedient"></span></div></div></div><div class="bg-red-100 border-l-8 border-red-700 p-5 text-sm text-red-900 font-bold">SE CONMINA AL CUMPLIMIENTO INMEDIATO.</div><div class="text-center pt-6"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-red-700 text-white font-black py-4 px-8 rounded uppercase inline-block w-full">REVISAR PRUEBAS</a></div></div></div>` },
-            3: { nombre: "Conciliación Extrajudicial", header: "Centro de Mediación", html: () => `<div class="font-sans bg-[#f0fdf4] border-2 border-emerald-500 rounded-3xl p-12 text-center"><h1 class="text-3xl font-extrabold text-emerald-900">Tribunal Arbitral de Mediación</h1><div class="bg-white rounded-2xl p-8 mt-6 border border-emerald-100 shadow-sm"><p class="text-sm font-bold text-emerald-700 uppercase tracking-widest">Invitación Formal a:</p><h2 class="text-2xl font-black dispClientName mt-2"></h2><p class="mt-4 text-slate-600">Expediente: <span class="font-bold dispExpedient"></span></p></div><div class="text-center pt-10"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-emerald-500 text-white font-bold py-4 px-10 rounded-full uppercase text-sm inline-block">ACCEDER A DOCUMENTACIÓN</a></div></div>` },
-            4: { nombre: "Incumplimiento Mercantil", header: "Juzgado de lo Civil", html: () => `<div class="font-mono text-slate-800 bg-white border border-slate-800 shadow-sm"><div class="bg-slate-900 text-white p-6"><h1 class="text-xl font-bold tracking-tight">JUZGADO DE LO CIVIL Y MERCANTIL</h1></div><div class="p-10"><div class="grid grid-cols-2 border border-slate-300 mb-8 text-sm"><div class="p-5 border-r border-b bg-slate-50"><span class="block font-bold text-xs uppercase text-slate-500">Destinatario</span><span class="dispClientName font-bold text-lg"></span></div><div class="p-5 border-b"><span class="block font-bold text-xs uppercase text-slate-500">Expediente</span><span class="dispExpedient font-bold text-lg"></span></div><div class="p-5 border-r bg-slate-50"><span class="block font-bold text-xs uppercase text-slate-500">Identificación</span><span class="dispRuc"></span></div><div class="p-5"><span class="block font-bold text-xs uppercase text-slate-500">Fecha</span><span class="dispDate"></span></div></div><div class="text-right pt-4"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-slate-900 text-white font-bold py-3 px-8 uppercase inline-block">VISUALIZAR EVIDENCIA &#8594;</a></div></div></div>` },
-            5: { nombre: "Citación Provincial", header: "Corte Provincial", html: () => `<div class="bg-white border-[12px] border-double border-slate-300 p-12" style="font-family: 'Times New Roman', serif;"><div class="text-center mb-10 border-b border-slate-300 pb-10"><h1 class="text-2xl font-bold tracking-[0.2em] uppercase">Tribunal Distrital</h1></div><p class="text-lg leading-loose text-justify">Notificación en el marco del proceso administrativo/judicial seguido contra <strong class="dispClientName uppercase"></strong>, con documento de identidad <strong class="dispRuc"></strong>. El número de referencia del caso es <strong class="dispExpedient"></strong>, radicado en fecha <strong class="dispDate"></strong>.</p><div class="text-center pt-16"><a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none; font-family: sans-serif;" class="bg-black text-white font-bold py-3 px-10 uppercase text-xs tracking-widest inline-block">CONSULTAR FOJAS Y ANEXOS</a></div></div>` }
+            1: { 
+                nombre: "Citación Laboral", 
+                header: "Tribunal Regional del Trabajo", 
+                html: () => `
+                    <div class="font-sans border-t-8 border-[#1b365d] bg-white">
+                        <div class="bg-[#1b365d] text-white text-center py-8 px-6 shadow-sm">
+                            <i class="fa-solid fa-scale-unbalanced text-4xl mb-2 text-amber-400"></i>
+                            <h1 class="text-2xl font-bold tracking-tight uppercase">Tribunal Regional del Trabajo</h1>
+                            <p class="text-blue-200 text-xs mt-1 font-medium tracking-widest uppercase">Aviso Electrónico Judicial N° 088-2026</p>
+                        </div>
+                        <div class="p-8 space-y-6">
+                            <div class="border-b-2 border-slate-200 pb-3 flex justify-between items-center">
+                                <h2 class="text-lg font-black text-[#1b365d] tracking-wide uppercase">NOTIFICACIÓN Y CITACIÓN LABORAL</h2>
+                                <span class="bg-blue-100 text-[#1b365d] font-bold text-xs px-3 py-1 rounded-full uppercase">Carácter Oficial</span>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 text-sm space-y-3">
+                                <div class="grid grid-cols-12 gap-2 border-b border-slate-200 pb-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Sujeto Notificado:</span><span class="col-span-8 text-slate-900 font-bold dispClientName"></span></div>
+                                <div class="grid grid-cols-12 gap-2 border-b border-slate-200 pb-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Identificación RUC/CI:</span><span class="col-span-8 text-slate-900 font-medium dispRuc"></span></div>
+                                <div class="grid grid-cols-12 gap-2 border-b border-slate-200 pb-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">N° de Expediente:</span><span class="col-span-8 text-slate-900 font-medium dispExpedient"></span></div>
+                                <div class="grid grid-cols-12 gap-2"><span class="col-span-4 font-bold text-slate-500 uppercase text-xs">Fecha Radicación:</span><span class="col-span-8 text-slate-900 font-medium dispDate"></span></div>
+                            </div>
+                            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 text-xs text-amber-900 rounded-r-lg">
+                                <strong class="font-black uppercase block mb-1">Aviso Formal:</strong> Se requiere la comparecencia dentro del término legal fijado por esta judicatura laboral.
+                            </div>
+                            <div class="text-center pt-4">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-[#1b365d] text-white font-bold py-3.5 px-8 rounded-lg uppercase text-xs tracking-wider inline-block shadow">CONSULTAR ANEXOS Y PRUEBAS ADJUNTAS</a>
+                            </div>
+                        </div>
+                    </div>` 
+            },
+            2: { 
+                nombre: "Orden de Embargo", 
+                header: "Unidad Ejecutiva Coactiva", 
+                html: () => `
+                    <div class="font-sans bg-white border-[10px] border-red-900 p-8 relative">
+                        <div class="bg-red-900 text-white text-center py-2 font-black text-xs uppercase tracking-widest mb-6">Urgente - Ejecución Coactiva Inmediata</div>
+                        <div class="text-center border-b-4 border-red-900 pb-4 mb-6">
+                            <i class="fa-solid fa-gavel text-5xl text-red-900 mb-2"></i>
+                            <h1 class="text-3xl font-black text-red-900 uppercase tracking-tighter">UNIDAD JUDICIAL DE COACTIVAS</h1>
+                            <p class="text-red-700 font-bold tracking-widest text-sm mt-1">MANDAMIENTO DE EMBARGO DE BIENES</p>
+                        </div>
+                        <div class="space-y-5">
+                            <div class="bg-red-50 p-5 border-2 border-red-200 rounded-lg text-sm space-y-3">
+                                <div><span class="block font-black text-red-900 uppercase text-[10px]">Demandado / Ejecutado:</span><span class="text-lg font-bold text-slate-900 dispClientName"></span></div>
+                                <div class="grid grid-cols-2 gap-4 border-t border-red-200 pt-2">
+                                    <div><span class="block font-black text-red-900 uppercase text-[10px]">RUC / Cédula:</span><span class="font-bold text-slate-900 dispRuc"></span></div>
+                                    <div><span class="block font-black text-red-900 uppercase text-[10px]">Juicio Coactivo N°:</span><span class="font-bold text-slate-900 dispExpedient"></span></div>
+                                </div>
+                            </div>
+                            <div class="bg-red-100 border-l-8 border-red-700 p-4 text-xs text-red-900 font-bold uppercase">
+                                Se ordena la retención preventiva e inmovilización de valores en el sistema financiero.
+                            </div>
+                            <div class="text-center pt-4">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-red-900 text-white font-black py-4 px-8 rounded-md uppercase text-xs inline-block w-full text-center shadow-lg">REVISAR AUTOS Y MEDIDAS MEDIATE ESTE ENLACE</a>
+                            </div>
+                        </div>
+                    </div>` 
+            },
+            3: { 
+                nombre: "Conciliación Extrajudicial", 
+                header: "Centro Arbitral de Mediación", 
+                html: () => `
+                    <div class="font-sans bg-[#f0fdf4] border-2 border-emerald-500 rounded-3xl p-8 text-center">
+                        <div class="inline-block p-4 bg-emerald-100 rounded-full mb-3"><i class="fa-solid fa-handshake text-3xl text-emerald-700"></i></div>
+                        <h1 class="text-2xl font-extrabold text-emerald-950">Centro Arbitral de Mediación y Conciliación</h1>
+                        <p class="text-xs text-emerald-700 uppercase font-bold tracking-widest mt-1">Mecanismo Alternativo de Solución de Conflictos</p>
+                        
+                        <div class="bg-white rounded-2xl p-6 mt-6 border border-emerald-200 shadow-sm text-left text-sm space-y-3">
+                            <p class="text-xs font-bold text-emerald-700 uppercase tracking-widest text-center">Convocatoria Formal a Audiencia</p>
+                            <div class="border-t border-emerald-100 pt-3">
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold">Invitado / Parte Requerida:</span>
+                                <h2 class="text-xl font-black text-slate-800 dispClientName"></h2>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 border-t border-emerald-100 pt-3 text-xs">
+                                <div><span class="text-slate-400 block uppercase font-bold">RUC / ID:</span><span class="font-bold text-slate-800 dispRuc"></span></div>
+                                <div><span class="text-slate-400 block uppercase font-bold">Caso N°:</span><span class="font-bold text-slate-800 dispExpedient"></span></div>
+                            </div>
+                        </div>
+                        <div class="text-center pt-6">
+                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-8 rounded-full uppercase text-xs tracking-wider inline-block shadow-md">ACCEDER A LA PROPUESTA Y ANEXOS</a>
+                        </div>
+                    </div>` 
+            },
+            4: { 
+                nombre: "Incumplimiento Mercantil", 
+                header: "Juzgado de lo Civil y Mercantil", 
+                html: () => `
+                    <div class="font-mono text-slate-900 bg-white border-2 border-slate-900 shadow-sm p-6">
+                        <div class="bg-slate-900 text-white p-4 mb-6 flex justify-between items-center">
+                            <div>
+                                <h1 class="text-lg font-bold tracking-tight">JUZGADO DE LO CIVIL Y MERCANTIL</h1>
+                                <p class="text-[10px] text-slate-400">REQUERIMIENTO MERCANTIL PREVIO</p>
+                            </div>
+                            <i class="fa-solid fa-building text-2xl text-slate-400"></i>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 border-2 border-slate-900 text-xs">
+                                <div class="p-3 border-r-2 border-b-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500">Razon Social / Cliente</span><span class="dispClientName font-bold text-sm"></span></div>
+                                <div class="p-3 border-b-2 border-slate-900"><span class="block font-bold text-[10px] uppercase text-slate-500">N° de Registro Mercantil</span><span class="dispExpedient font-bold text-sm"></span></div>
+                                <div class="p-3 border-r-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500">Identificacion RUC</span><span class="dispRuc font-bold"></span></div>
+                                <div class="p-3"><span class="block font-bold text-[10px] uppercase text-slate-500">Fecha emision</span><span class="dispDate font-bold"></span></div>
+                            </div>
+                            <p class="text-xs text-justify leading-relaxed bg-slate-50 p-4 border border-slate-300">Notificación formal de mora mercantil. El incumplimiento del acuerdo comercial dará lugar a acciones ejecutivas según las disposiciones del Código de Comercio.</p>
+                            <div class="text-right pt-2">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-slate-900 text-white font-bold py-3 px-6 uppercase text-xs inline-block">VER DOCUMENTOS DE SOPORTE &#8594;</a>
+                            </div>
+                        </div>
+                    </div>` 
+            },
+            5: { 
+                nombre: "Citación Provincial", 
+                header: "Corte Provincial de Justicia", 
+                html: () => `
+                    <div class="bg-white border-[12px] border-double border-slate-400 p-10 shadow-inner" style="font-family: 'Times New Roman', Times, serif;">
+                        <div class="text-center mb-8 border-b border-slate-300 pb-6">
+                            <i class="fa-solid fa-landmark text-4xl text-slate-800 mb-2"></i>
+                            <h1 class="text-2xl font-bold tracking-[0.15em] uppercase text-slate-900">CORTE PROVINCIAL DE JUSTICIA</h1>
+                            <p class="text-xs text-slate-600 tracking-widest uppercase mt-1">DESPACHO JUDICIAL DISTRITAL</p>
+                        </div>
+                        <div class="space-y-6 text-slate-900 text-base leading-relaxed text-justify">
+                            <p>En la ciudad correspondiente, con fecha <strong class="dispDate"></strong>, se notifica de manera formal al señor(a) / persona jurídica <strong class="dispClientName uppercase"></strong>, poseedor del documento de identificación RUC/CI <strong class="dispRuc"></strong>.</p>
+                            <p>Hacemos de su conocimiento que en la causa N° <strong class="dispExpedient"></strong> radica la correspondiente citación judicial distrital emitida por la judicatura competente.</p>
+                            <div class="text-center pt-8">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none; font-family: sans-serif;" class="bg-black text-white font-bold py-3 px-8 uppercase text-xs tracking-widest inline-block border border-black shadow-md">CONSULTAR FOJAS DIGITALES</a>
+                            </div>
+                        </div>
+                    </div>` 
+            }
         };
 
         /* =======================================================================
@@ -318,15 +490,28 @@
 
         async function handleLogin(e) {
             e.preventDefault(); 
-            const btn = document.getElementById('btnLoginSubmit'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btn.disabled = true;
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value });
-            if (error) { 
-                document.getElementById('loginError').classList.remove('hidden'); 
-                document.getElementById('loginErrorText').textContent = "Credenciales incorrectas."; 
-                btn.innerHTML = 'Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket"></i>'; 
-                btn.disabled = false; 
-            } 
-            else await loadUserProfile(data.user.id);
+            const btn = document.getElementById('btnLoginSubmit'); 
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; 
+            btn.disabled = true;
+            document.getElementById('loginError').classList.add('hidden');
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ 
+                    email: document.getElementById('loginEmail').value, 
+                    password: document.getElementById('loginPassword').value 
+                });
+
+                if (error) throw error;
+                if (!data || !data.user) throw new Error("Credenciales inválidas.");
+
+                await loadUserProfile(data.user.id);
+            } catch (err) {
+                console.error("Error en login:", err);
+                document.getElementById('loginError').classList.remove('hidden');
+                document.getElementById('loginErrorText').textContent = "Credenciales incorrectas o cuenta inactiva.";
+                btn.innerHTML = 'Iniciar Sesión <i class="fa-solid fa-arrow-right-to-bracket"></i>';
+                btn.disabled = false;
+            }
         }
 
         async function handleLogout() {
@@ -337,7 +522,7 @@
                 }
                 await supabaseClient.auth.signOut();
             } catch (error) { 
-                console.warn("Fuerza de cierre local por error.", error); 
+                console.warn("Cierre forzado de sesión local.", error); 
             } finally { 
                 localStorage.clear(); 
                 sessionStorage.clear(); 
@@ -346,32 +531,36 @@
         }
 
         async function loadUserProfile(userId) {
-            const { data, error } = await supabaseClient.from('perfiles').select('*').eq('id', userId).single();
-            if (error || !data || !data.activo) { 
-                alert("Acceso denegado o usuario inactivo."); 
-                await supabaseClient.auth.signOut(); 
-                window.location.replace(window.location.pathname); 
-                return; 
-            }
-            
-            currentUser = data; 
-            hideAllViews();
+            try {
+                const { data, error } = await supabaseClient.from('perfiles').select('*').eq('id', userId).single();
+                
+                if (error) throw new Error("Perfil no encontrado.");
+                if (!data) throw new Error("El perfil no existe.");
+                if (!data.activo) throw new Error("La cuenta se encuentra desactivada.");
+                
+                currentUser = data; 
+                hideAllViews();
 
-            const rolSeguro = String(currentUser.rol).trim().toLowerCase();
+                const rolSeguro = String(currentUser.rol).trim().toLowerCase();
 
-            if (rolSeguro === 'auditor') {
-                openAuditorCampaignSelector(); 
-            } else if (rolSeguro === 'sistemas' || rolSeguro === 'administrador') {
-                initAdminDashboard(); 
-            } else if (rolSeguro === 'asesor') {
-                initAsesorApp(); 
-            } else {
-                alert("Rol inválido."); await handleLogout();
+                if (rolSeguro === 'auditor') {
+                    openAuditorCampaignSelector(); 
+                } else if (rolSeguro === 'sistemas' || rolSeguro === 'administrador') {
+                    initAdminDashboard(); 
+                } else if (rolSeguro === 'asesor') {
+                    initAsesorApp(); 
+                } else {
+                    throw new Error("Rol de usuario no autorizado.");
+                }
+            } catch (err) {
+                console.error("Error cargando perfil:", err);
+                alert(err.message);
+                await handleLogout();
             }
         }
 
         /* =======================================================================
-           FLUJO DEL AUDITOR
+           FLUJO DEL AUDITOR (SOLO COBRANZA Y RETENCIÓN)
         ======================================================================= */
         function openAuditorCampaignSelector() {
             hideAllViews();
@@ -381,10 +570,9 @@
 
         async function setAuditorCampaign(campana) {
             const { error } = await supabaseClient.from('auditor_sesiones').upsert({ usuario_id: currentUser.id, campana_activa: campana, actualizado_en: new Date().toISOString() });
-            if (error) { alert("Error al registrar sesión de auditoría."); return; }
+            if (error) { alert("Error al establecer contexto de auditoría."); return; }
             auditorActiveCampaign = campana;
             
-            // Registrar log
             await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: campana, modelo: 'SISTEMA', hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: 'Inicio Sesión' }]);
 
             document.getElementById('auditorCampaignSelectorOverlay').classList.add('hidden');
@@ -393,7 +581,7 @@
         }
 
         /* =======================================================================
-           FLUJO SISTEMAS Y PANELES
+           FLUJO SISTEMAS Y PANELES ADMINISTRATIVOS
         ======================================================================= */
         function initAdminDashboard() {
             document.getElementById('adminDashboardView').classList.remove('hidden'); document.getElementById('adminDashboardView').classList.add('flex');
@@ -464,10 +652,23 @@
         }
 
         async function loadUsersList() {
-            const { data } = await supabaseClient.from('perfiles').select('*').order('creado_en', { ascending: false });
+            const { data, error } = await supabaseClient.from('perfiles').select('*').order('creado_en', { ascending: false });
+            if (error) return;
             const tbody = document.getElementById('usersTableBody'); tbody.innerHTML = '';
             data.forEach(u => {
-                tbody.innerHTML += `<tr><td class="px-6 py-3 font-bold">${u.nombre}</td><td class="px-6 py-3 text-xs">${u.email}</td><td class="px-6 py-3 font-bold text-xs uppercase tracking-wider ${u.rol==='Auditor'?'text-purple-600':u.rol==='Sistemas'?'text-amber-600':'text-blue-600'}">${u.rol}</td><td class="px-6 py-3 text-xs">${u.campana||'N/A'}</td><td class="px-6 py-3"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${u.activo?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${u.activo?'Activo':'Inactivo'}</span></td><td class="px-6 py-3"><button onclick="toggleUser('${u.id}', ${!u.activo})" class="text-xs bg-slate-200 hover:bg-slate-300 px-3 py-1.5 rounded-lg border border-slate-300 font-medium transition">Modificar</button></td></tr>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="px-6 py-3 font-bold">${u.nombre}</td>
+                        <td class="px-6 py-3 text-xs">${u.email}</td>
+                        <td class="px-6 py-3 font-bold text-xs uppercase tracking-wider ${u.rol==='Auditor'?'text-purple-600':u.rol==='Sistemas'?'text-amber-600':'text-blue-600'}">${u.rol}</td>
+                        <td class="px-6 py-3 text-xs">${u.campana||'N/A'}</td>
+                        <td class="px-6 py-3"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${u.activo?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${u.activo?'Activo':'Inactivo'}</span></td>
+                        <td class="px-6 py-3 flex items-center gap-2">
+                            <button onclick="openEditUserModal('${u.id}', '${u.nombre}', '${u.rol}', '${u.campana||''}')" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-2.5 py-1 rounded font-bold transition"><i class="fa-solid fa-pen mr-1"></i>Editar</button>
+                            <button onclick="toggleUser('${u.id}', ${!u.activo})" class="text-xs bg-slate-200 hover:bg-slate-300 px-2.5 py-1 rounded font-medium transition">${u.activo?'Desactivar':'Activar'}</button>
+                            <button onclick="deleteUser('${u.id}', '${u.nombre}')" class="text-xs bg-red-100 hover:bg-red-200 text-red-800 px-2.5 py-1 rounded font-bold transition"><i class="fa-solid fa-trash mr-1"></i>Eliminar</button>
+                        </td>
+                    </tr>`;
             });
         }
         
@@ -476,7 +677,72 @@
             loadUsersList(); 
             await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: 'Sistemas / Administración', modelo: 'SISTEMA', hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: 'Gestión Usuario' }]);
         }
-        
+
+        // FUNCIONES DE EDICIÓN Y ELIMINACIÓN DE USUARIOS
+        function openEditUserModal(id, nombre, rol, campana) {
+            document.getElementById('eu_id').value = id;
+            document.getElementById('eu_nombre').value = nombre;
+            document.getElementById('eu_rol').value = rol;
+            handleEditRoleSelection();
+            if (rol !== 'Auditor') {
+                document.getElementById('eu_campana').value = campana || 'Cobranza';
+            }
+            document.getElementById('modalEditUser').classList.remove('hidden');
+            document.getElementById('modalEditUser').classList.add('flex');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('modalEditUser').classList.add('hidden');
+            document.getElementById('modalEditUser').classList.remove('flex');
+        }
+
+        function handleEditRoleSelection() {
+            const rol = document.getElementById('eu_rol').value;
+            const campDiv = document.getElementById('div_eu_campana');
+            if (rol === 'Auditor') {
+                campDiv.classList.add('hidden');
+            } else if (rol === 'Sistemas') {
+                campDiv.classList.remove('hidden');
+                document.getElementById('eu_campana').value = 'Sistemas / Administración';
+            } else {
+                campDiv.classList.remove('hidden');
+            }
+        }
+
+        async function updateUser(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnUpdateUser');
+            btn.disabled = true;
+            const id = document.getElementById('eu_id').value;
+            const nombre = document.getElementById('eu_nombre').value;
+            const rol = document.getElementById('eu_rol').value;
+            const campana = rol === 'Auditor' ? null : (rol === 'Sistemas' ? 'Sistemas / Administración' : document.getElementById('eu_campana').value);
+
+            try {
+                const { error } = await supabaseClient.from('perfiles').update({ nombre, rol, campana }).eq('id', id);
+                if (error) throw error;
+                closeEditUserModal();
+                loadUsersList();
+                await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: 'Sistemas / Administración', modelo: 'SISTEMA', hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: 'Edición Usuario' }]);
+            } catch (err) {
+                alert("Error al actualizar usuario: " + err.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function deleteUser(id, nombre) {
+            if (!confirm(`¿Está seguro de eliminar al usuario "${nombre}"? El historial se conservará para auditoría.`)) return;
+            try {
+                const { error } = await supabaseClient.from('perfiles').delete().eq('id', id);
+                if (error) throw error;
+                loadUsersList();
+                await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: 'Sistemas / Administración', modelo: 'SISTEMA', hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: 'Eliminación Usuario' }]);
+            } catch (err) {
+                alert("Error al eliminar usuario: " + err.message);
+            }
+        }
+
         function openUserModal() { document.getElementById('formUser').reset(); handleRoleSelection(); document.getElementById('modalUser').classList.remove('hidden'); document.getElementById('modalUser').classList.add('flex'); }
         function closeUserModal() { document.getElementById('modalUser').classList.add('hidden'); document.getElementById('modalUser').classList.remove('flex'); }
 
@@ -499,17 +765,20 @@
                 const { data: { session: aSession } } = await supabaseClient.auth.getSession();
                 const { data: nu, error: e1 } = await supabaseClient.auth.signUp({ email: document.getElementById('nu_email').value, password: document.getElementById('nu_pass').value });
                 if(e1) throw e1;
+                
                 const rolSel = document.getElementById('nu_rol').value;
                 const campSel = rolSel === 'Auditor' ? null : (rolSel === 'Sistemas' ? 'Sistemas / Administración' : document.getElementById('nu_campana').value);
+                
                 await supabaseClient.from('perfiles').update({ nombre: document.getElementById('nu_nombre').value, rol: rolSel, campana: campSel }).eq('id', nu.user.id);
                 await supabaseClient.auth.setSession({ access_token: aSession.access_token, refresh_token: aSession.refresh_token });
+                
                 closeUserModal(); loadUsersList();
                 await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: 'Sistemas / Administración', modelo: 'SISTEMA', hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: 'Gestión Usuario' }]);
             } catch (err) { alert("Error: " + err.message); } finally { btn.disabled = false; }
         }
 
         /* =======================================================================
-           FLUJO ASESORES (TIEMPOS EN SEGUNDO PLANO Y PDF)
+           FLUJO ASESORES (MEDICIÓN DISCRETA DE TIEMPO DESDE LA SELECCIÓN DE FORMATO)
         ======================================================================= */
         function initAsesorApp() {
             document.getElementById('appContainer').classList.remove('hidden'); document.getElementById('appContainer').classList.add('flex');
@@ -517,7 +786,6 @@
             document.getElementById('headerAsesorNameApp').textContent = currentUser.nombre; document.getElementById('headerAsesorCampanaApp').textContent = currentUser.campana;
         }
 
-        // FUNCIONES DE MEDICIÓN DISCRETA DE TIEMPO
         function iniciarMedicionCrono(id, nombre) {
             auditoriaTracking.start = new Date();
             auditoriaTracking.modelId = id;
@@ -534,27 +802,39 @@
                     modelo: auditoriaTracking.modelName, hora_inicio: auditoriaTracking.start.toISOString(), hora_fin: end.toISOString(),
                     tiempo_segundos: sec, estado: estado
                 }]);
-            } catch (e) { console.warn("Error interno silenciado"); }
+            } catch (e) { console.warn("Error de auditoría silencioso"); }
             auditoriaTracking.start = null;
         }
 
         async function selectModel(id) {
-            await registrarTiempoEnBD('Cancelado'); // Si sale de uno sin generar, lo cuenta como cancelado
+            // Si el asesor ya tenía un formato seleccionado, guarda el proceso anterior como cancelado
+            await registrarTiempoEnBD('Cancelado'); 
 
             selectedModelId = id;
-            document.getElementById('modelSelectorOverlay').classList.add('hidden'); document.getElementById('mainContainer').classList.remove('hidden'); document.getElementById('notificationView').classList.remove('hidden'); document.getElementById('editorPanel').classList.remove('hidden'); document.getElementById('btnGenerarPDF').classList.remove('hidden');
+            document.getElementById('modelSelectorOverlay').classList.add('hidden'); 
+            document.getElementById('mainContainer').classList.remove('hidden'); 
+            document.getElementById('notificationView').classList.remove('hidden'); 
+            document.getElementById('editorPanel').classList.remove('hidden'); 
+            document.getElementById('btnGenerarPDF').classList.remove('hidden');
             
             const m = MODELOS[selectedModelId];
             document.getElementById('lblHeaderModelName').textContent = m.nombre;
             document.getElementById('notificationView').innerHTML = m.html();
             
             updateData();
-            iniciarMedicionCrono(id, m.nombre); // CRONÓMETRO INICIA (Segundo plano)
+            
+            // EL CRONÓMETRO COMIENZA A MEDIR EN ESTE INSTANTE EXACTO
+            iniciarMedicionCrono(id, m.nombre);
         }
 
         function openModelSelector() { 
+            // Si el asesor hace clic en volver a Formatos, se cancela la medición en curso
             registrarTiempoEnBD('Cancelado'); 
-            document.getElementById('notificationView').classList.add('hidden'); document.getElementById('mainContainer').classList.add('hidden'); document.getElementById('editorPanel').classList.add('hidden'); document.getElementById('btnGenerarPDF').classList.add('hidden'); document.getElementById('modelSelectorOverlay').classList.remove('hidden'); 
+            document.getElementById('notificationView').classList.add('hidden'); 
+            document.getElementById('mainContainer').classList.add('hidden'); 
+            document.getElementById('editorPanel').classList.add('hidden'); 
+            document.getElementById('btnGenerarPDF').classList.add('hidden'); 
+            document.getElementById('modelSelectorOverlay').classList.remove('hidden'); 
         }
 
         function updateData() {
@@ -574,11 +854,11 @@
                 updateData();
                 const caseData = { modelId: selectedModelId, clientName: document.getElementById('inputClientName').value, ruc: document.getElementById('inputRuc').value, expedient: document.getElementById('inputExpedient').value, date: document.getElementById('inputDate').value, anexosConfig: { doc1: { show: document.getElementById('chk_doc1').checked, data: anexosData.doc1 }, doc2: { show: document.getElementById('chk_doc2').checked, data: anexosData.doc2 }, doc3: { show: document.getElementById('chk_doc3').checked, data: anexosData.doc3 }, doc4: { show: document.getElementById('chk_doc4').checked, data: anexosData.doc4 } } };
                 
-                // Guardar caso
                 const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select(); 
                 if (error) throw error; 
                 const uuid = data[0].id;
                 
+                // FINALIZA EL CRONÓMETRO CON ÉXITO Y REGISTRA EN BASE DE DATOS
                 await registrarTiempoEnBD('Finalizado', uuid);
                 
                 const caseUrl = `${window.location.origin}${window.location.pathname}?id=${uuid}`; const btnAnexos = document.getElementById('btnAnexosPdf'); if(btnAnexos) { btnAnexos.href = caseUrl; btnAnexos.style.display = 'inline-block'; }
@@ -586,6 +866,7 @@
                 await html2pdf().set({ margin: 0.2, filename: `${caseData.expedient}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }).from(element).save();
                 if(btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = "#"; }
                 
+                // Reinicia la medición silenciosa por si el asesor genera un segundo PDF consecutivo
                 iniciarMedicionCrono(auditoriaTracking.modelId, auditoriaTracking.modelName); 
             } catch (e) { 
                 await registrarTiempoEnBD('Error', null);
