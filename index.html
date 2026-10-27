@@ -944,32 +944,27 @@
             btn.disabled = true;
             
             try {
-                // 1. Guardar la sesión del administrador
-                const { data: { session: aSession } } = await supabaseClient.auth.getSession();
-                
-                // 2. Crear usuario (esto auto-inicia sesión con el nuevo usuario temporalmente)
-                const { data: nu, error: e1 } = await supabaseClient.auth.signUp({ 
+                // 1. Instanciar un cliente temporal SIN persistencia para no sobreescribir la sesión actual del administrador
+                const tempClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    auth: { persistSession: false, autoRefreshToken: false }
+                });
+
+                // 2. Crear el usuario con el cliente temporal (el admin sigue intacto en supabaseClient)
+                const { data: nu, error: e1 } = await tempClient.auth.signUp({ 
                     email: document.getElementById('nu_email').value, 
                     password: document.getElementById('nu_pass').value 
                 });
                 
                 if (e1) throw e1;
-                
-                // 3. RESTAURAR INMEDIATAMENTE la sesión del administrador para recuperar permisos RLS
-                if (aSession) {
-                    await supabaseClient.auth.setSession({ 
-                        access_token: aSession.access_token, 
-                        refresh_token: aSession.refresh_token 
-                    });
-                }
 
-                // 4. Pequeña pausa (1s) para asegurar que el trigger de BD ya creó el perfil por defecto
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // 3. Pausa para dar tiempo al trigger de la BD a generar el registro por defecto
+                await new Promise(resolve => setTimeout(resolve, 1500));
                 
-                // 5. Preparar datos y actualizar con permisos del admin
+                // 4. Preparar datos
                 const rolSel = document.getElementById('nu_rol').value;
                 const campSel = rolSel === 'Auditor' ? null : (rolSel === 'Sistemas' ? 'Sistemas / Administración' : document.getElementById('nu_campana').value);
                 
+                // 5. Actualizar usando el cliente principal, el cual NUNCA perdió los privilegios de Administrador/Sistemas
                 const { error: e2 } = await supabaseClient.from('perfiles')
                     .update({ 
                         nombre: document.getElementById('nu_nombre').value, 
