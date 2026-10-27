@@ -1026,13 +1026,13 @@
 
         const safeName = caseData.expedient.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'documento';
         const opt = {
-            margin: [0.4, 0.3, 0.4, 0.3],
-            filename: `${safeName}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 800 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-            pagebreak: { mode: ['css', 'legacy'] }
-        };
+                    margin: [0.4, 0.3, 0.4, 0.3],
+                    filename: `${safeName}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'] }
+                    };    
 
         await html2pdf().set(opt).from(clone).save();
 
