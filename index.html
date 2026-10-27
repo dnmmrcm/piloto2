@@ -1024,7 +1024,7 @@
             document.querySelectorAll('.dispClientName').forEach(el => el.textContent = cd.clientName); document.querySelectorAll('.dispRuc').forEach(el => el.textContent = cd.ruc);
             document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = cd.expedient); document.querySelectorAll('.dispDate').forEach(el => el.textContent = cd.date);
             const g = document.getElementById('galeriaAnexos'); g.innerHTML = ''; let hI = false;
-            const seguro = x => typeof x === 'string' && /^data:image\\/(jpeg|png|webp|gif);base64,/.test(x);
+            const seguro = x => typeof x === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,/.test(x);
             ['doc1', 'doc2', 'doc3', 'doc4'].forEach((k, i) => {
                 const c = cd.anexosConfig && cd.anexosConfig[k];
                 if (c && c.show && seguro(c.data)) { g.appendChild(crearTarjeta(`Soporte ${i + 1}`, c.data)); hI = true; }
