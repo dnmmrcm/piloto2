@@ -993,26 +993,23 @@
         }
 
         // GENERACIÓN DE PDF PERFECTAMENTE ENCUADRADO Y CENTRADO
-        function buildPdfSource(marginIn) {
-            const W = 740;
-            const holder = document.createElement('div'); holder.style.cssText = `position:fixed;left:-10000px;top:0;width:${W}px;pointer-events:none;`;
-            const wrapper = document.createElement('div'); wrapper.style.cssText = `width:${W}px;margin:0;padding:0;background:#fff;box-sizing:border-box;`;
-            const clone = document.getElementById('notificationView').cloneNode(true);
-            clone.removeAttribute('id'); clone.classList.remove('hidden', 'shadow-xl');
-            clone.style.cssText = 'width:100%;max-width:none;margin:0;box-shadow:none;';
-            wrapper.appendChild(clone); holder.appendChild(wrapper); document.body.appendChild(holder);
-            const pxPerIn = W / (8.5 - 2 * marginIn);
-            const availH = (11 - 2 * marginIn) * pxPerIn;
-            const h = clone.offsetHeight;
-            if (h < availH - 40) wrapper.style.paddingTop = Math.floor((availH - h) / 2) + 'px';
-            return { wrapper, cleanup: () => holder.remove() };
-        }
-
         async function generarPDF() {
             if (!validateForm()) return;
             const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML;
             btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btnGen.disabled = true;
             let uuid = null; const btnAnexos = document.getElementById('btnAnexosPdf');
+            
+            // 1. Preparar vista aislando la caja visual
+            const element = document.getElementById('notificationView');
+            const originalStyle = element.style.cssText;
+            
+            // Forzar un ancho fijo que quepa en un documento Letter A4 (790px)
+            element.style.cssText = 'width: 790px !important; max-width: 790px !important; margin: 0 auto; background: white; padding: 10px; display: block;';
+            
+            // 2. Workaround: Forzar el scroll de la ventana a 0 temporalmente para evitar recortes en la foto de html2canvas
+            const currentScroll = window.scrollY;
+            window.scrollTo(0, 0);
+
             try {
                 if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre);
                 updateData();
@@ -1029,15 +1026,17 @@
                 if (btnAnexos) { btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; btnAnexos.style.display = 'inline-block'; }
                 if (document.fonts && document.fonts.ready) await document.fonts.ready;
 
-                const MARGIN = 0.4;
-                const src = buildPdfSource(MARGIN);
+                // 3. Márgenes y configuración mejorada
                 const safeName = caseData.expedient.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'documento';
                 const opt = {
-                    margin: MARGIN, filename: `${safeName}.pdf`, image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 1024, backgroundColor: '#ffffff' },
+                    margin: [0.4, 0.3, 0.4, 0.3], // Centrado
+                    filename: `${safeName}.pdf`, 
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 800 },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
-                try { await html2pdf().set(opt).from(src.wrapper).save(); } finally { src.cleanup(); }
+                
+                await html2pdf().set(opt).from(element).save();
 
                 await registrarTiempoEnBD('Finalizado', uuid);
             } catch (e) {
@@ -1046,6 +1045,11 @@
                 alert('Error de generación. Intente nuevamente.');
             } finally {
                 if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; }
+                
+                // 4. Restaurar el formato y scroll visual original del usuario
+                element.style.cssText = originalStyle;
+                window.scrollTo(0, currentScroll);
+
                 btnGen.innerHTML = oldText; btnGen.disabled = false;
             }
         }
