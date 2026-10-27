@@ -105,6 +105,28 @@
                     <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Tiempo Promedio</p><p class="text-3xl font-bold text-blue-600" id="stat-promedio">0m 0s</p></div>
                     <div class="bg-white p-6 rounded-lg shadow border border-slate-200"><p class="text-sm text-slate-500 font-medium">Procesos Cancelados</p><p class="text-3xl font-bold text-red-600" id="stat-cancelados">0</p></div>
                 </div>
+                <div class="bg-white rounded-lg shadow border border-slate-200 overflow-hidden">
+                    <div class="p-5 border-b border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800">Productividad por asesor</h3>
+                        <p class="text-sm text-slate-500 mt-1">Horas acumuladas y tiempo promedio por documento finalizado, según los filtros aplicados.</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200 text-sm">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase">Asesor</th>
+                                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase">Campaña</th>
+                                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase">Documentos finalizados</th>
+                                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase">Tiempo total</th>
+                                    <th class="px-5 py-3 text-left text-xs font-bold text-slate-500 uppercase">Promedio por documento</th>
+                                </tr>
+                            </thead>
+                            <tbody id="advisorProductivityBody" class="bg-white divide-y divide-slate-200">
+                                <tr><td colspan="5" class="px-5 py-6 text-center text-slate-400">Cargando productividad...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- HISTORIAL AUDITORIA -->
@@ -725,7 +747,7 @@
 
         async function loadAuditData() {
             const isAdmin = String(currentUser.rol).trim().toLowerCase() === 'sistemas';
-            let query = supabaseClient.from('auditoria').select('*, perfiles(nombre)').order('hora_fin', { ascending: false });
+            let query = supabaseClient.from('auditoria').select('*, perfiles(nombre,rol)').order('hora_fin', { ascending: false });
             if (isAdmin) {
                 const campFilter = document.getElementById('filter-campana').value;
                 if (campFilter !== 'ALL') query = query.eq('campana', campFilter);
@@ -743,10 +765,28 @@
             const thAcciones = document.getElementById('thAccionesAudit');
             if (thAcciones) thAcciones.style.display = isAdmin ? 'table-cell' : 'none';
             let totalT = 0, fin = 0, docsTot = 0, canceled = 0; const rows = [];
+            const advisorStats = new Map();
             (data || []).forEach(r => {
                 const isDoc = r.estado === 'Finalizado' || r.estado === 'Cancelado' || r.estado === 'Error';
                 if (isDoc) docsTot++;
-                if (r.estado === 'Finalizado') { totalT += r.tiempo_segundos; fin++; }
+                if (r.estado === 'Finalizado') {
+                    const seconds = Math.max(0, Number(r.tiempo_segundos) || 0);
+                    totalT += seconds; fin++;
+                    const role = String(r.perfiles?.rol || '').trim().toLowerCase();
+                    // Solo se consideran asesores; se excluyen auditoría, sesiones y acciones administrativas.
+                    if (role === 'asesor') {
+                        const key = r.usuario_id || r.perfiles?.nombre || 'sin_usuario';
+                        if (!advisorStats.has(key)) advisorStats.set(key, {
+                            nombre: r.perfiles?.nombre || 'Asesor sin nombre',
+                            campana: r.campana || '-',
+                            totalSegundos: 0,
+                            documentos: 0
+                        });
+                        const item = advisorStats.get(key);
+                        item.totalSegundos += seconds;
+                        item.documentos++;
+                    }
+                }
                 if (r.estado === 'Cancelado') canceled++;
                 const tStr = isDoc ? `${Math.floor(r.tiempo_segundos / 60)}m ${r.tiempo_segundos % 60}s` : '-';
                 const del = isAdmin ? `<td class="px-6 py-3"><button onclick="deleteAuditRecord('${esc(r.id)}')" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-2.5 py-1.5 rounded font-bold transition"><i class="fa-solid fa-trash"></i></button></td>` : '';
@@ -758,6 +798,28 @@
             document.getElementById('stat-cancelados').textContent = canceled;
             const avg = fin > 0 ? Math.floor(totalT / fin) : 0;
             document.getElementById('stat-promedio').textContent = `${Math.floor(avg / 60)}m ${avg % 60}s`;
+
+            const formatLongDuration = seconds => {
+                const safe = Math.max(0, Number(seconds) || 0);
+                const hours = Math.floor(safe / 3600);
+                const minutes = Math.floor((safe % 3600) / 60);
+                const secs = safe % 60;
+                return `${hours} h ${minutes} min ${secs} s`;
+            };
+            const productivityBody = document.getElementById('advisorProductivityBody');
+            if (productivityBody) {
+                const items = Array.from(advisorStats.values()).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+                productivityBody.innerHTML = items.length ? items.map(item => {
+                    const average = item.documentos ? Math.floor(item.totalSegundos / item.documentos) : 0;
+                    return `<tr>
+                        <td class="px-5 py-3 font-semibold text-slate-800">${esc(item.nombre)}</td>
+                        <td class="px-5 py-3">${esc(item.campana)}</td>
+                        <td class="px-5 py-3">${item.documentos}</td>
+                        <td class="px-5 py-3 font-mono whitespace-nowrap">${formatLongDuration(item.totalSegundos)}</td>
+                        <td class="px-5 py-3 font-mono whitespace-nowrap">${formatLongDuration(average)}</td>
+                    </tr>`;
+                }).join('') : '<tr><td colspan="5" class="px-5 py-6 text-center text-slate-400">No hay documentos finalizados de asesores para los filtros seleccionados.</td></tr>';
+            }
         }
 
         async function deleteAuditRecord(id) {
