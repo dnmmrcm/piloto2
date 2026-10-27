@@ -992,24 +992,13 @@
             r.readAsDataURL(fl);
         }
 
-        // GENERACIÓN DE PDF PERFECTAMENTE ENCUADRADO Y CENTRADO
+        // GENERACIÓN DE PDF AISLADO TOTALMENTE DEL DOM PARA EVITAR RECORTE
         async function generarPDF() {
             if (!validateForm()) return;
             const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML;
             btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btnGen.disabled = true;
             let uuid = null; const btnAnexos = document.getElementById('btnAnexosPdf');
             
-            // 1. Preparar vista aislando la caja visual
-            const element = document.getElementById('notificationView');
-            const originalStyle = element.style.cssText;
-            
-            // Forzar un ancho fijo que quepa en un documento Letter A4 (790px)
-            element.style.cssText = 'width: 790px !important; max-width: 790px !important; margin: 0 auto; background: white; padding: 10px; display: block;';
-            
-            // 2. Workaround: Forzar el scroll de la ventana a 0 temporalmente para evitar recortes en la foto de html2canvas
-            const currentScroll = window.scrollY;
-            window.scrollTo(0, 0);
-
             try {
                 if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre);
                 updateData();
@@ -1026,17 +1015,45 @@
                 if (btnAnexos) { btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; btnAnexos.style.display = 'inline-block'; }
                 if (document.fonts && document.fonts.ready) await document.fonts.ready;
 
-                // 3. Márgenes y configuración mejorada
+                // 1. SOLUCION FIX - Clonar elemento fuera de la pantalla en cordenada 0,0
+                const printContainer = document.createElement('div');
+                printContainer.style.position = 'absolute';
+                printContainer.style.top = '0';
+                printContainer.style.left = '0';
+                printContainer.style.width = '800px'; 
+                printContainer.style.zIndex = '-9999';
+                printContainer.style.background = '#ffffff';
+
+                const clone = document.getElementById('notificationView').cloneNode(true);
+                clone.style.display = 'block';
+                clone.style.width = '100%';
+                clone.style.maxWidth = '100%';
+                clone.style.margin = '0';
+                clone.classList.remove('hidden', 'shadow-xl');
+
+                printContainer.appendChild(clone);
+                document.body.appendChild(printContainer);
+
+                // 2. Generar el PDF apuntando al nuevo contenedor perfecto
                 const safeName = caseData.expedient.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'documento';
                 const opt = {
-                    margin: [0.4, 0.3, 0.4, 0.3], // Centrado
+                    margin: [0.4, 0.3, 0.4, 0.3], 
                     filename: `${safeName}.pdf`, 
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 800 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true,
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: 800
+                    },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
                 
-                await html2pdf().set(opt).from(element).save();
+                await html2pdf().set(opt).from(printContainer).save();
+
+                // 3. Limpiar la memoria borrando el contenedor invisible
+                document.body.removeChild(printContainer);
 
                 await registrarTiempoEnBD('Finalizado', uuid);
             } catch (e) {
@@ -1045,11 +1062,6 @@
                 alert('Error de generación. Intente nuevamente.');
             } finally {
                 if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; }
-                
-                // 4. Restaurar el formato y scroll visual original del usuario
-                element.style.cssText = originalStyle;
-                window.scrollTo(0, currentScroll);
-
                 btnGen.innerHTML = oldText; btnGen.disabled = false;
             }
         }
