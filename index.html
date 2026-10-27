@@ -13,6 +13,11 @@
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
         @media print { .no-print { display: none !important; } body { background-color: white !important; } }
         #lightboxModal { transition: opacity 0.3s ease-in-out; }
+        /* El contenedor de exportación se mantiene fuera de pantalla, pero nunca con display:none. */
+        .pdf-export-root { position: fixed !important; left: -10000px !important; top: 0 !important; width: 736px !important; background: #fff !important; z-index: -1 !important; }
+        .pdf-export-root, .pdf-export-root * { box-sizing: border-box !important; }
+        .pdf-export-root img { max-width: 100% !important; }
+        .pdf-export-root .pdf-no-export { display: none !important; }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
@@ -840,35 +845,60 @@
             auditoriaTracking.start = null;
         }
 
+        function resetDocumentForm() {
+            // Reinicia todas las evidencias y evita reutilizar archivos de otro documento.
+            anexosData = { doc1: null, doc2: null, doc3: null, doc4: null };
+            ['doc1', 'doc2', 'doc3', 'doc4'].forEach((fld) => {
+                const preview = document.getElementById(`preview-${fld}`);
+                if (preview) {
+                    preview.style.backgroundImage = 'none';
+                    preview.classList.add('hidden');
+                }
+                const checkbox = document.getElementById(`chk_${fld}`);
+                if (checkbox) checkbox.checked = true;
+                // El input file debe limpiarse para permitir seleccionar de nuevo el mismo archivo.
+                const previewContainer = preview?.parentElement;
+                const fileInput = previewContainer?.querySelector('input[type="file"]');
+                if (fileInput) fileInput.value = '';
+            });
+
+            // Evita que los datos de identificación de un documento anterior pasen al siguiente.
+            ['inputClientName', 'inputRuc', 'inputExpedient', 'inputDate'].forEach((id) => {
+                const input = document.getElementById(id);
+                if (input) input.value = '';
+            });
+            updateData();
+        }
+
         async function selectModel(id) {
-            // Guarda el proceso anterior como cancelado si salió sin generar
-            await registrarTiempoEnBD('Cancelado'); 
+            // Cierra cualquier medición previa antes de iniciar un documento nuevo.
+            await registrarTiempoEnBD('Cancelado');
+            resetDocumentForm();
 
             selectedModelId = id;
-            document.getElementById('modelSelectorOverlay').classList.add('hidden'); 
-            document.getElementById('mainContainer').classList.remove('hidden'); 
-            document.getElementById('notificationView').classList.remove('hidden'); 
-            document.getElementById('editorPanel').classList.remove('hidden'); 
+            document.getElementById('modelSelectorOverlay').classList.add('hidden');
+            document.getElementById('mainContainer').classList.remove('hidden');
+            document.getElementById('notificationView').classList.remove('hidden');
+            document.getElementById('editorPanel').classList.remove('hidden');
             document.getElementById('btnGenerarPDF').classList.remove('hidden');
-            
+
             const m = MODELOS[selectedModelId];
             document.getElementById('lblHeaderModelName').textContent = m.nombre;
             document.getElementById('notificationView').innerHTML = m.html();
-            
             updateData();
-            
-            // CRONÓMETRO EMPIEZA A MEDIR EN ESTE INSTANTE
+
+            // El cronómetro empieza desde cero para el nuevo formato.
             iniciarMedicionCrono(id, m.nombre);
         }
 
-        function openModelSelector() { 
-            // Cancela la medición en curso al volver al menú de Formatos
-            registrarTiempoEnBD('Cancelado'); 
-            document.getElementById('notificationView').classList.add('hidden'); 
-            document.getElementById('mainContainer').classList.add('hidden'); 
-            document.getElementById('editorPanel').classList.add('hidden'); 
-            document.getElementById('btnGenerarPDF').classList.add('hidden'); 
-            document.getElementById('modelSelectorOverlay').classList.remove('hidden'); 
+        async function openModelSelector() {
+            await registrarTiempoEnBD('Cancelado');
+            resetDocumentForm();
+            document.getElementById('notificationView').classList.add('hidden');
+            document.getElementById('mainContainer').classList.add('hidden');
+            document.getElementById('editorPanel').classList.add('hidden');
+            document.getElementById('btnGenerarPDF').classList.add('hidden');
+            document.getElementById('modelSelectorOverlay').classList.remove('hidden');
         }
 
         function updateData() {
@@ -877,47 +907,137 @@
         }
 
         function compressImage(evt, fld) {
-            const fl = evt.target.files[0]; if(!fl) return;
-            const r = new FileReader(); r.readAsDataURL(fl);
-            r.onload = e => { const img = new Image(); img.src = e.target.result; img.onload = () => { const cv = document.createElement('canvas'); let w=img.width, h=img.height; if(w>1200){h*=1200/w; w=1200;} cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h); const b64 = cv.toDataURL('image/jpeg', 0.8); anexosData[fld] = b64; document.getElementById(`preview-${fld}`).style.backgroundImage = `url(${b64})`; document.getElementById(`preview-${fld}`).classList.remove('hidden'); } }
+            const file = evt.target.files?.[0];
+            if (!file) return;
+            // Una nueva carga sustituye siempre el contenido previo de ese soporte.
+            anexosData[fld] = null;
+            const preview = document.getElementById(`preview-${fld}`);
+            if (preview) { preview.style.backgroundImage = 'none'; preview.classList.add('hidden'); }
+
+            const reader = new FileReader();
+            reader.onerror = () => alert('No se pudo leer la imagen seleccionada. Intente nuevamente.');
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onerror = () => alert('El archivo seleccionado no es una imagen válida.');
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width, height = img.height;
+                    if (width > 1200) { height = Math.round(height * 1200 / width); width = 1200; }
+                    canvas.width = width; canvas.height = height;
+                    const context = canvas.getContext('2d');
+                    if (!context) return;
+                    context.drawImage(img, 0, 0, width, height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+                    anexosData[fld] = dataUrl;
+                    if (preview) {
+                        preview.style.backgroundImage = `url("${dataUrl}")`;
+                        preview.classList.remove('hidden');
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         async function generarPDF() {
-            const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML; btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btnGen.disabled = true;
+            const btnGen = document.getElementById('btnGenerarPDF');
+            const oldText = btnGen.innerHTML;
+            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+            btnGen.disabled = true;
+            let exportRoot = null;
+            let caseSaved = false;
             try {
                 updateData();
-                const caseData = { modelId: selectedModelId, clientName: document.getElementById('inputClientName').value, ruc: document.getElementById('inputRuc').value, expedient: document.getElementById('inputExpedient').value, date: document.getElementById('inputDate').value, anexosConfig: { doc1: { show: document.getElementById('chk_doc1').checked, data: anexosData.doc1 }, doc2: { show: document.getElementById('chk_doc2').checked, data: anexosData.doc2 }, doc3: { show: document.getElementById('chk_doc3').checked, data: anexosData.doc3 }, doc4: { show: document.getElementById('chk_doc4').checked, data: anexosData.doc4 } } };
-                
-                const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select(); 
-                if (error) throw error; 
-                const uuid = data[0].id;
-                
-                // FINALIZA CRONÓMETRO CON ÉXITO
-                await registrarTiempoEnBD('Finalizado', uuid);
-                
-                const caseUrl = `${window.location.origin}${window.location.pathname}?id=${uuid}`; const btnAnexos = document.getElementById('btnAnexosPdf'); if(btnAnexos) { btnAnexos.href = caseUrl; btnAnexos.style.display = 'inline-block'; }
-                
-                const element = document.getElementById('notificationView'); 
-                
-                // Configuración Optimizada PDF (Evita bugs de scroll)
-                const opt = {
-                    margin: 0.3,
-                    filename: `${caseData.expedient}.pdf`,
-                    image: { type: 'jpeg', quality: 1 },
-                    html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 1024 },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                const caseData = {
+                    modelId: selectedModelId,
+                    clientName: document.getElementById('inputClientName').value.trim(),
+                    ruc: document.getElementById('inputRuc').value.trim(),
+                    expedient: document.getElementById('inputExpedient').value.trim(),
+                    date: document.getElementById('inputDate').value.trim(),
+                    anexosConfig: {
+                        doc1: { show: document.getElementById('chk_doc1').checked, data: anexosData.doc1 },
+                        doc2: { show: document.getElementById('chk_doc2').checked, data: anexosData.doc2 },
+                        doc3: { show: document.getElementById('chk_doc3').checked, data: anexosData.doc3 },
+                        doc4: { show: document.getElementById('chk_doc4').checked, data: anexosData.doc4 }
+                    }
                 };
 
-                await html2pdf().set(opt).from(element).save();
-                
-                if(btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = "#"; }
-                
-                // Reinicia la medición silenciosa por si se genera otro PDF consecutivo
-                iniciarMedicionCrono(auditoriaTracking.modelId, auditoriaTracking.modelName); 
-            } catch (e) { 
-                await registrarTiempoEnBD('Error', null);
-                alert("Error de generación."); 
-            } finally { btnGen.innerHTML = oldText; btnGen.disabled = false; }
+                if (!caseData.clientName || !caseData.ruc || !caseData.expedient || !caseData.date) {
+                    throw new Error('Complete el destinatario, identificación, expediente y fecha antes de generar el PDF.');
+                }
+
+                const { data, error } = await supabaseClient.from('casos')
+                    .insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }])
+                    .select();
+                if (error) throw error;
+                const uuid = data[0].id;
+                caseSaved = true;
+                await registrarTiempoEnBD('Finalizado', uuid);
+
+                const element = document.getElementById('notificationView');
+                // Exporta una copia aislada: no altera la vista que usa el asesor.
+                exportRoot = document.createElement('div');
+                exportRoot.className = 'pdf-export-root';
+                const exportPage = element.cloneNode(true);
+                exportPage.id = 'notificationViewPdfExport';
+                exportPage.classList.remove('hidden', 'shadow-2xl', 'overflow-hidden');
+                exportPage.style.width = '736px';
+                exportPage.style.maxWidth = '736px';
+                exportPage.style.margin = '0';
+                exportPage.style.background = '#ffffff';
+                exportPage.style.overflow = 'visible';
+                exportPage.style.height = 'auto';
+                exportPage.querySelectorAll('#btnAnexosPdf').forEach((link) => {
+                    link.href = `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(uuid)}`;
+                    link.style.display = 'inline-block';
+                    link.style.visibility = 'visible';
+                    link.style.color = '#ffffff';
+                });
+                // Elimina del PDF controles de interfaz que no pertenecen al documento.
+                exportPage.querySelectorAll('button, input, select, textarea, .no-print, .pdf-no-export').forEach((node) => node.remove());
+                exportRoot.appendChild(exportPage);
+                document.body.appendChild(exportRoot);
+
+                // Espera fuentes e imágenes para evitar exportaciones incompletas.
+                if (document.fonts?.ready) await document.fonts.ready;
+                const images = Array.from(exportPage.querySelectorAll('img'));
+                await Promise.all(images.map((img) => {
+                    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                    return new Promise((resolve) => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                }));
+                await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+                const safeName = (caseData.expedient || 'documento').replace(/[\\/:*?"<>|]+/g, '_');
+                const opt = {
+                    margin: [0.3, 0.3, 0.3, 0.3],
+                    filename: `${safeName}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: false,
+                        backgroundColor: '#ffffff',
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: 800,
+                        logging: false
+                    },
+                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait', compress: true },
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.avoid-page-break'] }
+                };
+                await html2pdf().set(opt).from(exportPage).save();
+            } catch (e) {
+                console.error('Error al generar PDF:', e);
+                if (!caseSaved) await registrarTiempoEnBD('Error', null);
+                alert(e?.message || 'No se pudo generar el PDF. Revise los datos e inténtelo nuevamente.');
+            } finally {
+                if (exportRoot?.parentNode) exportRoot.parentNode.removeChild(exportRoot);
+                btnGen.innerHTML = oldText;
+                btnGen.disabled = false;
+            }
         }
 
         /* =======================================================================
@@ -934,7 +1054,7 @@
                 if (c.doc3 && c.doc3.show && c.doc3.data) { g.innerHTML += crearTarjeta('Soporte 3', c.doc3.data); hI = true; }
                 if (c.doc4 && c.doc4.show && c.doc4.data) { g.innerHTML += crearTarjeta('Soporte 4', c.doc4.data); hI = true; }
             }
-            if(hI) document.getElementById('seccionEvidencias').classList.remove('hidden');
+            document.getElementById('seccionEvidencias').classList.toggle('hidden', !hI);
         }
         function crearTarjeta(tit, b64) { return `<div class="border rounded-lg p-5 bg-slate-50 text-center cursor-pointer hover:shadow-lg transition hover:border-blue-300" onclick="openLightbox('${b64}')"><h4 class="text-xs font-bold mb-3 uppercase tracking-widest text-slate-500">${tit}</h4><img src="${b64}" class="mx-auto max-h-56 object-contain rounded shadow-sm border border-slate-200"></div>`; }
         function openLightbox(s) { document.getElementById('lightboxImg').src = s; document.getElementById('lightboxModal').classList.remove('hidden'); document.getElementById('lightboxModal').classList.add('flex'); }
