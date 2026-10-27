@@ -12,12 +12,8 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
         @media print { .no-print { display: none !important; } body { background-color: white !important; } }
+        .field-error{border-color:#ef4444!important;box-shadow:0 0 0 2px rgba(239,68,68,.5)}
         #lightboxModal { transition: opacity 0.3s ease-in-out; }
-        /* El contenedor de exportación se mantiene fuera de pantalla, pero nunca con display:none. */
-        .pdf-export-root { position: fixed !important; left: -10000px !important; top: 0 !important; width: 736px !important; background: #fff !important; z-index: -1 !important; }
-        .pdf-export-root, .pdf-export-root * { box-sizing: border-box !important; }
-        .pdf-export-root img { max-width: 100% !important; }
-        .pdf-export-root .pdf-no-export { display: none !important; }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
@@ -254,18 +250,19 @@
             
             <div id="editorPanel" class="hidden border-t border-slate-800 bg-slate-950 px-4 py-4 shadow-inner">
                 <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                    <div><label class="block text-slate-400 mb-1">Nombre Destinatario</label><input type="text" id="inputClientName" value="EMPRESA S.A. / JUAN PÉREZ" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
-                    <div><label class="block text-slate-400 mb-1">Identificación / RUC</label><input type="text" id="inputRuc" value="0992345678001" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
-                    <div><label class="block text-slate-400 mb-1">Código de Expediente</label><input type="text" id="inputExpedient" value="7191926-22.9.35" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
-                    <div><label class="block text-slate-400 mb-1">Fecha de Radicación</label><input type="text" id="inputDate" value="26 de octubre, 2026" oninput="updateData()" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
+                    <div id="formErrorBox" class="hidden col-span-full bg-red-900/40 border border-red-500 text-red-200 rounded p-3"></div>
+                    <div><label class="block text-slate-400 mb-1">Nombre Destinatario <span class="text-red-400">*</span></label><input type="text" id="inputClientName" placeholder="Ej. EMPRESA S.A. / JUAN PÉREZ" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
+                    <div><label class="block text-slate-400 mb-1">Identificación / RUC <span class="text-red-400">*</span></label><input type="text" id="inputRuc" placeholder="Ej. 0992345678001" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
+                    <div><label class="block text-slate-400 mb-1">Código de Expediente <span class="text-red-400">*</span></label><input type="text" id="inputExpedient" placeholder="Ej. 7191926-22.9.35" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
+                    <div><label class="block text-slate-400 mb-1">Fecha de Radicación <span class="text-red-400">*</span></label><input type="date" id="inputDate" style="color-scheme:dark" onchange="updateData(); clearFieldError(this)" class="cursor-pointer w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
 
                     <div class="col-span-full border-t border-slate-700 pt-4 mt-2">
-                        <h3 class="text-amber-400 font-bold mb-3 uppercase flex items-center gap-2"><i class="fa-solid fa-paperclip"></i> Evidencias Documentales Admisibles</h3>
+                        <h3 class="text-amber-400 font-bold mb-3 uppercase flex items-center gap-2"><i class="fa-solid fa-paperclip"></i> Evidencias Documentales Admisibles <span class="text-slate-400 normal-case font-normal">(cada soporte marcado en "Incluir" requiere su imagen)</span></h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-slate-800/80 p-3 rounded border border-slate-700"><label class="block text-slate-300 mb-2 font-bold text-[10px] uppercase">Soporte 1</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc1')" class="w-full text-slate-400 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1 font-medium"><input type="checkbox" id="chk_doc1" checked class="accent-blue-500"> Incluir</label><div id="preview-doc1" class="w-full h-20 bg-slate-900 rounded border border-slate-700 bg-cover bg-center mt-2 hidden"></div></div>
-                            <div class="bg-slate-800/80 p-3 rounded border border-slate-700"><label class="block text-slate-300 mb-2 font-bold text-[10px] uppercase">Soporte 2</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc2')" class="w-full text-slate-400 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1 font-medium"><input type="checkbox" id="chk_doc2" checked class="accent-blue-500"> Incluir</label><div id="preview-doc2" class="w-full h-20 bg-slate-900 rounded border border-slate-700 bg-cover bg-center mt-2 hidden"></div></div>
-                            <div class="bg-slate-800/80 p-3 rounded border border-slate-700"><label class="block text-slate-300 mb-2 font-bold text-[10px] uppercase">Soporte 3</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc3')" class="w-full text-slate-400 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1 font-medium"><input type="checkbox" id="chk_doc3" checked class="accent-blue-500"> Incluir</label><div id="preview-doc3" class="w-full h-20 bg-slate-900 rounded border border-slate-700 bg-cover bg-center mt-2 hidden"></div></div>
-                            <div class="bg-slate-800/80 p-3 rounded border border-slate-700"><label class="block text-slate-300 mb-2 font-bold text-[10px] uppercase">Soporte 4</label><input type="file" accept="image/*" onchange="compressImage(event, 'doc4')" class="w-full text-slate-400 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1 font-medium"><input type="checkbox" id="chk_doc4" checked class="accent-blue-500"> Incluir</label><div id="preview-doc4" class="w-full h-20 bg-slate-900 rounded border border-slate-700 bg-cover bg-center mt-2 hidden"></div></div>
+                            <div class="bg-slate-800/80 p-3 rounded border border-slate-700"><label class="block text-slate-300 mb-2 font-bold text-[10px] uppercase">Soporte 1</label><input type="file" id="file_doc1" accept="image/*" onchange="compressImage(event, 'doc1')" class="w-full text-slate-400 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1 font-medium"><input type="checkbox" id="chk_doc1" checked onchange="clearFieldError(document.getElementById('file_doc1'))" class="accent-blue-500"> Incluir</label><div id="preview-doc1" class="w-full h-20 bg-slate-900 rounded border border-slate-700 bg-cover bg-center mt-2 hidden"></div></div>
+                            <div class="bg-slate-800/80 p-3 rounded border border-slate-700"><label class="block text-slate-300 mb-2 font-bold text-[10px] uppercase">Soporte 2</label><input type="file" id="file_doc2" accept="image/*" onchange="compressImage(event, 'doc2')" class="w-full text-slate-400 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1 font-medium"><input type="checkbox" id="chk_doc2" checked onchange="clearFieldError(document.getElementById('file_doc2'))" class="accent-blue-500"> Incluir</label><div id="preview-doc2" class="w-full h-20 bg-slate-900 rounded border border-slate-700 bg-cover bg-center mt-2 hidden"></div></div>
+                            <div class="bg-slate-800/80 p-3 rounded border border-slate-700"><label class="block text-slate-300 mb-2 font-bold text-[10px] uppercase">Soporte 3</label><input type="file" id="file_doc3" accept="image/*" onchange="compressImage(event, 'doc3')" class="w-full text-slate-400 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1 font-medium"><input type="checkbox" id="chk_doc3" checked onchange="clearFieldError(document.getElementById('file_doc3'))" class="accent-blue-500"> Incluir</label><div id="preview-doc3" class="w-full h-20 bg-slate-900 rounded border border-slate-700 bg-cover bg-center mt-2 hidden"></div></div>
+                            <div class="bg-slate-800/80 p-3 rounded border border-slate-700"><label class="block text-slate-300 mb-2 font-bold text-[10px] uppercase">Soporte 4</label><input type="file" id="file_doc4" accept="image/*" onchange="compressImage(event, 'doc4')" class="w-full text-slate-400 text-[10px] mb-2"><label class="flex items-center text-slate-300 gap-2 cursor-pointer mt-1 font-medium"><input type="checkbox" id="chk_doc4" checked onchange="clearFieldError(document.getElementById('file_doc4'))" class="accent-blue-500"> Incluir</label><div id="preview-doc4" class="w-full h-20 bg-slate-900 rounded border border-slate-700 bg-cover bg-center mt-2 hidden"></div></div>
                         </div>
                     </div>
                 </div>
@@ -342,6 +339,64 @@
         let auditoriaTracking = { start: null, modelId: null, modelName: null };
         let selectedModelId = null;
         let anexosData = { doc1: null, doc2: null, doc3: null, doc4: null };
+
+        const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+        function formatDateES(iso) {
+            const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+            return m ? `${parseInt(m[3], 10)} de ${MESES[parseInt(m[2], 10) - 1]} de ${m[1]}` : '';
+        }
+        function esc(v) {
+            return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        function showFormError(msgs, title = 'Complete todos los datos para generar el PDF:') {
+            const box = document.getElementById('formErrorBox'); box.innerHTML = '';
+            const t = document.createElement('div'); t.className = 'font-bold mb-1'; t.textContent = title;
+            const ul = document.createElement('ul'); ul.className = 'list-disc pl-5 space-y-0.5';
+            msgs.forEach(m => { const li = document.createElement('li'); li.textContent = m; ul.appendChild(li); });
+            box.append(t, ul); box.classList.remove('hidden');
+        }
+        function clearFieldError(el) {
+            if (el) el.classList.remove('field-error');
+            if (!document.querySelector('#editorPanel .field-error')) document.getElementById('formErrorBox').classList.add('hidden');
+        }
+        function resetEditorForm() {
+            ['inputClientName', 'inputRuc', 'inputExpedient', 'inputDate'].forEach(id => { const el = document.getElementById(id); el.value = ''; el.classList.remove('field-error'); });
+            anexosData = { doc1: null, doc2: null, doc3: null, doc4: null };
+            for (let i = 1; i <= 4; i++) {
+                const f = document.getElementById(`file_doc${i}`); f.value = ''; f.classList.remove('field-error');
+                document.getElementById(`chk_doc${i}`).checked = true;
+                const p = document.getElementById(`preview-doc${i}`); p.style.backgroundImage = ''; p.classList.add('hidden');
+            }
+            document.getElementById('formErrorBox').classList.add('hidden');
+        }
+        function validateForm() {
+            document.querySelectorAll('#editorPanel .field-error').forEach(el => el.classList.remove('field-error'));
+            const errs = []; let first = null;
+            const mark = (el, msg) => { el.classList.add('field-error'); errs.push(msg); if (!first) first = el; };
+            [['inputClientName', 'Nombre del destinatario'], ['inputRuc', 'Identificación / RUC'], ['inputExpedient', 'Código de expediente'], ['inputDate', 'Fecha de radicación (seleccione una fecha)']]
+                .forEach(([id, label]) => { const el = document.getElementById(id); if (!el.value.trim()) mark(el, label); });
+            for (let i = 1; i <= 4; i++) {
+                if (document.getElementById(`chk_doc${i}`).checked && !anexosData[`doc${i}`])
+                    mark(document.getElementById(`file_doc${i}`), `Soporte ${i}: cargue la imagen o desmarque "Incluir"`);
+            }
+            if (!selectedModelId) { errs.push('Seleccione un formato'); }
+            if (errs.length) {
+                showFormError(errs);
+                if (first) { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); try { first.focus({ preventScroll: true }); } catch (_) {} }
+                return false;
+            }
+            document.getElementById('formErrorBox').classList.add('hidden');
+            return true;
+        }
+        // Fecha: solo se elige desde el calendario (no se escribe)
+        (function () {
+            const d = document.getElementById('inputDate');
+            const open = () => { try { d.showPicker(); } catch (_) {} };
+            d.addEventListener('click', open);
+            d.addEventListener('keydown', e => { if (e.key === 'Tab') return; e.preventDefault(); if (e.key === 'Enter' || e.key === ' ') open(); });
+            d.addEventListener('paste', e => e.preventDefault());
+            d.addEventListener('drop', e => e.preventDefault());
+        })();
 
         // ==========================================
         // 5 FORMATOS 100% COMPATIBLES CON EL PDF
@@ -633,49 +688,39 @@
         async function loadAuditData() {
             const isAdmin = String(currentUser.rol).trim().toLowerCase() === 'sistemas';
             let query = supabaseClient.from('auditoria').select('*, perfiles(nombre)').order('hora_fin', { ascending: false });
-            
             if (isAdmin) {
                 const campFilter = document.getElementById('filter-campana').value;
                 if (campFilter !== 'ALL') query = query.eq('campana', campFilter);
+            } else if (auditorActiveCampaign) {
+                query = query.eq('campana', auditorActiveCampaign);
             }
-            
             const dateFilter = document.getElementById('filter-date').value;
             if (dateFilter) {
-                const start = new Date(dateFilter); start.setHours(0,0,0,0);
-                const end = new Date(dateFilter); end.setHours(23,59,59,999);
+                // Hora local explícita: new Date('YYYY-MM-DD') es UTC y desplazaba el día en Ecuador
+                const start = new Date(`${dateFilter}T00:00:00`), end = new Date(`${dateFilter}T23:59:59.999`);
                 query = query.gte('hora_fin', start.toISOString()).lte('hora_fin', end.toISOString());
             }
-
             const { data, error } = await query;
             if (error) { console.error(error); return; }
 
-            const tbody = document.getElementById('auditTableBody'); tbody.innerHTML = '';
-            
-            // Ocultar cabecera de Acciones si no es Sistemas
             const thAcciones = document.getElementById('thAccionesAudit');
-            if(thAcciones) thAcciones.style.display = isAdmin ? 'table-cell' : 'none';
-
-            let totalT = 0, fin = 0, docsTot = 0, canceled = 0;
-
-            (data||[]).forEach(r => {
+            if (thAcciones) thAcciones.style.display = isAdmin ? 'table-cell' : 'none';
+            let totalT = 0, fin = 0, docsTot = 0, canceled = 0; const rows = [];
+            (data || []).forEach(r => {
                 const isDoc = r.estado === 'Finalizado' || r.estado === 'Cancelado' || r.estado === 'Error';
-                if(isDoc) docsTot++;
-                if(r.estado === 'Finalizado') { totalT += r.tiempo_segundos; fin++; }
-                if(r.estado === 'Cancelado') { canceled++; }
-                
-                const tStr = isDoc ? `${Math.floor(r.tiempo_segundos/60)}m ${r.tiempo_segundos%60}s` : '-';
-                
-                // Botón de eliminar solo para sistemas
-                const deleteBtnHtml = isAdmin ? `<td class="px-6 py-3"><button onclick="deleteAuditRecord('${r.id}')" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-2.5 py-1.5 rounded font-bold transition"><i class="fa-solid fa-trash"></i></button></td>` : '';
-
-                tbody.innerHTML += `<tr><td class="px-6 py-3 whitespace-nowrap text-[11px]">${new Date(r.hora_fin).toLocaleString()}</td><td class="px-6 py-3 font-bold">${r.perfiles?.nombre || 'SISTEMA'}</td><td class="px-6 py-3">${r.campana||'-'}</td><td class="px-6 py-3 text-xs">${isDoc ? r.modelo : r.estado}</td><td class="px-6 py-3 font-mono text-xs">${tStr}</td><td class="px-6 py-3"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${r.estado==='Finalizado'?'bg-emerald-100 text-emerald-800':r.estado==='Cancelado'?'bg-red-100 text-red-800':'bg-slate-100 text-slate-800'}">${isDoc ? r.estado : 'Log'}</span></td>${deleteBtnHtml}</tr>`;
+                if (isDoc) docsTot++;
+                if (r.estado === 'Finalizado') { totalT += r.tiempo_segundos; fin++; }
+                if (r.estado === 'Cancelado') canceled++;
+                const tStr = isDoc ? `${Math.floor(r.tiempo_segundos / 60)}m ${r.tiempo_segundos % 60}s` : '-';
+                const del = isAdmin ? `<td class="px-6 py-3"><button onclick="deleteAuditRecord('${esc(r.id)}')" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-2.5 py-1.5 rounded font-bold transition"><i class="fa-solid fa-trash"></i></button></td>` : '';
+                rows.push(`<tr><td class="px-6 py-3 whitespace-nowrap text-[11px]">${new Date(r.hora_fin).toLocaleString()}</td><td class="px-6 py-3 font-bold">${esc(r.perfiles?.nombre || 'SISTEMA')}</td><td class="px-6 py-3">${esc(r.campana || '-')}</td><td class="px-6 py-3 text-xs">${esc(isDoc ? r.modelo : r.estado)}</td><td class="px-6 py-3 font-mono text-xs">${tStr}</td><td class="px-6 py-3"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${r.estado === 'Finalizado' ? 'bg-emerald-100 text-emerald-800' : r.estado === 'Cancelado' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-800'}">${isDoc ? esc(r.estado) : 'Log'}</span></td>${del}</tr>`);
             });
-
+            document.getElementById('auditTableBody').innerHTML = rows.join('');
             document.getElementById('stat-total').textContent = docsTot;
             document.getElementById('stat-finalizados').textContent = fin;
             document.getElementById('stat-cancelados').textContent = canceled;
             const avg = fin > 0 ? Math.floor(totalT / fin) : 0;
-            document.getElementById('stat-promedio').textContent = `${Math.floor(avg/60)}m ${avg%60}s`;
+            document.getElementById('stat-promedio').textContent = `${Math.floor(avg / 60)}m ${avg % 60}s`;
         }
 
         async function deleteAuditRecord(id) {
@@ -692,22 +737,19 @@
         async function loadUsersList() {
             const { data, error } = await supabaseClient.from('perfiles').select('*').order('creado_en', { ascending: false });
             if (error) return;
-            const tbody = document.getElementById('usersTableBody'); tbody.innerHTML = '';
-            data.forEach(u => {
-                tbody.innerHTML += `
+            document.getElementById('usersTableBody').innerHTML = data.map(u => `
                     <tr>
-                        <td class="px-6 py-3 font-bold">${u.nombre}</td>
-                        <td class="px-6 py-3 text-xs">${u.email}</td>
-                        <td class="px-6 py-3 font-bold text-xs uppercase tracking-wider ${u.rol==='Auditor'?'text-purple-600':u.rol==='Sistemas'?'text-amber-600':'text-blue-600'}">${u.rol}</td>
-                        <td class="px-6 py-3 text-xs">${u.campana||'N/A'}</td>
-                        <td class="px-6 py-3"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${u.activo?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${u.activo?'Activo':'Inactivo'}</span></td>
+                        <td class="px-6 py-3 font-bold">${esc(u.nombre)}</td>
+                        <td class="px-6 py-3 text-xs">${esc(u.email)}</td>
+                        <td class="px-6 py-3 font-bold text-xs uppercase tracking-wider ${u.rol === 'Auditor' ? 'text-purple-600' : u.rol === 'Sistemas' ? 'text-amber-600' : 'text-blue-600'}">${esc(u.rol)}</td>
+                        <td class="px-6 py-3 text-xs">${esc(u.campana || 'N/A')}</td>
+                        <td class="px-6 py-3"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${u.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
                         <td class="px-6 py-3 flex items-center gap-2">
-                            <button onclick="openEditUserModal('${u.id}', '${u.nombre}', '${u.rol}', '${u.campana||''}')" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-2.5 py-1.5 rounded font-bold transition"><i class="fa-solid fa-pen mr-1"></i> Editar</button>
-                            <button onclick="toggleUser('${u.id}', ${!u.activo})" class="text-xs bg-slate-200 hover:bg-slate-300 px-2.5 py-1.5 rounded font-medium transition">${u.activo?'Desactivar':'Activar'}</button>
-                            <button onclick="deleteUser('${u.id}', '${u.nombre}')" class="text-xs bg-red-100 hover:bg-red-200 text-red-800 px-2.5 py-1.5 rounded font-bold transition"><i class="fa-solid fa-trash mr-1"></i> Eliminar</button>
+                            <button data-id="${esc(u.id)}" data-nombre="${esc(u.nombre)}" data-rol="${esc(u.rol)}" data-campana="${esc(u.campana || '')}" onclick="openEditUserModal(this.dataset.id, this.dataset.nombre, this.dataset.rol, this.dataset.campana)" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-2.5 py-1.5 rounded font-bold transition"><i class="fa-solid fa-pen mr-1"></i> Editar</button>
+                            <button onclick="toggleUser('${esc(u.id)}', ${!u.activo})" class="text-xs bg-slate-200 hover:bg-slate-300 px-2.5 py-1.5 rounded font-medium transition">${u.activo ? 'Desactivar' : 'Activar'}</button>
+                            <button data-id="${esc(u.id)}" data-nombre="${esc(u.nombre)}" onclick="deleteUser(this.dataset.id, this.dataset.nombre)" class="text-xs bg-red-100 hover:bg-red-200 text-red-800 px-2.5 py-1.5 rounded font-bold transition"><i class="fa-solid fa-trash mr-1"></i> Eliminar</button>
                         </td>
-                    </tr>`;
-            });
+                    </tr>`).join('');
         }
         
         async function toggleUser(id, estado) { 
@@ -808,8 +850,13 @@
                 const rolSel = document.getElementById('nu_rol').value;
                 const campSel = rolSel === 'Auditor' ? null : (rolSel === 'Sistemas' ? 'Sistemas / Administración' : document.getElementById('nu_campana').value);
                 
-                await supabaseClient.from('perfiles').update({ nombre: document.getElementById('nu_nombre').value, rol: rolSel, campana: campSel }).eq('id', nu.user.id);
-                await supabaseClient.auth.setSession({ access_token: aSession.access_token, refresh_token: aSession.refresh_token });
+                let e2 = null;
+                try {
+                    ({ error: e2 } = await supabaseClient.from('perfiles').update({ nombre: document.getElementById('nu_nombre').value, rol: rolSel, campana: campSel }).eq('id', nu.user.id));
+                } finally {
+                    if (aSession) await supabaseClient.auth.setSession({ access_token: aSession.access_token, refresh_token: aSession.refresh_token });
+                }
+                if (e2) throw e2;
                 
                 closeUserModal(); loadUsersList();
                 await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: 'Sistemas / Administración', modelo: 'SISTEMA', hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: 'Gestión Usuario' }]);
@@ -845,198 +892,125 @@
             auditoriaTracking.start = null;
         }
 
-        function resetDocumentForm() {
-            // Reinicia todas las evidencias y evita reutilizar archivos de otro documento.
-            anexosData = { doc1: null, doc2: null, doc3: null, doc4: null };
-            ['doc1', 'doc2', 'doc3', 'doc4'].forEach((fld) => {
-                const preview = document.getElementById(`preview-${fld}`);
-                if (preview) {
-                    preview.style.backgroundImage = 'none';
-                    preview.classList.add('hidden');
-                }
-                const checkbox = document.getElementById(`chk_${fld}`);
-                if (checkbox) checkbox.checked = true;
-                // El input file debe limpiarse para permitir seleccionar de nuevo el mismo archivo.
-                const previewContainer = preview?.parentElement;
-                const fileInput = previewContainer?.querySelector('input[type="file"]');
-                if (fileInput) fileInput.value = '';
-            });
-
-            // Evita que los datos de identificación de un documento anterior pasen al siguiente.
-            ['inputClientName', 'inputRuc', 'inputExpedient', 'inputDate'].forEach((id) => {
-                const input = document.getElementById(id);
-                if (input) input.value = '';
-            });
-            updateData();
-        }
-
         async function selectModel(id) {
-            // Cierra cualquier medición previa antes de iniciar un documento nuevo.
-            await registrarTiempoEnBD('Cancelado');
-            resetDocumentForm();
+            // Guarda el proceso anterior como cancelado si salió sin generar
+            await registrarTiempoEnBD('Cancelado'); 
 
             selectedModelId = id;
-            document.getElementById('modelSelectorOverlay').classList.add('hidden');
-            document.getElementById('mainContainer').classList.remove('hidden');
-            document.getElementById('notificationView').classList.remove('hidden');
-            document.getElementById('editorPanel').classList.remove('hidden');
+            resetEditorForm(); // limpia datos del documento anterior
+            document.getElementById('modelSelectorOverlay').classList.add('hidden'); 
+            document.getElementById('mainContainer').classList.remove('hidden'); 
+            document.getElementById('notificationView').classList.remove('hidden'); 
+            document.getElementById('editorPanel').classList.remove('hidden'); 
             document.getElementById('btnGenerarPDF').classList.remove('hidden');
-
+            
             const m = MODELOS[selectedModelId];
             document.getElementById('lblHeaderModelName').textContent = m.nombre;
             document.getElementById('notificationView').innerHTML = m.html();
+            
             updateData();
-
-            // El cronómetro empieza desde cero para el nuevo formato.
+            
+            // CRONÓMETRO EMPIEZA A MEDIR EN ESTE INSTANTE
             iniciarMedicionCrono(id, m.nombre);
         }
 
-        async function openModelSelector() {
-            await registrarTiempoEnBD('Cancelado');
-            resetDocumentForm();
-            document.getElementById('notificationView').classList.add('hidden');
-            document.getElementById('mainContainer').classList.add('hidden');
-            document.getElementById('editorPanel').classList.add('hidden');
-            document.getElementById('btnGenerarPDF').classList.add('hidden');
-            document.getElementById('modelSelectorOverlay').classList.remove('hidden');
+        function openModelSelector() {
+            resetEditorForm(); 
+            // Cancela la medición en curso al volver al menú de Formatos
+            registrarTiempoEnBD('Cancelado'); 
+            document.getElementById('notificationView').classList.add('hidden'); 
+            document.getElementById('mainContainer').classList.add('hidden'); 
+            document.getElementById('editorPanel').classList.add('hidden'); 
+            document.getElementById('btnGenerarPDF').classList.add('hidden'); 
+            document.getElementById('modelSelectorOverlay').classList.remove('hidden'); 
         }
 
         function updateData() {
-            const d = { c: document.getElementById('inputClientName').value || '-', r: document.getElementById('inputRuc').value || '-', e: document.getElementById('inputExpedient').value || '-', f: document.getElementById('inputDate').value || '-' };
-            document.querySelectorAll('.dispClientName').forEach(el => el.textContent = d.c); document.querySelectorAll('.dispRuc').forEach(el => el.textContent = d.r); document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = d.e); document.querySelectorAll('.dispDate').forEach(el => el.textContent = d.f);
+            const v = id => document.getElementById(id).value.trim();
+            const d = { c: v('inputClientName') || '-', r: v('inputRuc') || '-', e: v('inputExpedient') || '-', f: formatDateES(document.getElementById('inputDate').value) || '-' };
+            document.querySelectorAll('.dispClientName').forEach(el => el.textContent = d.c); document.querySelectorAll('.dispRuc').forEach(el => el.textContent = d.r);
+            document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = d.e); document.querySelectorAll('.dispDate').forEach(el => el.textContent = d.f);
         }
 
         function compressImage(evt, fld) {
-            const file = evt.target.files?.[0];
-            if (!file) return;
-            // Una nueva carga sustituye siempre el contenido previo de ese soporte.
-            anexosData[fld] = null;
-            const preview = document.getElementById(`preview-${fld}`);
-            if (preview) { preview.style.backgroundImage = 'none'; preview.classList.add('hidden'); }
-
-            const reader = new FileReader();
-            reader.onerror = () => alert('No se pudo leer la imagen seleccionada. Intente nuevamente.');
-            reader.onload = (event) => {
+            const input = evt.target; const preview = document.getElementById(`preview-${fld}`);
+            const clear = () => { anexosData[fld] = null; preview.style.backgroundImage = ''; preview.classList.add('hidden'); };
+            const fl = input.files && input.files[0];
+            if (!fl) { clear(); return; }
+            if (!fl.type.startsWith('image/')) { clear(); input.value = ''; showFormError(['El archivo debe ser una imagen (JPG, PNG, WEBP).'], 'Archivo no válido:'); return; }
+            clearFieldError(input);
+            const r = new FileReader();
+            r.onerror = () => { clear(); showFormError(['No se pudo leer el archivo.'], 'Error:'); };
+            r.onload = e => {
                 const img = new Image();
-                img.onerror = () => alert('El archivo seleccionado no es una imagen válida.');
+                img.onerror = () => { clear(); input.value = ''; showFormError(['La imagen está dañada o no es compatible.'], 'Error:'); };
                 img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width, height = img.height;
-                    if (width > 1200) { height = Math.round(height * 1200 / width); width = 1200; }
-                    canvas.width = width; canvas.height = height;
-                    const context = canvas.getContext('2d');
-                    if (!context) return;
-                    context.drawImage(img, 0, 0, width, height);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-                    anexosData[fld] = dataUrl;
-                    if (preview) {
-                        preview.style.backgroundImage = `url("${dataUrl}")`;
-                        preview.classList.remove('hidden');
-                    }
+                    let w = img.width, h = img.height; if (w > 1200) { h = Math.round(h * 1200 / w); w = 1200; }
+                    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+                    const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+                    const b64 = cv.toDataURL('image/jpeg', 0.8); anexosData[fld] = b64;
+                    preview.style.backgroundImage = `url(${b64})`; preview.classList.remove('hidden');
                 };
-                img.src = event.target.result;
+                img.src = e.target.result;
             };
-            reader.readAsDataURL(file);
+            r.readAsDataURL(fl);
+        }
+
+        // Copia del documento con ancho fijo y centrada (horizontal y verticalmente) dentro de la hoja carta
+        function buildPdfSource(marginIn) {
+            const W = 740;
+            const holder = document.createElement('div'); holder.style.cssText = `position:fixed;left:-10000px;top:0;width:${W}px;pointer-events:none;`;
+            const wrapper = document.createElement('div'); wrapper.style.cssText = `width:${W}px;margin:0;padding:0;background:#fff;box-sizing:border-box;`;
+            const clone = document.getElementById('notificationView').cloneNode(true);
+            clone.removeAttribute('id'); clone.classList.remove('hidden', 'shadow-2xl');
+            clone.style.cssText = 'width:100%;max-width:none;margin:0;box-shadow:none;';
+            wrapper.appendChild(clone); holder.appendChild(wrapper); document.body.appendChild(holder);
+            const pxPerIn = W / (8.5 - 2 * marginIn);
+            const availH = (11 - 2 * marginIn) * pxPerIn;
+            const h = clone.offsetHeight;
+            if (h < availH - 40) wrapper.style.paddingTop = Math.floor((availH - h) / 2) + 'px';
+            return { wrapper, cleanup: () => holder.remove() };
         }
 
         async function generarPDF() {
-            const btnGen = document.getElementById('btnGenerarPDF');
-            const oldText = btnGen.innerHTML;
-            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
-            btnGen.disabled = true;
-            let exportRoot = null;
-            let caseSaved = false;
+            if (!validateForm()) return;
+            const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML;
+            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btnGen.disabled = true;
+            let uuid = null; const btnAnexos = document.getElementById('btnAnexosPdf');
             try {
+                if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre);
                 updateData();
-                const caseData = {
-                    modelId: selectedModelId,
-                    clientName: document.getElementById('inputClientName').value.trim(),
-                    ruc: document.getElementById('inputRuc').value.trim(),
-                    expedient: document.getElementById('inputExpedient').value.trim(),
-                    date: document.getElementById('inputDate').value.trim(),
-                    anexosConfig: {
-                        doc1: { show: document.getElementById('chk_doc1').checked, data: anexosData.doc1 },
-                        doc2: { show: document.getElementById('chk_doc2').checked, data: anexosData.doc2 },
-                        doc3: { show: document.getElementById('chk_doc3').checked, data: anexosData.doc3 },
-                        doc4: { show: document.getElementById('chk_doc4').checked, data: anexosData.doc4 }
-                    }
-                };
+                const val = id => document.getElementById(id).value.trim();
+                const cfg = n => ({ show: document.getElementById(`chk_doc${n}`).checked, data: anexosData[`doc${n}`] });
+                const caseData = { modelId: selectedModelId, clientName: val('inputClientName'), ruc: val('inputRuc'), expedient: val('inputExpedient'),
+                    date: formatDateES(document.getElementById('inputDate').value), dateIso: document.getElementById('inputDate').value,
+                    anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) } };
 
-                if (!caseData.clientName || !caseData.ruc || !caseData.expedient || !caseData.date) {
-                    throw new Error('Complete el destinatario, identificación, expediente y fecha antes de generar el PDF.');
-                }
-
-                const { data, error } = await supabaseClient.from('casos')
-                    .insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }])
-                    .select();
+                const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select();
                 if (error) throw error;
-                const uuid = data[0].id;
-                caseSaved = true;
-                await registrarTiempoEnBD('Finalizado', uuid);
+                uuid = data[0].id;
 
-                const element = document.getElementById('notificationView');
-                // Exporta una copia aislada: no altera la vista que usa el asesor.
-                exportRoot = document.createElement('div');
-                exportRoot.className = 'pdf-export-root';
-                const exportPage = element.cloneNode(true);
-                exportPage.id = 'notificationViewPdfExport';
-                exportPage.classList.remove('hidden', 'shadow-2xl', 'overflow-hidden');
-                exportPage.style.width = '736px';
-                exportPage.style.maxWidth = '736px';
-                exportPage.style.margin = '0';
-                exportPage.style.background = '#ffffff';
-                exportPage.style.overflow = 'visible';
-                exportPage.style.height = 'auto';
-                exportPage.querySelectorAll('#btnAnexosPdf').forEach((link) => {
-                    link.href = `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(uuid)}`;
-                    link.style.display = 'inline-block';
-                    link.style.visibility = 'visible';
-                    link.style.color = '#ffffff';
-                });
-                // Elimina del PDF controles de interfaz que no pertenecen al documento.
-                exportPage.querySelectorAll('button, input, select, textarea, .no-print, .pdf-no-export').forEach((node) => node.remove());
-                exportRoot.appendChild(exportPage);
-                document.body.appendChild(exportRoot);
+                if (btnAnexos) { btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; btnAnexos.style.display = 'inline-block'; }
+                if (document.fonts && document.fonts.ready) await document.fonts.ready;
 
-                // Espera fuentes e imágenes para evitar exportaciones incompletas.
-                if (document.fonts?.ready) await document.fonts.ready;
-                const images = Array.from(exportPage.querySelectorAll('img'));
-                await Promise.all(images.map((img) => {
-                    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-                    return new Promise((resolve) => {
-                        img.onload = resolve;
-                        img.onerror = resolve;
-                    });
-                }));
-                await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-                const safeName = (caseData.expedient || 'documento').replace(/[\\/:*?"<>|]+/g, '_');
+                const MARGIN = 0.4;
+                const src = buildPdfSource(MARGIN);
+                const safeName = caseData.expedient.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'documento';
                 const opt = {
-                    margin: [0.3, 0.3, 0.3, 0.3],
-                    filename: `${safeName}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        allowTaint: false,
-                        backgroundColor: '#ffffff',
-                        scrollX: 0,
-                        scrollY: 0,
-                        windowWidth: 800,
-                        logging: false
-                    },
-                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait', compress: true },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.avoid-page-break'] }
+                    margin: MARGIN, filename: `${safeName}.pdf`, image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 1024, backgroundColor: '#ffffff' },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
                 };
-                await html2pdf().set(opt).from(exportPage).save();
+                try { await html2pdf().set(opt).from(src.wrapper).save(); } finally { src.cleanup(); }
+
+                await registrarTiempoEnBD('Finalizado', uuid);
             } catch (e) {
-                console.error('Error al generar PDF:', e);
-                if (!caseSaved) await registrarTiempoEnBD('Error', null);
-                alert(e?.message || 'No se pudo generar el PDF. Revise los datos e inténtelo nuevamente.');
+                console.error('Error generando PDF:', e);
+                await registrarTiempoEnBD('Error', uuid);
+                alert('Error de generación. Intente nuevamente.');
             } finally {
-                if (exportRoot?.parentNode) exportRoot.parentNode.removeChild(exportRoot);
-                btnGen.innerHTML = oldText;
-                btnGen.disabled = false;
+                if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; }
+                btnGen.innerHTML = oldText; btnGen.disabled = false;
             }
         }
 
@@ -1046,17 +1020,24 @@
         async function getCaseData(uuid) { const { data } = await supabaseClient.from('casos').select('*').eq('id', uuid).single(); return data; }
         function populateClientView(cr) {
             const cd = cr.data; const m = MODELOS[cd.modelId || 1];
-            document.getElementById('dispClientViewHeaderTitle').textContent = m.header; document.querySelectorAll('.dispClientName').forEach(el => el.textContent = cd.clientName); document.querySelectorAll('.dispRuc').forEach(el => el.textContent = cd.ruc); document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = cd.expedient); document.querySelectorAll('.dispDate').forEach(el => el.textContent = cd.date);
+            document.getElementById('dispClientViewHeaderTitle').textContent = m.header;
+            document.querySelectorAll('.dispClientName').forEach(el => el.textContent = cd.clientName); document.querySelectorAll('.dispRuc').forEach(el => el.textContent = cd.ruc);
+            document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = cd.expedient); document.querySelectorAll('.dispDate').forEach(el => el.textContent = cd.date);
             const g = document.getElementById('galeriaAnexos'); g.innerHTML = ''; let hI = false;
-            if(cd.anexosConfig) { const c = cd.anexosConfig;
-                if (c.doc1 && c.doc1.show && c.doc1.data) { g.innerHTML += crearTarjeta('Soporte 1', c.doc1.data); hI = true; }
-                if (c.doc2 && c.doc2.show && c.doc2.data) { g.innerHTML += crearTarjeta('Soporte 2', c.doc2.data); hI = true; }
-                if (c.doc3 && c.doc3.show && c.doc3.data) { g.innerHTML += crearTarjeta('Soporte 3', c.doc3.data); hI = true; }
-                if (c.doc4 && c.doc4.show && c.doc4.data) { g.innerHTML += crearTarjeta('Soporte 4', c.doc4.data); hI = true; }
-            }
-            document.getElementById('seccionEvidencias').classList.toggle('hidden', !hI);
+            const seguro = x => typeof x === 'string' && /^data:image\\/(jpeg|png|webp|gif);base64,/.test(x);
+            ['doc1', 'doc2', 'doc3', 'doc4'].forEach((k, i) => {
+                const c = cd.anexosConfig && cd.anexosConfig[k];
+                if (c && c.show && seguro(c.data)) { g.appendChild(crearTarjeta(`Soporte ${i + 1}`, c.data)); hI = true; }
+            });
+            if (hI) document.getElementById('seccionEvidencias').classList.remove('hidden');
         }
-        function crearTarjeta(tit, b64) { return `<div class="border rounded-lg p-5 bg-slate-50 text-center cursor-pointer hover:shadow-lg transition hover:border-blue-300" onclick="openLightbox('${b64}')"><h4 class="text-xs font-bold mb-3 uppercase tracking-widest text-slate-500">${tit}</h4><img src="${b64}" class="mx-auto max-h-56 object-contain rounded shadow-sm border border-slate-200"></div>`; }
+        function crearTarjeta(tit, src) {
+            const card = document.createElement('div'); card.className = 'border rounded-lg p-5 bg-slate-50 text-center cursor-pointer hover:shadow-lg transition hover:border-blue-300';
+            card.addEventListener('click', () => openLightbox(src));
+            const h = document.createElement('h4'); h.className = 'text-xs font-bold mb-3 uppercase tracking-widest text-slate-500'; h.textContent = tit;
+            const img = document.createElement('img'); img.src = src; img.className = 'mx-auto max-h-56 object-contain rounded shadow-sm border border-slate-200';
+            card.append(h, img); return card;
+        }
         function openLightbox(s) { document.getElementById('lightboxImg').src = s; document.getElementById('lightboxModal').classList.remove('hidden'); document.getElementById('lightboxModal').classList.add('flex'); }
         function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); document.getElementById('lightboxModal').classList.remove('flex'); }
     </script>
