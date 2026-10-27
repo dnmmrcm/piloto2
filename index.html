@@ -299,29 +299,66 @@
 
         <main class="flex-grow py-8 px-4 sm:px-6 max-w-5xl mx-auto w-full z-10 hidden" id="mainContainer">
             <div class="mb-3 text-right"><span class="text-xs bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold uppercase" id="lblHeaderModelName">Formato</span></div>
-            <section id="notificationView" class="hidden shadow-2xl bg-white overflow-hidden" style="width: 100%; max-width: 800px; margin: 0 auto;"></section>
+            <section id="notificationView" class="hidden shadow-xl bg-white overflow-hidden" style="width: 100%; max-width: 800px; margin: 0 auto;"></section>
         </main>
     </div>
 
     <!-- ========================================== -->
-    <!-- VISTA PÚBLICA (LECTURA CLIENTE)            -->
+    <!-- VISTA PÚBLICA (LECTURA CLIENTE / PORTAL)   -->
     <!-- ========================================== -->
-    <section id="caseDetailView" class="hidden space-y-6 flex-grow py-6 px-4 max-w-5xl mx-auto w-full">
-        <div class="flex items-center justify-end no-print bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition"><i class="fa-solid fa-print"></i> Guardar Constancia</button></div>
-        <div class="bg-white rounded-xl shadow-xl border border-slate-300 p-8 sm:p-12 space-y-6">
-            <div class="border-b-2 border-slate-800 pb-4"><h2 class="font-black text-slate-900 text-2xl uppercase tracking-tighter" id="dispClientViewHeaderTitle">PLATAFORMA DOCUMENTAL</h2><p class="text-sm text-slate-500 font-medium">Registro Público Electrónico</p></div>
-            <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div><span class="text-slate-500 block text-[10px] uppercase font-bold">Destinatario:</span><span class="font-bold text-slate-900 text-base dispClientName"></span></div>
-                <div><span class="text-slate-500 block text-[10px] uppercase font-bold">Identificación Legal:</span><span class="font-bold text-slate-900 text-base dispRuc"></span></div>
-                <div><span class="text-slate-500 block text-[10px] uppercase font-bold">Referencia / Expediente:</span><span class="font-bold text-slate-900 text-base dispExpedient"></span></div>
-                <div><span class="text-slate-500 block text-[10px] uppercase font-bold">Fecha de Emisión:</span><span class="font-bold text-slate-900 text-base dispDate"></span></div>
+    <section id="caseDetailView" class="hidden flex-col items-center flex-grow py-10 px-4 w-full bg-slate-100 min-h-screen">
+        <div class="max-w-4xl w-full">
+            <div class="flex items-center justify-between no-print bg-white p-4 rounded-t-xl border-b-4 border-blue-900 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-shield-check text-2xl text-emerald-600"></i>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Portal de Verificación Judicial</h3>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">Documento Electrónico Certificado</p>
+                    </div>
+                </div>
+                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded flex items-center gap-2 transition"><i class="fa-solid fa-print"></i> Imprimir Constancia</button>
             </div>
-            <div id="seccionEvidencias" class="hidden pt-4"><h2 class="font-black text-slate-800 text-sm uppercase mb-4 border-b pb-2 tracking-widest"><i class="fa-solid fa-folder-open text-amber-500 mr-2"></i> EVIDENCIA DIGITAL ADJUNTA</h2><div id="galeriaAnexos" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div></div>
+            
+            <div class="bg-white rounded-b-xl shadow-xl border border-slate-200 p-8 sm:p-12 space-y-8">
+                <div class="text-center border-b-2 border-slate-100 pb-6">
+                    <h2 class="font-black text-slate-900 text-3xl uppercase tracking-tight" id="dispClientViewHeaderTitle">PLATAFORMA DOCUMENTAL</h2>
+                    <p class="text-sm text-slate-500 font-medium mt-2"><i class="fa-solid fa-file-signature text-blue-600 mr-2"></i>Copia Fiel del Original</p>
+                </div>
+                
+                <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                    <div class="border-b sm:border-b-0 sm:border-r border-slate-200 pb-4 sm:pb-0 pr-4">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Parte Requerida / Destinatario:</span>
+                        <span class="font-bold text-slate-900 text-base dispClientName"></span>
+                    </div>
+                    <div class="pb-4 sm:pb-0">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Identificación Legal (RUC/CI):</span>
+                        <span class="font-bold text-slate-900 text-base dispRuc"></span>
+                    </div>
+                    <div class="border-b sm:border-b-0 sm:border-r border-slate-200 pb-4 sm:pb-0 pr-4 pt-4 sm:border-t">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Número de Expediente / Causa:</span>
+                        <span class="font-bold text-slate-900 text-base dispExpedient text-blue-700"></span>
+                    </div>
+                    <div class="pt-4 sm:border-t border-slate-200">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Fecha de Emisión / Radicación:</span>
+                        <span class="font-bold text-slate-900 text-base dispDate"></span>
+                    </div>
+                </div>
+                
+                <div id="seccionEvidencias" class="hidden pt-6 border-t-2 border-dashed border-slate-200">
+                    <h2 class="font-black text-slate-800 text-sm uppercase mb-6 flex items-center gap-2"><i class="fa-solid fa-photo-film text-amber-500 text-lg"></i> Evidencia Digital Adjunta</h2>
+                    <div id="galeriaAnexos" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8 text-xs text-slate-400 font-medium">
+                <p>Este documento es válido para todos los fines legales correspondientes.</p>
+                <p>Plataforma Integral Judicial &copy; 2026</p>
+            </div>
         </div>
     </section>
 
     <!-- LIGHTBOX -->
-    <div id="lightboxModal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-4 cursor-pointer" onclick="closeLightbox()"><span class="absolute top-4 right-6 text-white text-4xl hover:text-red-400">&times;</span><img id="lightboxImg" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg"></div>
+    <div id="lightboxModal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-4 cursor-pointer" onclick="closeLightbox()"><span class="absolute top-4 right-6 text-white text-4xl hover:text-red-400">&times;</span><img id="lightboxImg" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"></div>
 
     <script>
         /* =======================================================================
@@ -329,8 +366,8 @@
         ======================================================================= */
         
         // ¡¡ IMPORTANTE: REEMPLAZA ESTO CON TUS CREDENCIALES REALES !!
-        const SUPABASE_URL = 'https://crrlfrlczhihuwxljwru.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNycmxmcmxjemhpaHV3eGxqd3J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2OTY4NjUsImV4cCI6MjEwODI3Mjg2NX0.goqWlSuj-DtfU26dEnKNU6q48AsrIoCMpkFsm6Rtn-Q';
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; 
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
         
         let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -399,35 +436,35 @@
         })();
 
         // ==========================================
-        // 5 FORMATOS 100% COMPATIBLES CON EL PDF
+        // 5 FORMATOS CON DISEÑOS PDF MEJORADOS (FLEX)
         // ==========================================
         const MODELOS = {
             1: { 
                 nombre: "Citación Laboral", 
                 header: "Tribunal Regional del Trabajo", 
                 html: () => `
-                    <div class="font-sans border-t-8 border-[#1b365d] bg-white">
-                        <div class="bg-[#1b365d] text-white text-center py-8 px-6 shadow-sm">
-                            <i class="fa-solid fa-scale-unbalanced text-4xl mb-2 text-amber-400"></i>
-                            <h1 class="text-2xl font-bold tracking-tight uppercase">Tribunal Regional del Trabajo</h1>
-                            <p class="text-blue-200 text-xs mt-1 font-medium tracking-widest uppercase">Aviso Electrónico Judicial N° 088-2026</p>
+                    <div class="font-sans border-t-[12px] border-[#1b365d] bg-white">
+                        <div class="bg-[#1b365d] text-white text-center py-10 px-6 shadow-md">
+                            <i class="fa-solid fa-scale-unbalanced text-4xl mb-3 text-amber-400"></i>
+                            <h1 class="text-3xl font-bold tracking-tight uppercase">Tribunal Regional del Trabajo</h1>
+                            <p class="text-blue-200 text-xs mt-2 font-bold tracking-widest uppercase">Aviso Electrónico Judicial</p>
                         </div>
-                        <div class="p-8 space-y-6">
+                        <div class="p-10 space-y-8">
                             <div class="border-b-2 border-slate-200 pb-3 flex justify-between items-center">
-                                <h2 class="text-lg font-black text-[#1b365d] tracking-wide uppercase">NOTIFICACIÓN Y CITACIÓN LABORAL</h2>
-                                <span class="bg-blue-100 text-[#1b365d] font-bold text-xs px-3 py-1 rounded-full uppercase">Carácter Oficial</span>
+                                <h2 class="text-xl font-black text-[#1b365d] tracking-wide uppercase">NOTIFICACIÓN Y CITACIÓN LABORAL</h2>
+                                <span class="bg-blue-100 text-[#1b365d] font-bold text-xs px-3 py-1 rounded-full uppercase border border-blue-200">Carácter Oficial</span>
                             </div>
-                            <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 text-sm space-y-3">
-                                <div class="flex border-b border-slate-200 pb-2"><span class="w-1/3 font-bold text-slate-500 uppercase text-xs">Sujeto Notificado:</span><span class="w-2/3 text-slate-900 font-bold dispClientName"></span></div>
-                                <div class="flex border-b border-slate-200 pb-2"><span class="w-1/3 font-bold text-slate-500 uppercase text-xs">Identificación RUC/CI:</span><span class="w-2/3 text-slate-900 font-medium dispRuc"></span></div>
-                                <div class="flex border-b border-slate-200 pb-2"><span class="w-1/3 font-bold text-slate-500 uppercase text-xs">N° de Expediente:</span><span class="w-2/3 text-slate-900 font-medium dispExpedient"></span></div>
-                                <div class="flex"><span class="w-1/3 font-bold text-slate-500 uppercase text-xs">Fecha Radicación:</span><span class="w-2/3 text-slate-900 font-medium dispDate"></span></div>
+                            <div class="bg-slate-50 p-6 rounded border border-slate-200 text-sm space-y-4 shadow-sm">
+                                <div class="flex border-b border-slate-200 pb-2"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">Sujeto Notificado:</span><span class="inline-block w-2/3 text-slate-900 font-bold dispClientName"></span></div>
+                                <div class="flex border-b border-slate-200 pb-2"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">Identificación RUC/CI:</span><span class="inline-block w-2/3 text-slate-900 font-medium dispRuc"></span></div>
+                                <div class="flex border-b border-slate-200 pb-2"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">N° de Expediente:</span><span class="inline-block w-2/3 text-slate-900 font-bold text-blue-800 dispExpedient"></span></div>
+                                <div class="flex"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">Fecha Radicación:</span><span class="inline-block w-2/3 text-slate-900 font-medium dispDate"></span></div>
                             </div>
-                            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 text-xs text-amber-900 rounded-r-lg">
-                                <strong class="font-black uppercase block mb-1">Aviso Formal:</strong> Se requiere la comparecencia dentro del término legal fijado por esta judicatura laboral.
+                            <div class="bg-amber-50 border-l-4 border-amber-500 p-5 text-sm text-amber-900 shadow-sm">
+                                <strong class="font-black uppercase block mb-2 text-amber-700">Aviso Formal:</strong> Se requiere la comparecencia obligatoria y oportuna dentro del término legal fijado por esta judicatura laboral bajo apercibimiento de ley.
                             </div>
-                            <div class="text-center pt-4">
-                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-[#1b365d] text-white font-bold py-3 px-8 rounded-lg uppercase text-xs tracking-wider inline-block shadow">CONSULTAR ANEXOS Y PRUEBAS</a>
+                            <div class="text-center pt-6">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-[#1b365d] text-white font-bold py-4 px-10 rounded uppercase text-xs tracking-wider inline-block shadow-md">CONSULTAR ANEXOS Y PRUEBAS</a>
                             </div>
                         </div>
                     </div>` 
@@ -436,26 +473,26 @@
                 nombre: "Orden de Embargo", 
                 header: "Unidad Ejecutiva Coactiva", 
                 html: () => `
-                    <div class="font-sans bg-white border-[10px] border-red-900 p-8 relative">
-                        <div class="bg-red-900 text-white text-center py-2 font-black text-xs uppercase tracking-widest mb-6">Urgente - Ejecución Coactiva Inmediata</div>
-                        <div class="text-center border-b-4 border-red-900 pb-4 mb-6">
-                            <i class="fa-solid fa-gavel text-5xl text-red-900 mb-2"></i>
-                            <h1 class="text-3xl font-black text-red-900 uppercase tracking-tighter">UNIDAD JUDICIAL DE COACTIVAS</h1>
-                            <p class="text-red-700 font-bold tracking-widest text-sm mt-1">MANDAMIENTO DE EMBARGO DE BIENES</p>
+                    <div class="font-sans bg-white border-[12px] border-red-900 p-10 relative">
+                        <div class="bg-red-900 text-white text-center py-2 px-6 font-black text-sm uppercase tracking-widest absolute top-0 left-0 right-0">Urgente - Ejecución Coactiva Inmediata</div>
+                        <div class="text-center border-b-4 border-red-900 pb-6 mb-8 mt-10">
+                            <i class="fa-solid fa-gavel text-6xl text-red-900 mb-4 drop-shadow-md"></i>
+                            <h1 class="text-4xl font-black text-red-900 uppercase tracking-tighter">UNIDAD JUDICIAL DE COACTIVAS</h1>
+                            <p class="text-red-700 font-bold tracking-widest text-base mt-2">MANDAMIENTO DE EMBARGO DE BIENES</p>
                         </div>
-                        <div class="space-y-5">
-                            <div class="bg-red-50 p-5 border-2 border-red-200 rounded-lg text-sm space-y-3">
-                                <div><span class="block font-black text-red-900 uppercase text-[10px]">Demandado / Ejecutado:</span><span class="text-lg font-bold text-slate-900 dispClientName"></span></div>
-                                <div class="flex justify-between border-t border-red-200 pt-2">
-                                    <div class="w-1/2"><span class="block font-black text-red-900 uppercase text-[10px]">RUC / Cédula:</span><span class="font-bold text-slate-900 dispRuc"></span></div>
-                                    <div class="w-1/2"><span class="block font-black text-red-900 uppercase text-[10px]">Juicio Coactivo N°:</span><span class="font-bold text-slate-900 dispExpedient"></span></div>
+                        <div class="space-y-6">
+                            <div class="bg-red-50 p-6 border-2 border-red-200 text-sm space-y-4">
+                                <div class="border-b border-red-200 pb-3"><span class="block font-black text-red-900 uppercase text-xs mb-1">Demandado / Ejecutado:</span><span class="text-xl font-bold text-slate-900 dispClientName"></span></div>
+                                <div class="flex justify-between pt-1">
+                                    <div class="w-1/2"><span class="block font-black text-red-900 uppercase text-[10px] mb-1">RUC / Cédula:</span><span class="font-bold text-slate-900 text-base dispRuc"></span></div>
+                                    <div class="w-1/2"><span class="block font-black text-red-900 uppercase text-[10px] mb-1">Juicio Coactivo N°:</span><span class="font-black text-red-800 text-base dispExpedient"></span></div>
                                 </div>
                             </div>
-                            <div class="bg-red-100 border-l-8 border-red-700 p-4 text-xs text-red-900 font-bold uppercase">
-                                Se ordena la retención preventiva e inmovilización de valores en el sistema financiero.
+                            <div class="bg-red-100 border-l-8 border-red-700 p-5 text-sm text-red-900 font-bold uppercase shadow-inner">
+                                Se ordena la retención preventiva e inmovilización inmediata de valores depositados en el sistema financiero nacional.
                             </div>
-                            <div class="text-center pt-4">
-                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-red-900 text-white font-black py-4 px-8 rounded-md uppercase text-xs inline-block w-full text-center shadow-lg">REVISAR AUTOS MEDIANTE ESTE ENLACE</a>
+                            <div class="text-center pt-8">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-red-900 text-white font-black py-4 px-8 uppercase text-sm tracking-wide inline-block w-full text-center shadow-lg border border-red-950">REVISAR AUTOS Y MEDIDAS MEDIANTE ESTE ENLACE</a>
                             </div>
                         </div>
                     </div>` 
@@ -464,24 +501,25 @@
                 nombre: "Conciliación Extrajudicial", 
                 header: "Centro Arbitral de Mediación", 
                 html: () => `
-                    <div class="font-sans bg-[#f0fdf4] border-2 border-emerald-500 rounded-3xl p-8 text-center">
-                        <div class="inline-block p-4 bg-emerald-100 rounded-full mb-3"><i class="fa-solid fa-handshake text-3xl text-emerald-700"></i></div>
-                        <h1 class="text-2xl font-extrabold text-emerald-950">Centro Arbitral de Mediación y Conciliación</h1>
-                        <p class="text-xs text-emerald-700 uppercase font-bold tracking-widest mt-1">Mecanismo Alternativo de Solución de Conflictos</p>
+                    <div class="font-sans bg-[#f0fdf4] border-[6px] border-emerald-500 rounded-3xl p-10 text-center relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 text-emerald-100 opacity-50"><i class="fa-solid fa-leaf text-[150px]"></i></div>
+                        <div class="inline-block p-5 bg-emerald-100 rounded-full mb-4 relative z-10"><i class="fa-solid fa-handshake text-4xl text-emerald-700"></i></div>
+                        <h1 class="text-3xl font-extrabold text-emerald-950 relative z-10">Centro Arbitral de Mediación y Conciliación</h1>
+                        <p class="text-sm text-emerald-700 uppercase font-bold tracking-widest mt-2 relative z-10">Mecanismo Alternativo de Solución de Conflictos</p>
                         
-                        <div class="bg-white rounded-2xl p-6 mt-6 border border-emerald-200 shadow-sm text-left text-sm space-y-3">
-                            <p class="text-xs font-bold text-emerald-700 uppercase tracking-widest text-center mb-2">Convocatoria Formal a Audiencia</p>
-                            <div class="border-t border-emerald-100 pt-3">
-                                <span class="text-slate-400 block text-[10px] uppercase font-bold">Invitado / Parte Requerida:</span>
-                                <h2 class="text-xl font-black text-slate-800 dispClientName"></h2>
+                        <div class="bg-white rounded-2xl p-8 mt-8 border border-emerald-200 shadow-md text-left text-sm space-y-4 relative z-10">
+                            <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest text-center border-b border-emerald-100 pb-4 mb-2">Convocatoria Formal a Audiencia de Mediación</p>
+                            <div class="pt-2">
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Invitado / Parte Requerida:</span>
+                                <h2 class="text-2xl font-black text-slate-800 dispClientName"></h2>
                             </div>
-                            <div class="flex border-t border-emerald-100 pt-3 text-xs">
-                                <div class="w-1/2"><span class="text-slate-400 block uppercase font-bold">RUC / ID:</span><span class="font-bold text-slate-800 dispRuc"></span></div>
-                                <div class="w-1/2"><span class="text-slate-400 block uppercase font-bold">Caso N°:</span><span class="font-bold text-slate-800 dispExpedient"></span></div>
+                            <div class="flex border-t border-emerald-100 pt-4 mt-2 text-sm">
+                                <div class="w-1/2 border-r border-emerald-100"><span class="text-slate-400 block text-[10px] uppercase font-bold">RUC / ID:</span><span class="font-bold text-slate-800 dispRuc"></span></div>
+                                <div class="w-1/2 pl-4"><span class="text-slate-400 block text-[10px] uppercase font-bold">Caso N°:</span><span class="font-bold text-emerald-700 dispExpedient"></span></div>
                             </div>
                         </div>
-                        <div class="text-center pt-6">
-                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-8 rounded-full uppercase text-xs tracking-wider inline-block shadow-md">ACCEDER A LA PROPUESTA Y ANEXOS</a>
+                        <div class="text-center pt-8 relative z-10">
+                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-10 rounded-full uppercase text-sm tracking-wider inline-block shadow-lg">ACCEDER A LA PROPUESTA Y ANEXOS</a>
                         </div>
                     </div>` 
             },
@@ -489,23 +527,23 @@
                 nombre: "Incumplimiento Mercantil", 
                 header: "Juzgado de lo Civil y Mercantil", 
                 html: () => `
-                    <div class="font-mono text-slate-900 bg-white border-2 border-slate-900 shadow-sm p-6">
-                        <div class="bg-slate-900 text-white p-4 mb-6 flex justify-between items-center">
+                    <div class="font-mono text-slate-900 bg-white border-4 border-slate-900 shadow-sm p-8">
+                        <div class="bg-slate-900 text-white p-6 mb-8 flex justify-between items-center">
                             <div>
-                                <h1 class="text-lg font-bold tracking-tight">JUZGADO DE LO CIVIL Y MERCANTIL</h1>
-                                <p class="text-[10px] text-slate-400">REQUERIMIENTO MERCANTIL PREVIO</p>
+                                <h1 class="text-2xl font-bold tracking-tight">JUZGADO DE LO CIVIL Y MERCANTIL</h1>
+                                <p class="text-xs text-slate-300 mt-1 uppercase tracking-widest">Requerimiento Mercantil Previo</p>
                             </div>
                         </div>
-                        <div class="space-y-4">
-                            <div class="flex flex-wrap border-2 border-slate-900 text-xs">
-                                <div class="w-1/2 p-3 border-r-2 border-b-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500">Razon Social / Cliente</span><span class="dispClientName font-bold text-sm"></span></div>
-                                <div class="w-1/2 p-3 border-b-2 border-slate-900"><span class="block font-bold text-[10px] uppercase text-slate-500">N° de Registro Mercantil</span><span class="dispExpedient font-bold text-sm"></span></div>
-                                <div class="w-1/2 p-3 border-r-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500">Identificacion RUC</span><span class="dispRuc font-bold"></span></div>
-                                <div class="w-1/2 p-3"><span class="block font-bold text-[10px] uppercase text-slate-500">Fecha emision</span><span class="dispDate font-bold"></span></div>
+                        <div class="space-y-6">
+                            <div class="flex flex-wrap border-2 border-slate-900 text-sm">
+                                <div class="w-1/2 p-4 border-r-2 border-b-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Razón Social / Cliente</span><span class="dispClientName font-bold text-base"></span></div>
+                                <div class="w-1/2 p-4 border-b-2 border-slate-900"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">N° de Registro Mercantil</span><span class="dispExpedient font-bold text-base"></span></div>
+                                <div class="w-1/2 p-4 border-r-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Identificación RUC</span><span class="dispRuc font-bold"></span></div>
+                                <div class="w-1/2 p-4"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Fecha de Emisión</span><span class="dispDate font-bold"></span></div>
                             </div>
-                            <p class="text-xs text-justify leading-relaxed bg-slate-50 p-4 border border-slate-300">Notificación formal de mora mercantil. El incumplimiento del acuerdo comercial dará lugar a acciones ejecutivas según las disposiciones del Código de Comercio.</p>
-                            <div class="text-right pt-2">
-                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-slate-900 text-white font-bold py-3 px-6 uppercase text-xs inline-block">VER DOCUMENTOS DE SOPORTE &#8594;</a>
+                            <p class="text-sm text-justify leading-relaxed bg-slate-50 p-6 border border-slate-300 font-medium">Notificación formal de mora mercantil. El incumplimiento del presente acuerdo comercial y la falta de pago documentada darán lugar al inicio inmediato de acciones ejecutivas en base a las disposiciones vigentes del Código de Comercio.</p>
+                            <div class="text-right pt-4">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-slate-900 text-white font-bold py-4 px-8 uppercase text-xs tracking-wider inline-block">VER DOCUMENTOS DE SOPORTE &#8594;</a>
                             </div>
                         </div>
                     </div>` 
@@ -515,16 +553,16 @@
                 header: "Corte Provincial de Justicia", 
                 html: () => `
                     <div class="bg-white border-8 border-slate-400 p-2" style="font-family: 'Times New Roman', Times, serif;">
-                        <div class="border-2 border-slate-400 p-8 shadow-inner">
-                            <div class="text-center mb-8 border-b border-slate-300 pb-6">
-                                <h1 class="text-2xl font-bold tracking-[0.15em] uppercase text-slate-900">CORTE PROVINCIAL DE JUSTICIA</h1>
-                                <p class="text-xs text-slate-600 tracking-widest uppercase mt-1">DESPACHO JUDICIAL DISTRITAL</p>
+                        <div class="border-[4px] border-double border-slate-400 p-10 shadow-inner">
+                            <div class="text-center mb-10 border-b border-slate-300 pb-8">
+                                <h1 class="text-3xl font-bold tracking-[0.2em] uppercase text-slate-900">CORTE PROVINCIAL DE JUSTICIA</h1>
+                                <p class="text-sm text-slate-600 tracking-widest uppercase mt-2 font-bold">DESPACHO JUDICIAL DISTRITAL</p>
                             </div>
-                            <div class="space-y-6 text-slate-900 text-base leading-relaxed text-justify">
-                                <p>En la ciudad correspondiente, con fecha <strong class="dispDate"></strong>, se notifica de manera formal al señor(a) / persona jurídica <strong class="dispClientName uppercase"></strong>, poseedor del documento de identificación RUC/CI <strong class="dispRuc"></strong>.</p>
-                                <p>Hacemos de su conocimiento que en la causa N° <strong class="dispExpedient"></strong> radica la correspondiente citación judicial distrital emitida por la judicatura competente.</p>
-                                <div class="text-center pt-8">
-                                    <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none; font-family: sans-serif;" class="bg-black text-white font-bold py-3 px-8 uppercase text-xs tracking-widest inline-block border border-black shadow-md">CONSULTAR FOJAS DIGITALES</a>
+                            <div class="space-y-6 text-slate-900 text-lg leading-relaxed text-justify px-4">
+                                <p>En la ciudad correspondiente, con fecha <strong><span class="dispDate"></span></strong>, se notifica de manera formal al señor(a) o persona jurídica <strong><span class="dispClientName uppercase"></span></strong>, poseedor del documento de identificación RUC/CI <strong><span class="dispRuc"></span></strong>.</p>
+                                <p>Hacemos de su expreso conocimiento que en la causa N° <strong><span class="dispExpedient"></span></strong> radica la correspondiente citación judicial distrital emitida por la judicatura competente para los fines legales pertinentes.</p>
+                                <div class="text-center pt-12 pb-4">
+                                    <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none; font-family: sans-serif;" class="bg-black text-white font-bold py-4 px-10 uppercase text-xs tracking-[0.1em] inline-block border border-black shadow-lg">CONSULTAR FOJAS DIGITALES ALOJADAS</a>
                                 </div>
                             </div>
                         </div>
@@ -540,10 +578,10 @@
             if (urlParams.get('id')) {
                 hideAllViews(); 
                 document.getElementById('caseDetailView').classList.remove('hidden'); 
-                document.getElementById('caseDetailView').classList.add('flex-grow');
+                document.getElementById('caseDetailView').classList.add('flex');
                 const caseData = await getCaseData(urlParams.get('id'));
                 if (caseData) populateClientView(caseData); 
-                else document.getElementById('caseDetailView').innerHTML = `<h2 class="text-center mt-20 font-bold text-xl">Expediente No Encontrado</h2>`;
+                else document.getElementById('caseDetailView').innerHTML = `<div class="w-full text-center mt-20"><i class="fa-solid fa-file-circle-xmark text-6xl text-slate-300 mb-4"></i><h2 class="font-bold text-2xl text-slate-600">Expediente No Encontrado</h2></div>`;
                 return;
             }
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -554,7 +592,7 @@
         function hideAllViews() {
             document.querySelectorAll('#loginView, #adminDashboardView, #appContainer, #caseDetailView, #auditorCampaignSelectorOverlay').forEach(el => { 
                 el.classList.add('hidden'); 
-                if(el.id === 'adminDashboardView' || el.id === 'appContainer') el.classList.remove('flex'); 
+                if(el.id === 'adminDashboardView' || el.id === 'appContainer' || el.id === 'caseDetailView') el.classList.remove('flex'); 
             });
         }
 
@@ -696,7 +734,6 @@
             }
             const dateFilter = document.getElementById('filter-date').value;
             if (dateFilter) {
-                // Hora local explícita: new Date('YYYY-MM-DD') es UTC y desplazaba el día en Ecuador
                 const start = new Date(`${dateFilter}T00:00:00`), end = new Date(`${dateFilter}T23:59:59.999`);
                 query = query.gte('hora_fin', start.toISOString()).lte('hora_fin', end.toISOString());
             }
@@ -814,7 +851,6 @@
         async function deleteUser(id, nombre) {
             if (!confirm(`¿Está seguro de eliminar de forma permanente al usuario "${nombre}"? El historial de auditoría previo permanecerá para las métricas globales.`)) return;
             try {
-                // Gracias a la política RLS que agregaste y a la FK, ahora borrará exitosamente de perfiles
                 const { error } = await supabaseClient.from('perfiles').delete().eq('id', id);
                 if (error) throw error;
                 loadUsersList();
@@ -956,13 +992,13 @@
             r.readAsDataURL(fl);
         }
 
-        // Copia del documento con ancho fijo y centrada (horizontal y verticalmente) dentro de la hoja carta
+        // GENERACIÓN DE PDF PERFECTAMENTE ENCUADRADO Y CENTRADO
         function buildPdfSource(marginIn) {
             const W = 740;
             const holder = document.createElement('div'); holder.style.cssText = `position:fixed;left:-10000px;top:0;width:${W}px;pointer-events:none;`;
             const wrapper = document.createElement('div'); wrapper.style.cssText = `width:${W}px;margin:0;padding:0;background:#fff;box-sizing:border-box;`;
             const clone = document.getElementById('notificationView').cloneNode(true);
-            clone.removeAttribute('id'); clone.classList.remove('hidden', 'shadow-2xl');
+            clone.removeAttribute('id'); clone.classList.remove('hidden', 'shadow-xl');
             clone.style.cssText = 'width:100%;max-width:none;margin:0;box-shadow:none;';
             wrapper.appendChild(clone); holder.appendChild(wrapper); document.body.appendChild(holder);
             const pxPerIn = W / (8.5 - 2 * marginIn);
@@ -1019,8 +1055,7 @@
         ======================================================================= */
         async function getCaseData(uuid) { const { data } = await supabaseClient.from('casos').select('*').eq('id', uuid).single(); return data; }
         function populateClientView(cr) {
-            const cd = cr.data; const m = MODELOS[cd.modelId || 1];
-            document.getElementById('dispClientViewHeaderTitle').textContent = m.header;
+            const cd = cr.data;
             document.querySelectorAll('.dispClientName').forEach(el => el.textContent = cd.clientName); document.querySelectorAll('.dispRuc').forEach(el => el.textContent = cd.ruc);
             document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = cd.expedient); document.querySelectorAll('.dispDate').forEach(el => el.textContent = cd.date);
             const g = document.getElementById('galeriaAnexos'); g.innerHTML = ''; let hI = false;
