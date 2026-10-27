@@ -376,70 +376,60 @@
             5: { nombre: "Citación Provincial", html: ()=>`<div>...</div>` }
         };
 
-        async function generarPDF() {
-            if (!validateForm()) return;
-            const btnGen = document.getElementById('btnGenerarPDF');
-            const oldText = btnGen.innerHTML;
-            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
-            btnGen.disabled = true;
-            let uuid = null;
-            const btnAnexos = document.getElementById('btnAnexosPdf');
+      async function generarPDF() {
+    if (!validateForm()) return;
+    const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML;
+    btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btnGen.disabled = true;
+    let uuid = null; const btnAnexos = document.getElementById('btnAnexosPdf');
+    const originalScrollY = window.scrollY;
+    window.scrollTo(0, 0);
 
-            const element = document.getElementById('notificationView');
-            const clone = element.cloneNode(true);
-            const wrapper = document.createElement('div');
-            wrapper.style.cssText = 'position: fixed; left: -10000px; top: 0; width: 800px; background: #ffffff; z-index: -9999;';
-            clone.style.cssText = 'width: 800px !important; max-width: 800px !important; margin: 0; box-shadow: none; background: #ffffff;';
-            wrapper.appendChild(clone);
-            document.body.appendChild(wrapper);
+    try {
+        if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre);
+        updateData();
+        const val = id => document.getElementById(id).value.trim();
+        const cfg = n => ({ show: document.getElementById(`chk_doc${n}`).checked, data: anexosData[`doc${n}`] });
+        const caseData = { modelId: selectedModelId, clientName: val('inputClientName'), ruc: val('inputRuc'), expedient: val('inputExpedient'),
+            date: formatDateES(document.getElementById('inputDate').value), dateIso: document.getElementById('inputDate').value,
+            anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) } };
 
-            try {
-                if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre);
-                updateData();
-                const val = id => document.getElementById(id).value.trim();
-                const cfg = n => ({ show: document.getElementById('chk_doc'+n).checked, data: anexosData['doc'+n] });
-                const caseData = {
-                    modelId: selectedModelId,
-                    clientName: val('inputClientName'),
-                    ruc: val('inputRuc'),
-                    expedient: val('inputExpedient'),
-                    date: formatDateES(document.getElementById('inputDate').value),
-                    dateIso: document.getElementById('inputDate').value,
-                    anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) }
-                };
+        const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select();
+        if (error) throw error;
+        uuid = data[0].id;
 
-                const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select();
-                if (error) throw error;
-                uuid = data[0].id;
+        // Mostrar el botón con el enlace ANTES de clonar
+        if (btnAnexos) { btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; btnAnexos.style.display = 'inline-block'; }
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
 
-                if (btnAnexos) {
-                    btnAnexos.href = window.location.origin + window.location.pathname + '?id=' + uuid;
-                    btnAnexos.style.display = 'inline-block';
-                }
-                if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        // Clon limpio: flujo normal, ancho fijo, sin sombra ni offsets
+        const clone = document.getElementById('notificationView').cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden', 'shadow-xl', 'overflow-hidden');
+        clone.style.cssText = 'width:800px;max-width:800px;margin:0;padding:0;display:block;background:#fff;box-shadow:none;position:static;transform:none;';
 
-                const safeName = (caseData.expedient.replace(/[\\/:*?"<>|]+/g, '-').trim()) || 'documento';
-                const opt = {
-                    margin: [0.4, 0.3, 0.4, 0.3],
-                    filename: safeName + '.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 800 },
-                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-                };
+        const safeName = caseData.expedient.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'documento';
+        const opt = {
+            margin: [0.4, 0.3, 0.4, 0.3],
+            filename: `${safeName}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 800 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'] }
+        };
 
-                await html2pdf().set(opt).from(clone).save();
-                await registrarTiempoEnBD('Finalizado', uuid);
-            } catch (e) {
-                console.error('Error generando PDF:', e);
-                await registrarTiempoEnBD('Error', uuid);
-                alert('Error de generación. Intente nuevamente.');
-            } finally {
-                if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; }
-                if (wrapper && wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
-                btnGen.innerHTML = oldText;
-                btnGen.disabled = false;
-            }
-        }
+        await html2pdf().set(opt).from(clone).save();
+
+        await registrarTiempoEnBD('Finalizado', uuid);
+    } catch (e) {
+        console.error('Error generando PDF:', e);
+        await registrarTiempoEnBD('Error', uuid);
+        alert('Error de generación. Intente nuevamente.');
+    } finally {
+        if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; }
+        window.scrollTo(0, originalScrollY);
+        btnGen.innerHTML = oldText; btnGen.disabled = false;
+    }
+}
 
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
