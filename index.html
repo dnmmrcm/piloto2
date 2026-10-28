@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Judicial - Plataforma Integral</title>
+    <title>MC REPÚBLICA DEL ECUADOR - Plataforma de Gestión</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -14,6 +14,7 @@
         @media print { .no-print { display: none !important; } body { background-color: white !important; } }
         .field-error{border-color:#ef4444!important;box-shadow:0 0 0 2px rgba(239,68,68,.5)}
         #lightboxModal { transition: opacity 0.3s ease-in-out; }
+        .firma-manuscrita { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; transform: rotate(-2deg); }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
@@ -24,9 +25,9 @@
     <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8">
             <div class="text-center mb-8">
-                <i class="fa-solid fa-scale-balanced text-5xl text-amber-500 mb-4"></i>
-                <h1 class="text-2xl font-bold text-slate-900">Acceso al Sistema</h1>
-                <p class="text-sm text-slate-500 mt-1">Identificación requerida</p>
+                <i class="fa-solid fa-building-columns text-5xl text-amber-500 mb-4"></i>
+                <h1 class="text-2xl font-bold text-slate-900">MC REPÚBLICA DEL ECUADOR</h1>
+                <p class="text-sm text-slate-500 mt-1">Acceso a Plataforma Operativa</p>
             </div>
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-5">
                 <div>
@@ -275,7 +276,7 @@
                     <div id="formErrorBox" class="hidden col-span-full bg-red-900/40 border border-red-500 text-red-200 rounded p-3"></div>
                     <div><label class="block text-slate-400 mb-1">Nombre Destinatario <span class="text-red-400">*</span></label><input type="text" id="inputClientName" placeholder="Ej. EMPRESA S.A. / JUAN PÉREZ" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
                     <div><label class="block text-slate-400 mb-1">Identificación / RUC <span class="text-red-400">*</span></label><input type="text" id="inputRuc" placeholder="Ej. 0992345678001" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
-                    <div><label class="block text-slate-400 mb-1">Código de Expediente <span class="text-red-400">*</span></label><input type="text" id="inputExpedient" placeholder="Ej. 7191926-22.9.35" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
+                    <div><label class="block text-slate-400 mb-1">Número de Contrato <span class="text-red-400">*</span></label><input type="text" id="inputExpedient" placeholder="Ej. CT-2026-9041" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
                     <div><label class="block text-slate-400 mb-1">Fecha de Radicación <span class="text-red-400">*</span></label><input type="date" id="inputDate" style="color-scheme:dark" onchange="updateData(); clearFieldError(this)" class="cursor-pointer w-full bg-slate-800 text-white p-2 rounded border border-slate-700 outline-none focus:border-blue-500"></div>
 
                     <div class="col-span-full border-t border-slate-700 pt-4 mt-2">
@@ -297,23 +298,23 @@
                 <div class="mb-8 border-b pb-6">
                     <i class="fa-solid fa-layer-group text-4xl text-blue-600 mb-3"></i>
                     <h2 class="text-2xl font-bold text-slate-900">Formatos Estándar de Documentación</h2>
-                    <p class="text-sm text-slate-500 mt-1">Seleccione un formato para comenzar el registro de tiempo.</p>
+                    <p class="text-sm text-slate-500 mt-1">Seleccione un formato corporativo para comenzar la gestión de notificación.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
                     <button onclick="selectModel(1)" class="p-6 border-2 border-blue-200 bg-blue-50/40 hover:bg-blue-100/50 hover:border-blue-600 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-blue-900 group-hover:text-blue-700 mb-1"><i class="fa-solid fa-file-contract text-blue-600 mr-2"></i>1. Citación Laboral</h3><p class="text-[10px] text-slate-500">Notificación formal laboral con formato judicial azul.</p>
+                        <h3 class="font-bold text-sm text-blue-900 group-hover:text-blue-700 mb-1"><i class="fa-solid fa-file-contract text-blue-600 mr-2"></i>1. Citación Extrajudicial Laboral</h3><p class="text-[10px] text-slate-500">Notificación formal con firmas y sello corporativo MC.</p>
                     </button>
                     <button onclick="selectModel(2)" class="p-6 border-2 border-red-200 bg-red-50/40 hover:bg-red-100/50 hover:border-red-600 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-red-900 group-hover:text-red-700 mb-1"><i class="fa-solid fa-gavel text-red-600 mr-2"></i>2. Orden de Embargo</h3><p class="text-[10px] text-slate-500">Documento de urgencia con marco rojo y severo.</p>
+                        <h3 class="font-bold text-sm text-red-900 group-hover:text-red-700 mb-1"><i class="fa-solid fa-triangle-exclamation text-red-600 mr-2"></i>2. Requerimiento Extrajudicial</h3><p class="text-[10px] text-slate-500">Aviso de regularización previo con sello de legalización.</p>
                     </button>
                     <button onclick="selectModel(3)" class="p-6 border-2 border-emerald-200 bg-emerald-50/40 hover:bg-emerald-100/50 hover:border-emerald-600 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-emerald-900 group-hover:text-emerald-700 mb-1"><i class="fa-solid fa-handshake text-emerald-600 mr-2"></i>3. Conciliación Extrajudicial</h3><p class="text-[10px] text-slate-500">Diseño verde redondeado y amigable de mediación.</p>
+                        <h3 class="font-bold text-sm text-emerald-900 group-hover:text-emerald-700 mb-1"><i class="fa-solid fa-handshake text-emerald-600 mr-2"></i>3. Conciliación Extrajudicial</h3><p class="text-[10px] text-slate-500">Convocatoria a arreglo directo con respaldo institucional.</p>
                     </button>
                     <button onclick="selectModel(4)" class="p-6 border-2 border-slate-300 bg-slate-100 hover:bg-slate-200 hover:border-slate-800 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-slate-900 mb-1"><i class="fa-solid fa-building text-slate-800 mr-2"></i>4. Incumplimiento Mercantil</h3><p class="text-[10px] text-slate-500">Formato industrial en fuente monospaciada.</p>
+                        <h3 class="font-bold text-sm text-slate-900 mb-1"><i class="fa-solid fa-building text-slate-800 mr-2"></i>4. Incumplimiento Mercantil</h3><p class="text-[10px] text-slate-500">Formato oficial mercantil de cobro extrajudicial.</p>
                     </button>
                     <button onclick="selectModel(5)" class="p-6 border-2 border-purple-200 bg-purple-50/40 hover:bg-purple-100/50 hover:border-purple-600 rounded-xl transition shadow-sm group">
-                        <h3 class="font-bold text-sm text-purple-900 group-hover:text-purple-700 mb-1"><i class="fa-solid fa-map-location-dot text-purple-600 mr-2"></i>5. Citación Provincial</h3><p class="text-[10px] text-slate-500">Corte provincial clásica en tipografía Serif.</p>
+                        <h3 class="font-bold text-sm text-purple-900 group-hover:text-purple-700 mb-1"><i class="fa-solid fa-map-location-dot text-purple-600 mr-2"></i>5. Citación Provincial Extrajudicial</h3><p class="text-[10px] text-slate-500">Notificación distrital institucional con firma autorizada.</p>
                     </button>
                 </div>
             </div>
@@ -334,7 +335,7 @@
                 <div class="flex items-center gap-3">
                     <i class="fa-solid fa-shield-check text-2xl text-emerald-600"></i>
                     <div>
-                        <h3 class="font-bold text-slate-800 text-sm">Portal de Verificación Judicial</h3>
+                        <h3 class="font-bold text-slate-800 text-sm">Portal de Verificación Documental</h3>
                         <p class="text-[10px] text-slate-500 uppercase tracking-widest">Documento Electrónico Certificado</p>
                     </div>
                 </div>
@@ -343,8 +344,8 @@
             
             <div class="bg-white rounded-b-xl shadow-xl border border-slate-200 p-8 sm:p-12 space-y-8">
                 <div class="text-center border-b-2 border-slate-100 pb-6">
-                    <h2 class="font-black text-slate-900 text-3xl uppercase tracking-tight" id="dispClientViewHeaderTitle">PLATAFORMA DOCUMENTAL</h2>
-                    <p class="text-sm text-slate-500 font-medium mt-2"><i class="fa-solid fa-file-signature text-blue-600 mr-2"></i>Copia Fiel del Original</p>
+                    <h2 class="font-black text-slate-900 text-3xl uppercase tracking-tight" id="dispClientViewHeaderTitle">MC REPÚBLICA DEL ECUADOR</h2>
+                    <p class="text-sm text-slate-500 font-medium mt-2"><i class="fa-solid fa-file-signature text-blue-600 mr-2"></i>Copia Fiel del Registro de Citación Extrajudicial</p>
                 </div>
                 
                 <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
@@ -357,7 +358,7 @@
                         <span class="font-bold text-slate-900 text-base dispRuc"></span>
                     </div>
                     <div class="border-b sm:border-b-0 sm:border-r border-slate-200 pb-4 sm:pb-0 pr-4 pt-4 sm:border-t">
-                        <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Número de Expediente / Causa:</span>
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Número de Contrato:</span>
                         <span class="font-bold text-slate-900 text-base dispExpedient text-blue-700"></span>
                     </div>
                     <div class="pt-4 sm:border-t border-slate-200">
@@ -373,8 +374,8 @@
             </div>
             
             <div class="text-center mt-8 text-xs text-slate-400 font-medium">
-                <p>Este documento es válido para todos los fines legales correspondientes.</p>
-                <p>Plataforma Integral Judicial &copy; 2026</p>
+                <p>Este documento es válido para todos los fines de gestión extrajudicial correspondientes.</p>
+                <p>Plataforma Integral MC REPÚBLICA DEL ECUADOR &copy; 2026</p>
             </div>
         </div>
     </section>
@@ -387,7 +388,6 @@
            CONFIGURACIÓN Y ESTADOS GLOBALES
         ======================================================================= */
         
-        // ¡¡ IMPORTANTE: REEMPLAZA ESTO CON TUS CREDENCIALES REALES !!
         const SUPABASE_URL = 'https://crrlfrlczhihuwxljwru.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNycmxmcmxjemhpaHV3eGxqd3J1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2OTY4NjUsImV4cCI6MjEwODI3Mjg2NX0.goqWlSuj-DtfU26dEnKNU6q48AsrIoCMpkFsm6Rtn-Q';
         
@@ -432,7 +432,7 @@
             document.querySelectorAll('#editorPanel .field-error').forEach(el => el.classList.remove('field-error'));
             const errs = []; let first = null;
             const mark = (el, msg) => { el.classList.add('field-error'); errs.push(msg); if (!first) first = el; };
-            [['inputClientName', 'Nombre del destinatario'], ['inputRuc', 'Identificación / RUC'], ['inputExpedient', 'Código de expediente'], ['inputDate', 'Fecha de radicación (seleccione una fecha)']]
+            [['inputClientName', 'Nombre del destinatario'], ['inputRuc', 'Identificación / RUC'], ['inputExpedient', 'Número de Contrato'], ['inputDate', 'Fecha de radicación (seleccione una fecha)']]
                 .forEach(([id, label]) => { const el = document.getElementById(id); if (!el.value.trim()) mark(el, label); });
             for (let i = 1; i <= 4; i++) {
                 if (document.getElementById(`chk_doc${i}`).checked && !anexosData[`doc${i}`])
@@ -447,7 +447,7 @@
             document.getElementById('formErrorBox').classList.add('hidden');
             return true;
         }
-        // Fecha: solo se elige desde el calendario (no se escribe)
+
         (function () {
             const d = document.getElementById('inputDate');
             const open = () => { try { d.showPicker(); } catch (_) {} };
@@ -457,134 +457,218 @@
             d.addEventListener('drop', e => e.preventDefault());
         })();
 
-        // ==========================================
-        // 5 FORMATOS CON DISEÑOS PDF MEJORADOS (FLEX)
-        // ==========================================
+        /* =======================================================================
+           5 FORMATOS OFICIALES MC REPÚBLICA DEL ECUADOR CON FIRMA Y SELLO
+        ======================================================================= */
         const MODELOS = {
             1: { 
-                nombre: "Citación Laboral", 
-                header: "Tribunal Regional del Trabajo", 
+                nombre: "Citación Extrajudicial Laboral", 
+                header: "MC REPÚBLICA DEL ECUADOR", 
                 html: () => `
-                    <div class="font-sans border-t-[12px] border-[#1b365d] bg-white">
-                        <div class="bg-[#1b365d] text-white text-center py-10 px-6 shadow-md">
-                            <i class="fa-solid fa-scale-unbalanced text-4xl mb-3 text-amber-400"></i>
-                            <h1 class="text-3xl font-bold tracking-tight uppercase">Tribunal Regional del Trabajo</h1>
-                            <p class="text-blue-200 text-xs mt-2 font-bold tracking-widest uppercase">Aviso Electrónico Judicial</p>
+                    <div class="font-sans border-t-[12px] border-[#1b365d] bg-white p-2">
+                        <div class="bg-[#1b365d] text-white text-center py-8 px-6 shadow-sm rounded-t">
+                            <i class="fa-solid fa-building-columns text-4xl mb-2 text-amber-400"></i>
+                            <h1 class="text-3xl font-black tracking-wider uppercase">MC REPÚBLICA DEL ECUADOR</h1>
+                            <p class="text-blue-200 text-xs mt-1 font-bold tracking-widest uppercase">Dirección de Notificaciones Extrajudiciales</p>
                         </div>
-                        <div class="p-10 space-y-8">
+                        <div class="p-8 space-y-6">
                             <div class="border-b-2 border-slate-200 pb-3 flex justify-between items-center">
-                                <h2 class="text-xl font-black text-[#1b365d] tracking-wide uppercase">NOTIFICACIÓN Y CITACIÓN LABORAL</h2>
-                                <span class="bg-blue-100 text-[#1b365d] font-bold text-xs px-3 py-1 rounded-full uppercase border border-blue-200">Carácter Oficial</span>
+                                <h2 class="text-lg font-black text-[#1b365d] tracking-wide uppercase">CITACIÓN EXTRAJUDICIAL Y NOTIFICACIÓN FORMAL</h2>
+                                <span class="bg-blue-100 text-[#1b365d] font-bold text-xs px-3 py-1 rounded-full uppercase border border-blue-200">Aviso Oficial</span>
                             </div>
-                            <div class="bg-slate-50 p-6 rounded border border-slate-200 text-sm space-y-4 shadow-sm">
+                            <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 text-sm space-y-3 shadow-sm">
                                 <div class="flex border-b border-slate-200 pb-2"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">Sujeto Notificado:</span><span class="inline-block w-2/3 text-slate-900 font-bold dispClientName"></span></div>
                                 <div class="flex border-b border-slate-200 pb-2"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">Identificación RUC/CI:</span><span class="inline-block w-2/3 text-slate-900 font-medium dispRuc"></span></div>
-                                <div class="flex border-b border-slate-200 pb-2"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">N° de Expediente:</span><span class="inline-block w-2/3 text-slate-900 font-bold text-blue-800 dispExpedient"></span></div>
+                                <div class="flex border-b border-slate-200 pb-2"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">N° de Contrato:</span><span class="inline-block w-2/3 text-slate-900 font-bold text-blue-800 dispExpedient"></span></div>
                                 <div class="flex"><span class="inline-block w-1/3 font-bold text-slate-500 uppercase text-xs">Fecha Radicación:</span><span class="inline-block w-2/3 text-slate-900 font-medium dispDate"></span></div>
                             </div>
                             <div class="bg-amber-50 border-l-4 border-amber-500 p-5 text-sm text-amber-900 shadow-sm">
-                                <strong class="font-black uppercase block mb-2 text-amber-700">Aviso Formal:</strong> Se requiere la comparecencia obligatoria y oportuna dentro del término legal fijado por esta judicatura laboral bajo apercibimiento de ley.
+                                <strong class="font-black uppercase block mb-1 text-amber-800">Aviso Formal Extrajudicial:</strong> Se requiere el acercamiento y regularización oportuna de los compromisos pendientes amparados en el número de contrato citado, con la finalidad de conciliar de mutuo acuerdo.
                             </div>
-                            <div class="text-center pt-6">
-                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-[#1b365d] text-white font-bold py-4 px-10 rounded uppercase text-xs tracking-wider inline-block shadow-md">CONSULTAR ANEXOS Y PRUEBAS</a>
+                            
+                            <!-- BLOQUE DE FIRMA Y SELLO CORPORATIVO -->
+                            <div class="pt-8 border-t border-slate-200 mt-6 flex justify-between items-center">
+                                <div class="text-center w-1/2">
+                                    <div class="firma-manuscrita text-blue-900 font-bold mb-1">Fernando Obregón G.</div>
+                                    <div class="border-t border-slate-400 pt-1 text-[11px] font-bold text-slate-700 uppercase">Departamento de Notificaciones</div>
+                                    <div class="text-[10px] text-slate-500 font-semibold">MC REPÚBLICA DEL ECUADOR</div>
+                                </div>
+                                <div class="w-1/2 flex justify-center items-center">
+                                    <div class="w-24 h-24 rounded-full border-4 border-double border-blue-900/30 flex flex-col items-center justify-center text-[8px] font-black text-blue-900/70 uppercase tracking-tighter p-1 text-center rotate-6 shadow-inner">
+                                        <span>MC ECUADOR</span>
+                                        <span class="my-0.5 border-y border-blue-900/30 w-full py-0.5">VERIFICADO</span>
+                                        <span>EXTRAJUDICIAL</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center pt-4">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-[#1b365d] text-white font-bold py-3 px-8 rounded uppercase text-xs tracking-wider inline-block shadow-md">CONSULTAR ANEXOS Y SOPORTES</a>
                             </div>
                         </div>
                     </div>` 
             },
             2: { 
-                nombre: "Orden de Embargo", 
-                header: "Unidad Ejecutiva Coactiva", 
+                nombre: "Requerimiento Extrajudicial", 
+                header: "MC REPÚBLICA DEL ECUADOR", 
                 html: () => `
-                    <div class="font-sans bg-white border-[12px] border-red-900 p-10 relative">
-                        <div class="bg-red-900 text-white text-center py-2 px-6 font-black text-sm uppercase tracking-widest absolute top-0 left-0 right-0">Urgente - Ejecución Coactiva Inmediata</div>
-                        <div class="text-center border-b-4 border-red-900 pb-6 mb-8 mt-10">
-                            <i class="fa-solid fa-gavel text-6xl text-red-900 mb-4 drop-shadow-md"></i>
-                            <h1 class="text-4xl font-black text-red-900 uppercase tracking-tighter">UNIDAD JUDICIAL DE COACTIVAS</h1>
-                            <p class="text-red-700 font-bold tracking-widest text-base mt-2">MANDAMIENTO DE EMBARGO DE BIENES</p>
+                    <div class="font-sans bg-white border-[10px] border-red-900 p-8 relative">
+                        <div class="bg-red-900 text-white text-center py-2 px-6 font-black text-xs uppercase tracking-widest absolute top-0 left-0 right-0">Notificación Extrajudicial Urgente</div>
+                        <div class="text-center border-b-4 border-red-900 pb-5 mb-6 mt-8">
+                            <i class="fa-solid fa-triangle-exclamation text-5xl text-red-900 mb-3"></i>
+                            <h1 class="text-3xl font-black text-red-900 uppercase tracking-tight">MC REPÚBLICA DEL ECUADOR</h1>
+                            <p class="text-red-700 font-bold tracking-widest text-sm mt-1">REQUERIMIENTO EXTRAJUDICIAL DE PAGO</p>
                         </div>
-                        <div class="space-y-6">
-                            <div class="bg-red-50 p-6 border-2 border-red-200 text-sm space-y-4">
-                                <div class="border-b border-red-200 pb-3"><span class="block font-black text-red-900 uppercase text-xs mb-1">Demandado / Ejecutado:</span><span class="text-xl font-bold text-slate-900 dispClientName"></span></div>
+                        <div class="space-y-5">
+                            <div class="bg-red-50 p-5 border-2 border-red-200 text-sm space-y-3">
+                                <div class="border-b border-red-200 pb-2"><span class="block font-black text-red-900 uppercase text-xs mb-1">Destinatario Requerido:</span><span class="text-lg font-bold text-slate-900 dispClientName"></span></div>
                                 <div class="flex justify-between pt-1">
-                                    <div class="w-1/2"><span class="block font-black text-red-900 uppercase text-[10px] mb-1">RUC / Cédula:</span><span class="font-bold text-slate-900 text-base dispRuc"></span></div>
-                                    <div class="w-1/2"><span class="block font-black text-red-900 uppercase text-[10px] mb-1">Juicio Coactivo N°:</span><span class="font-black text-red-800 text-base dispExpedient"></span></div>
+                                    <div class="w-1/2"><span class="block font-black text-red-900 uppercase text-[10px] mb-1">RUC / Cédula:</span><span class="font-bold text-slate-900 text-sm dispRuc"></span></div>
+                                    <div class="w-1/2"><span class="block font-black text-red-900 uppercase text-[10px] mb-1">Número de Contrato:</span><span class="font-black text-red-800 text-sm dispExpedient"></span></div>
                                 </div>
                             </div>
-                            <div class="bg-red-100 border-l-8 border-red-700 p-5 text-sm text-red-900 font-bold uppercase shadow-inner">
-                                Se ordena la retención preventiva e inmovilización inmediata de valores depositados en el sistema financiero nacional.
+                            <div class="bg-red-100 border-l-8 border-red-700 p-4 text-xs text-red-900 font-bold uppercase">
+                                Se requiere el contacto inmediato con el departamento asignado para acordar un plan de regularización extrajudicial de los compromisos adquiridos.
                             </div>
-                            <div class="text-center pt-8">
-                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-red-900 text-white font-black py-4 px-8 uppercase text-sm tracking-wide inline-block w-full text-center shadow-lg border border-red-950">REVISAR AUTOS Y MEDIDAS MEDIANTE ESTE ENLACE</a>
+
+                            <!-- BLOQUE DE FIRMA Y SELLO DE SEGURIDAD -->
+                            <div class="pt-6 border-t border-red-200 mt-6 flex justify-between items-center">
+                                <div class="text-center w-1/2">
+                                    <div class="firma-manuscrita text-red-950 font-bold mb-1">Fernando Obregón G.</div>
+                                    <div class="border-t border-red-300 pt-1 text-[11px] font-bold text-red-900 uppercase">Jefatura de Cobranzas</div>
+                                    <div class="text-[10px] text-slate-600 font-bold">MC REPÚBLICA DEL ECUADOR</div>
+                                </div>
+                                <div class="w-1/2 flex justify-center items-center">
+                                    <div class="w-24 h-24 rounded-full border-4 border-double border-red-800/40 flex flex-col items-center justify-center text-[8px] font-black text-red-900 uppercase tracking-tighter p-1 text-center -rotate-12">
+                                        <span>DEPARTAMENTO</span>
+                                        <span class="my-0.5 border-y border-red-800/40 w-full py-0.5">MC ECUADOR</span>
+                                        <span>REGISTRADO</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center pt-4">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-red-900 text-white font-black py-3 px-8 uppercase text-xs tracking-wide inline-block w-full text-center shadow-lg">VER DETALLES MEDIAR ENLACE DIRECTO</a>
                             </div>
                         </div>
                     </div>` 
             },
             3: { 
                 nombre: "Conciliación Extrajudicial", 
-                header: "Centro Arbitral de Mediación", 
+                header: "MC REPÚBLICA DEL ECUADOR", 
                 html: () => `
-                    <div class="font-sans bg-[#f0fdf4] border-[6px] border-emerald-500 rounded-3xl p-10 text-center relative overflow-hidden">
-                        <div class="absolute -top-10 -right-10 text-emerald-100 opacity-50"><i class="fa-solid fa-leaf text-[150px]"></i></div>
-                        <div class="inline-block p-5 bg-emerald-100 rounded-full mb-4 relative z-10"><i class="fa-solid fa-handshake text-4xl text-emerald-700"></i></div>
-                        <h1 class="text-3xl font-extrabold text-emerald-950 relative z-10">Centro Arbitral de Mediación y Conciliación</h1>
-                        <p class="text-sm text-emerald-700 uppercase font-bold tracking-widest mt-2 relative z-10">Mecanismo Alternativo de Solución de Conflictos</p>
+                    <div class="font-sans bg-[#f0fdf4] border-[6px] border-emerald-600 rounded-2xl p-8 text-center relative overflow-hidden">
+                        <div class="inline-block p-4 bg-emerald-100 rounded-full mb-3"><i class="fa-solid fa-handshake text-3xl text-emerald-700"></i></div>
+                        <h1 class="text-3xl font-black text-emerald-950">MC REPÚBLICA DEL ECUADOR</h1>
+                        <p class="text-xs text-emerald-700 uppercase font-bold tracking-widest mt-1">Centro de Mediación y Conciliación Extrajudicial</p>
                         
-                        <div class="bg-white rounded-2xl p-8 mt-8 border border-emerald-200 shadow-md text-left text-sm space-y-4 relative z-10">
-                            <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest text-center border-b border-emerald-100 pb-4 mb-2">Convocatoria Formal a Audiencia de Mediación</p>
-                            <div class="pt-2">
-                                <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Invitado / Parte Requerida:</span>
-                                <h2 class="text-2xl font-black text-slate-800 dispClientName"></h2>
+                        <div class="bg-white rounded-xl p-6 mt-6 border border-emerald-200 shadow-sm text-left text-sm space-y-3">
+                            <p class="text-xs font-bold text-emerald-700 uppercase tracking-widest text-center border-b border-emerald-100 pb-3 mb-2">Convocatoria Extrajudicial de Conciliación Directa</p>
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold mb-1">Parte Convocada / Titular:</span>
+                                <h2 class="text-xl font-black text-slate-800 dispClientName"></h2>
                             </div>
-                            <div class="flex border-t border-emerald-100 pt-4 mt-2 text-sm">
+                            <div class="flex border-t border-emerald-100 pt-3 mt-2 text-sm">
                                 <div class="w-1/2 border-r border-emerald-100"><span class="text-slate-400 block text-[10px] uppercase font-bold">RUC / ID:</span><span class="font-bold text-slate-800 dispRuc"></span></div>
-                                <div class="w-1/2 pl-4"><span class="text-slate-400 block text-[10px] uppercase font-bold">Caso N°:</span><span class="font-bold text-emerald-700 dispExpedient"></span></div>
+                                <div class="w-1/2 pl-4"><span class="text-slate-400 block text-[10px] uppercase font-bold">Número de Contrato:</span><span class="font-bold text-emerald-700 dispExpedient"></span></div>
                             </div>
                         </div>
-                        <div class="text-center pt-8 relative z-10">
-                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-10 rounded-full uppercase text-sm tracking-wider inline-block shadow-lg">ACCEDER A LA PROPUESTA Y ANEXOS</a>
+
+                        <!-- BLOQUE DE FIRMA Y SELLO -->
+                        <div class="pt-6 border-t border-emerald-200 mt-6 flex justify-between items-center text-left">
+                            <div class="text-center w-1/2">
+                                <div class="firma-manuscrita text-emerald-900 font-bold mb-1">Fernando Obregón G.</div>
+                                <div class="border-t border-emerald-300 pt-1 text-[11px] font-bold text-emerald-950 uppercase">Director de Conciliaciones</div>
+                                <div class="text-[10px] text-emerald-700 font-semibold">MC REPÚBLICA DEL ECUADOR</div>
+                            </div>
+                            <div class="w-1/2 flex justify-center items-center">
+                                <div class="w-24 h-24 rounded-full border-4 border-double border-emerald-700/40 flex flex-col items-center justify-center text-[8px] font-black text-emerald-900 uppercase tracking-tighter p-1 text-center rotate-3">
+                                    <span>CONCILIACIÓN</span>
+                                    <span class="my-0.5 border-y border-emerald-700/40 w-full py-0.5">MC ECUADOR</span>
+                                    <span>APROBADO</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center pt-6">
+                            <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-full uppercase text-xs tracking-wider inline-block shadow-md">ACCEDER A LA PROPUESTA Y ANEXOS</a>
                         </div>
                     </div>` 
             },
             4: { 
                 nombre: "Incumplimiento Mercantil", 
-                header: "Juzgado de lo Civil y Mercantil", 
+                header: "MC REPÚBLICA DEL ECUADOR", 
                 html: () => `
                     <div class="font-mono text-slate-900 bg-white border-4 border-slate-900 shadow-sm p-8">
-                        <div class="bg-slate-900 text-white p-6 mb-8 flex justify-between items-center">
+                        <div class="bg-slate-900 text-white p-5 mb-6 flex justify-between items-center">
                             <div>
-                                <h1 class="text-2xl font-bold tracking-tight">JUZGADO DE LO CIVIL Y MERCANTIL</h1>
-                                <p class="text-xs text-slate-300 mt-1 uppercase tracking-widest">Requerimiento Mercantil Previo</p>
+                                <h1 class="text-2xl font-black tracking-tight">MC REPÚBLICA DEL ECUADOR</h1>
+                                <p class="text-xs text-slate-300 mt-0.5 uppercase tracking-widest">Notificación de Incumplimiento Mercantil Extrajudicial</p>
                             </div>
                         </div>
-                        <div class="space-y-6">
+                        <div class="space-y-5">
                             <div class="flex flex-wrap border-2 border-slate-900 text-sm">
-                                <div class="w-1/2 p-4 border-r-2 border-b-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Razón Social / Cliente</span><span class="dispClientName font-bold text-base"></span></div>
-                                <div class="w-1/2 p-4 border-b-2 border-slate-900"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">N° de Registro Mercantil</span><span class="dispExpedient font-bold text-base"></span></div>
-                                <div class="w-1/2 p-4 border-r-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Identificación RUC</span><span class="dispRuc font-bold"></span></div>
-                                <div class="w-1/2 p-4"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Fecha de Emisión</span><span class="dispDate font-bold"></span></div>
+                                <div class="w-1/2 p-3 border-r-2 border-b-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Razón Social / Cliente</span><span class="dispClientName font-bold text-sm"></span></div>
+                                <div class="w-1/2 p-3 border-b-2 border-slate-900"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Número de Contrato</span><span class="dispExpedient font-bold text-sm"></span></div>
+                                <div class="w-1/2 p-3 border-r-2 border-slate-900 bg-slate-100"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Identificación RUC</span><span class="dispRuc font-bold"></span></div>
+                                <div class="w-1/2 p-3"><span class="block font-bold text-[10px] uppercase text-slate-500 mb-1">Fecha de Emisión</span><span class="dispDate font-bold"></span></div>
                             </div>
-                            <p class="text-sm text-justify leading-relaxed bg-slate-50 p-6 border border-slate-300 font-medium">Notificación formal de mora mercantil. El incumplimiento del presente acuerdo comercial y la falta de pago documentada darán lugar al inicio inmediato de acciones ejecutivas en base a las disposiciones vigentes del Código de Comercio.</p>
-                            <div class="text-right pt-4">
-                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-slate-900 text-white font-bold py-4 px-8 uppercase text-xs tracking-wider inline-block">VER DOCUMENTOS DE SOPORTE &#8594;</a>
+                            <p class="text-xs text-justify leading-relaxed bg-slate-50 p-4 border border-slate-300 font-medium">Notificación formal extrajudicial por haber incurrido en mora mercantil respecto al acuerdo suscrito en el número de contrato expuesto. Se concede un plazo prudencial para acordar un plan de pagos antes del traslado de la causa a las instancias correspondientes.</p>
+                            
+                            <!-- BLOQUE DE FIRMA Y SELLO -->
+                            <div class="pt-6 border-t-2 border-slate-900 flex justify-between items-center">
+                                <div class="text-center w-1/2">
+                                    <div class="firma-manuscrita text-slate-900 font-bold mb-1">Fernando Obregón G.</div>
+                                    <div class="border-t border-slate-900 pt-1 text-[10px] font-bold text-slate-900 uppercase">División Mercantil Extrajudicial</div>
+                                    <div class="text-[9px] text-slate-600 font-bold">MC REPÚBLICA DEL ECUADOR</div>
+                                </div>
+                                <div class="w-1/2 flex justify-center items-center">
+                                    <div class="w-24 h-24 border-2 border-slate-900 flex flex-col items-center justify-center text-[8px] font-black text-slate-900 uppercase p-1 text-center rotate-6">
+                                        <span>DEPARTAMENTO</span>
+                                        <span class="my-0.5 border-y border-slate-900 w-full py-0.5">MC ECUADOR</span>
+                                        <span>REGISTRO COBRO</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-right pt-2">
+                                <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none;" class="bg-slate-900 text-white font-bold py-3 px-6 uppercase text-xs tracking-wider inline-block">VER DOCUMENTOS DE SOPORTE &#8594;</a>
                             </div>
                         </div>
                     </div>` 
             },
             5: { 
-                nombre: "Citación Provincial", 
-                header: "Corte Provincial de Justicia", 
+                nombre: "Citación Provincial Extrajudicial", 
+                header: "MC REPÚBLICA DEL ECUADOR", 
                 html: () => `
                     <div class="bg-white border-8 border-slate-400 p-2" style="font-family: 'Times New Roman', Times, serif;">
-                        <div class="border-[4px] border-double border-slate-400 p-10 shadow-inner">
-                            <div class="text-center mb-10 border-b border-slate-300 pb-8">
-                                <h1 class="text-3xl font-bold tracking-[0.2em] uppercase text-slate-900">CORTE PROVINCIAL DE JUSTICIA</h1>
-                                <p class="text-sm text-slate-600 tracking-widest uppercase mt-2 font-bold">DESPACHO JUDICIAL DISTRITAL</p>
+                        <div class="border-[3px] border-double border-slate-400 p-8 shadow-inner">
+                            <div class="text-center mb-8 border-b border-slate-300 pb-6">
+                                <h1 class="text-2xl font-bold tracking-[0.15em] uppercase text-slate-900">MC REPÚBLICA DEL ECUADOR</h1>
+                                <p class="text-xs text-slate-600 tracking-widest uppercase mt-1 font-bold">DELEGACIÓN PROVINCIAL DE NOTIFICACIONES EXTRAJUDICIALES</p>
                             </div>
-                            <div class="space-y-6 text-slate-900 text-lg leading-relaxed text-justify px-4">
-                                <p>En la ciudad correspondiente, con fecha <strong><span class="dispDate"></span></strong>, se notifica de manera formal al señor(a) o persona jurídica <strong><span class="dispClientName uppercase"></span></strong>, poseedor del documento de identificación RUC/CI <strong><span class="dispRuc"></span></strong>.</p>
-                                <p>Hacemos de su expreso conocimiento que en la causa N° <strong><span class="dispExpedient"></span></strong> radica la correspondiente citación judicial distrital emitida por la judicatura competente para los fines legales pertinentes.</p>
-                                <div class="text-center pt-12 pb-4">
-                                    <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none; font-family: sans-serif;" class="bg-black text-white font-bold py-4 px-10 uppercase text-xs tracking-[0.1em] inline-block border border-black shadow-lg">CONSULTAR FOJAS DIGITALES ALOJADAS</a>
+                            <div class="space-y-5 text-slate-900 text-base leading-relaxed text-justify px-2">
+                                <p>En la ciudad correspondiente, con fecha <strong><span class="dispDate"></span></strong>, se notifica mediante citación extrajudicial formal al ciudadano(a) o entidad <strong><span class="dispClientName uppercase"></span></strong>, portador del RUC/CI <strong><span class="dispRuc"></span></strong>.</p>
+                                <p>Hacemos de su expreso conocimiento que bajo el <strong>Número de Contrato N° <span class="dispExpedient"></span></strong> reposa la orden de notificación extrajudicial asignada a esta delegación, requiriéndose la debida atención antes del fenecimiento de los términos otorgados.</p>
+                                
+                                <!-- BLOQUE DE FIRMA Y SELLO -->
+                                <div class="pt-8 border-t border-slate-300 mt-6 flex justify-between items-center text-center font-sans">
+                                    <div class="w-1/2">
+                                        <div class="firma-manuscrita text-slate-900 font-bold mb-1">Fernando Obregón G.</div>
+                                        <div class="border-t border-slate-400 pt-1 text-[10px] font-bold text-slate-800 uppercase">Delegado Provincial de Notificaciones</div>
+                                        <div class="text-[9px] text-slate-500 font-bold">MC REPÚBLICA DEL ECUADOR</div>
+                                    </div>
+                                    <div class="w-1/2 flex justify-center items-center">
+                                        <div class="w-24 h-24 rounded-full border-2 border-slate-500 flex flex-col items-center justify-center text-[7px] font-bold text-slate-700 uppercase p-1 text-center -rotate-6">
+                                            <span>DELEGACIÓN</span>
+                                            <span class="my-0.5 border-y border-slate-500 w-full py-0.5">MC ECUADOR</span>
+                                            <span>CERTIFICADO</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-center pt-6 pb-2">
+                                    <a id="btnAnexosPdf" href="#" target="_blank" style="display: none; text-decoration:none; font-family: sans-serif;" class="bg-black text-white font-bold py-3 px-8 uppercase text-xs tracking-widest inline-block border border-black shadow">CONSULTAR REGISTROS DIGITALES</a>
                                 </div>
                             </div>
                         </div>
@@ -690,7 +774,7 @@
         }
 
         /* =======================================================================
-           FLUJO DEL AUDITOR (SOLO COBRANZA Y RETENCIÓN)
+           FLUJO DEL AUDITOR
         ======================================================================= */
         function openAuditorCampaignSelector() {
             hideAllViews();
@@ -773,7 +857,6 @@
                     const seconds = Math.max(0, Number(r.tiempo_segundos) || 0);
                     totalT += seconds; fin++;
                     const role = String(r.perfiles?.rol || '').trim().toLowerCase();
-                    // Solo se consideran asesores; se excluyen auditoría, sesiones y acciones administrativas.
                     if (role === 'asesor') {
                         const key = r.usuario_id || r.perfiles?.nombre || 'sin_usuario';
                         if (!advisorStats.has(key)) advisorStats.set(key, {
@@ -827,7 +910,7 @@
             try {
                 const { error } = await supabaseClient.from('auditoria').delete().eq('id', id);
                 if (error) throw error;
-                loadAuditData(); // Recarga la tabla de inmediato
+                loadAuditData();
             } catch (err) {
                 alert("Error al eliminar registro: " + err.message);
             }
@@ -857,7 +940,6 @@
             await supabaseClient.from('auditoria').insert([{ usuario_id: currentUser.id, campana: 'Sistemas / Administración', modelo: 'SISTEMA', hora_inicio: new Date().toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: 0, estado: 'Gestión Usuario' }]);
         }
 
-        // FUNCIONES DE EDICIÓN Y ELIMINACIÓN DE USUARIOS
         function openEditUserModal(id, nombre, rol, campana) {
             document.getElementById('eu_id').value = id;
             document.getElementById('eu_nombre').value = nombre;
@@ -898,11 +980,10 @@
             const campana = rol === 'Auditor' ? null : (rol === 'Sistemas' ? 'Sistemas / Administración' : document.getElementById('eu_campana').value);
 
             try {
-                // Se usa el supabaseClient general que tiene los permisos completos 
                 const { data, error } = await supabaseClient.from('perfiles').update({ nombre, rol, campana }).eq('id', id).select();
                 if (error) throw error;
                 if (!data || data.length === 0) {
-                    alert("Advertencia: El usuario no pudo ser editado. Revise las políticas RLS.");
+                    alert("Advertencia: El usuario no pudo ser editado.");
                 } else {
                     closeEditUserModal();
                     loadUsersList();
@@ -943,14 +1024,12 @@
             }
         }
 
-        // FUNCIÓN MEJORADA: Espera activamente (Polling) y usa el cliente principal para aplicar los cambios correctos.
         async function saveUser(e) {
             e.preventDefault(); 
             const btn = document.getElementById('btnSaveUser'); 
             btn.disabled = true;
             
             try {
-                // 1. Instanciar cliente temporal (evita sobrescribir la sesión actual)
                 const tempClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
                     auth: { persistSession: false, autoRefreshToken: false }
                 });
@@ -959,7 +1038,6 @@
                 const campSel = rolSel === 'Auditor' ? null : (rolSel === 'Sistemas' ? 'Sistemas / Administración' : document.getElementById('nu_campana').value);
                 const nombreVal = document.getElementById('nu_nombre').value;
 
-                // 2. Crear usuario 
                 const { data: nu, error: e1 } = await tempClient.auth.signUp({ 
                     email: document.getElementById('nu_email').value, 
                     password: document.getElementById('nu_pass').value,
@@ -967,24 +1045,18 @@
                 });
                 
                 if (e1) throw e1;
-                if (!nu || !nu.user) throw new Error("No se devolvió el identificador del nuevo usuario de Supabase.");
+                if (!nu || !nu.user) throw new Error("No se devolvió el identificador del usuario.");
 
-                // 3. POLLING (Espera activa): Esperamos pacientemente a que el trigger de BD termine de crear el perfil.
-                // Revisa la base de datos cada 500ms (máximo 10 intentos = 5 segundos)
                 let profileCreated = false;
                 for (let i = 0; i < 10; i++) {
                     await new Promise(resolve => setTimeout(resolve, 500));
-                    
-                    // Utilizamos tu sesión de Administrador para buscar si el ID ya existe en la tabla perfiles
                     const { data: check } = await supabaseClient.from('perfiles').select('id').eq('id', nu.user.id).single();
-                    
                     if (check) { 
                         profileCreated = true; 
                         break; 
                     }
                 }
                 
-                // 4. Actualizar forzosamente usando LA SESIÓN PRINCIPAL DE 'SISTEMAS' que YA TIENE PERMISOS
                 if (profileCreated) {
                     const { error: e2 } = await supabaseClient.from('perfiles')
                         .update({ nombre: nombreVal, rol: rolSel, campana: campSel })
@@ -992,7 +1064,7 @@
                         
                     if (e2) throw e2;
                 } else {
-                    alert("Aviso: El usuario se creó exitosamente, pero el servidor tardó demasiado en inicializar su perfil. Por favor, edítelo manualmente en la tabla.");
+                    alert("Aviso: El usuario se creó exitosamente, pero el servidor tardó demasiado en inicializar su perfil.");
                 }
                 
                 closeUserModal(); 
@@ -1006,7 +1078,7 @@
         }
 
         /* =======================================================================
-           FLUJO ASESORES (MEDICIÓN DISCRETA DE TIEMPO DESDE LA SELECCIÓN DE FORMATO)
+           FLUJO ASESORES
         ======================================================================= */
         function initAsesorApp() {
             document.getElementById('appContainer').classList.remove('hidden'); document.getElementById('appContainer').classList.add('flex');
@@ -1035,11 +1107,10 @@
         }
 
         async function selectModel(id) {
-            // Guarda el proceso anterior como cancelado si salió sin generar
             await registrarTiempoEnBD('Cancelado'); 
 
             selectedModelId = id;
-            resetEditorForm(); // limpia datos del documento anterior
+            resetEditorForm();
             document.getElementById('modelSelectorOverlay').classList.add('hidden'); 
             document.getElementById('mainContainer').classList.remove('hidden'); 
             document.getElementById('notificationView').classList.remove('hidden'); 
@@ -1051,14 +1122,11 @@
             document.getElementById('notificationView').innerHTML = m.html();
             
             updateData();
-            
-            // CRONÓMETRO EMPIEZA A MEDIR EN ESTE INSTANTE
             iniciarMedicionCrono(id, m.nombre);
         }
 
         function openModelSelector() {
             resetEditorForm(); 
-            // Cancela la medición en curso al volver al menú de Formatos
             registrarTiempoEnBD('Cancelado'); 
             document.getElementById('notificationView').classList.add('hidden'); 
             document.getElementById('mainContainer').classList.add('hidden'); 
@@ -1098,63 +1166,61 @@
             r.readAsDataURL(fl);
         }
 
-        // GENERACIÓN DE PDF PERFECTAMENTE ENCUADRADO Y CENTRADO
-      async function generarPDF() {
-    if (!validateForm()) return;
-    const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML;
-    btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btnGen.disabled = true;
-    let uuid = null; const btnAnexos = document.getElementById('btnAnexosPdf');
-    const originalScrollY = window.scrollY;
-    window.scrollTo(0, 0);
+        // GENERACIÓN DE PDF PERFECTAMENTE ENCUADRADO
+        async function generarPDF() {
+            if (!validateForm()) return;
+            const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML;
+            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btnGen.disabled = true;
+            let uuid = null; const btnAnexos = document.getElementById('btnAnexosPdf');
+            const originalScrollY = window.scrollY;
+            window.scrollTo(0, 0);
 
-    try {
-        if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre);
-        updateData();
-        const val = id => document.getElementById(id).value.trim();
-        const cfg = n => ({ show: document.getElementById(`chk_doc${n}`).checked, data: anexosData[`doc${n}`] });
-        const caseData = { modelId: selectedModelId, clientName: val('inputClientName'), ruc: val('inputRuc'), expedient: val('inputExpedient'),
-            date: formatDateES(document.getElementById('inputDate').value), dateIso: document.getElementById('inputDate').value,
-            anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) } };
+            try {
+                if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre);
+                updateData();
+                const val = id => document.getElementById(id).value.trim();
+                const cfg = n => ({ show: document.getElementById(`chk_doc${n}`).checked, data: anexosData[`doc${n}`] });
+                const caseData = { modelId: selectedModelId, clientName: val('inputClientName'), ruc: val('inputRuc'), expedient: val('inputExpedient'),
+                    date: formatDateES(document.getElementById('inputDate').value), dateIso: document.getElementById('inputDate').value,
+                    anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) } };
 
-        const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select();
-        if (error) throw error;
-        uuid = data[0].id;
+                const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select();
+                if (error) throw error;
+                uuid = data[0].id;
 
-        // Mostrar el botón con el enlace ANTES de clonar
-        if (btnAnexos) { btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; btnAnexos.style.display = 'inline-block'; }
-        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+                if (btnAnexos) { btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; btnAnexos.style.display = 'inline-block'; }
+                if (document.fonts && document.fonts.ready) await document.fonts.ready;
 
-        // Clon limpio: flujo normal, ancho fijo, sin sombra ni offsets
-        const clone = document.getElementById('notificationView').cloneNode(true);
-        clone.removeAttribute('id');
-        clone.classList.remove('hidden', 'shadow-xl', 'overflow-hidden');
-        clone.style.cssText = 'width:800px;max-width:800px;margin:0;padding:0;display:block;background:#fff;box-shadow:none;position:static;transform:none;';
+                const clone = document.getElementById('notificationView').cloneNode(true);
+                clone.removeAttribute('id');
+                clone.classList.remove('hidden', 'shadow-xl', 'overflow-hidden');
+                clone.style.cssText = 'width:800px;max-width:800px;margin:0;padding:0;display:block;background:#fff;box-shadow:none;position:static;transform:none;';
 
-        const safeName = caseData.expedient.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'documento';
-        const opt = {
+                const safeName = caseData.expedient.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'documento';
+                const opt = {
                     margin: [0.4, 0.3, 0.4, 0.3],
                     filename: `${safeName}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
                     pagebreak: { mode: ['css', 'legacy'] }
-                    };    
+                };    
 
-        await html2pdf().set(opt).from(clone).save();
+                await html2pdf().set(opt).from(clone).save();
+                await registrarTiempoEnBD('Finalizado', uuid);
+            } catch (e) {
+                console.error('Error generando PDF:', e);
+                await registrarTiempoEnBD('Error', uuid);
+                alert('Error de generación. Intente nuevamente.');
+            } finally {
+                if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; }
+                window.scrollTo(0, originalScrollY);
+                btnGen.innerHTML = oldText; btnGen.disabled = false;
+            }
+        }
 
-        await registrarTiempoEnBD('Finalizado', uuid);
-    } catch (e) {
-        console.error('Error generando PDF:', e);
-        await registrarTiempoEnBD('Error', uuid);
-        alert('Error de generación. Intente nuevamente.');
-    } finally {
-        if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; }
-        window.scrollTo(0, originalScrollY);
-        btnGen.innerHTML = oldText; btnGen.disabled = false;
-    }
-}
         /* =======================================================================
-           VISTA PÚBLICA DE LECTURA (PARA EL CLIENTE)
+           VISTA PÚBLICA DE LECTURA (PORTAL)
         ======================================================================= */
         async function getCaseData(uuid) { const { data } = await supabaseClient.from('casos').select('*').eq('id', uuid).single(); return data; }
         function populateClientView(cr) {
