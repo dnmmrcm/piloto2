@@ -898,11 +898,11 @@
             const campana = rol === 'Auditor' ? null : (rol === 'Sistemas' ? 'Sistemas / Administración' : document.getElementById('eu_campana').value);
 
             try {
-                // AÑADIDO: .select() para garantizar que los permisos RLS permitieron el update
+                // Se usa el supabaseClient general que tiene los permisos completos 
                 const { data, error } = await supabaseClient.from('perfiles').update({ nombre, rol, campana }).eq('id', id).select();
                 if (error) throw error;
                 if (!data || data.length === 0) {
-                    alert("Advertencia: El usuario no pudo ser editado. Revise las políticas RLS en Supabase; probablemente no tengas permisos UPDATE sobre perfiles que no son tuyos.");
+                    alert("Advertencia: El usuario no pudo ser editado. Revise las políticas RLS.");
                 } else {
                     closeEditUserModal();
                     loadUsersList();
@@ -943,13 +943,14 @@
             }
         }
 
+        // FUNCIÓN MEJORADA: Espera activamente (Polling) y usa el cliente principal para aplicar los cambios correctos.
         async function saveUser(e) {
             e.preventDefault(); 
             const btn = document.getElementById('btnSaveUser'); 
             btn.disabled = true;
             
             try {
-                // 1. Instanciar cliente temporal
+                // 1. Instanciar cliente temporal (evita sobrescribir la sesión actual)
                 const tempClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
                     auth: { persistSession: false, autoRefreshToken: false }
                 });
@@ -958,7 +959,7 @@
                 const campSel = rolSel === 'Auditor' ? null : (rolSel === 'Sistemas' ? 'Sistemas / Administración' : document.getElementById('nu_campana').value);
                 const nombreVal = document.getElementById('nu_nombre').value;
 
-                // 2. Crear usuario y pasar la metadata (por si el trigger de tu BD soporta extraer estos campos)
+                // 2. Crear usuario 
                 const { data: nu, error: e1 } = await tempClient.auth.signUp({ 
                     email: document.getElementById('nu_email').value, 
                     password: document.getElementById('nu_pass').value,
@@ -966,26 +967,33 @@
                 });
                 
                 if (e1) throw e1;
+                if (!nu || !nu.user) throw new Error("No se devolvió el identificador del nuevo usuario de Supabase.");
 
-                // 3. Pausa para permitir al trigger de la BD crear la fila (1.5 segundos)
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // 4. Intentar actualizar el perfil OBLIGATORIAMENTE usando el cliente temporal
-                // Ya que la BD suele permitir al propio usuario editar sus datos (auth.uid() = id)
-                const { data: upData } = await tempClient.from('perfiles')
-                    .update({ nombre: nombreVal, rol: rolSel, campana: campSel })
-                    .eq('id', nu.user.id)
-                    .select();
-                
-                // 5. Si el tempClient falló, intentamos con el administrador principal
-                if (!upData || upData.length === 0) {
-                    await supabaseClient.from('perfiles')
-                        .update({ nombre: nombreVal, rol: rolSel, campana: campSel })
-                        .eq('id', nu.user.id);
+                // 3. POLLING (Espera activa): Esperamos pacientemente a que el trigger de BD termine de crear el perfil.
+                // Revisa la base de datos cada 500ms (máximo 10 intentos = 5 segundos)
+                let profileCreated = false;
+                for (let i = 0; i < 10; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Utilizamos tu sesión de Administrador para buscar si el ID ya existe en la tabla perfiles
+                    const { data: check } = await supabaseClient.from('perfiles').select('id').eq('id', nu.user.id).single();
+                    
+                    if (check) { 
+                        profileCreated = true; 
+                        break; 
+                    }
                 }
                 
-                // 6. Cerrar sesión temporal por seguridad
-                await tempClient.auth.signOut();
+                // 4. Actualizar forzosamente usando LA SESIÓN PRINCIPAL DE 'SISTEMAS' que YA TIENE PERMISOS
+                if (profileCreated) {
+                    const { error: e2 } = await supabaseClient.from('perfiles')
+                        .update({ nombre: nombreVal, rol: rolSel, campana: campSel })
+                        .eq('id', nu.user.id);
+                        
+                    if (e2) throw e2;
+                } else {
+                    alert("Aviso: El usuario se creó exitosamente, pero el servidor tardó demasiado en inicializar su perfil. Por favor, edítelo manualmente en la tabla.");
+                }
                 
                 closeUserModal(); 
                 loadUsersList();
