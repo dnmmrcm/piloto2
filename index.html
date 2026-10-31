@@ -217,10 +217,11 @@
                     <div class="col-span-full border-t border-slate-700 pt-5 mt-2">
                         <h3 class="text-amber-400 font-black mb-4 uppercase tracking-wider flex items-center gap-2 text-xs"><i class="fa-solid fa-paperclip"></i> Evidencia Documental de Respaldo <span class="text-slate-400 normal-case font-normal">(Opcional)</span></h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 1</label><input type="file" id="file_doc1" accept="image/*" onchange="compressImage(event, 'doc1')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc1" checked onchange="clearFieldError(document.getElementById('file_doc1'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc1" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
-                            <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 2</label><input type="file" id="file_doc2" accept="image/*" onchange="compressImage(event, 'doc2')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc2" checked onchange="clearFieldError(document.getElementById('file_doc2'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc2" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
-                            <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 3</label><input type="file" id="file_doc3" accept="image/*" onchange="compressImage(event, 'doc3')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc3" checked onchange="clearFieldError(document.getElementById('file_doc3'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc3" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
-                            <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 4</label><input type="file" id="file_doc4" accept="image/*" onchange="compressImage(event, 'doc4')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc4" checked onchange="clearFieldError(document.getElementById('file_doc4'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc4" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
+                            <!-- LOS CHECKBOXES INICIAN DESMARCADOS Y SE MARCAN AL SUBIR EVIDENCIA -->
+                            <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 1</label><input type="file" id="file_doc1" accept="image/*" onchange="compressImage(event, 'doc1')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc1" onchange="clearFieldError(document.getElementById('file_doc1'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc1" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
+                            <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 2</label><input type="file" id="file_doc2" accept="image/*" onchange="compressImage(event, 'doc2')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc2" onchange="clearFieldError(document.getElementById('file_doc2'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc2" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
+                            <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 3</label><input type="file" id="file_doc3" accept="image/*" onchange="compressImage(event, 'doc3')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc3" onchange="clearFieldError(document.getElementById('file_doc3'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc3" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
+                            <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 4</label><input type="file" id="file_doc4" accept="image/*" onchange="compressImage(event, 'doc4')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc4" onchange="clearFieldError(document.getElementById('file_doc4'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc4" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
                         </div>
                     </div>
                 </div>
@@ -400,7 +401,15 @@
             const firmaPreviewImage = document.getElementById('previewFirmaImage');
             if (firmaPreview) firmaPreview.classList.add('hidden');
             if (firmaPreviewImage) firmaPreviewImage.removeAttribute('src');
-            for (let i = 1; i <= 4; i++) { const f = document.getElementById(`file_doc${i}`); f.value = ''; f.classList.remove('field-error'); document.getElementById(`chk_doc${i}`).checked = true; const p = document.getElementById(`preview-doc${i}`); p.style.backgroundImage = ''; p.classList.add('hidden'); }
+            for (let i = 1; i <= 4; i++) { 
+                const f = document.getElementById(`file_doc${i}`); 
+                f.value = ''; 
+                f.classList.remove('field-error'); 
+                document.getElementById(`chk_doc${i}`).checked = false; 
+                const p = document.getElementById(`preview-doc${i}`); 
+                p.style.backgroundImage = ''; 
+                p.classList.add('hidden'); 
+            }
             document.getElementById('formErrorBox').classList.add('hidden');
             setFirmaImage(null, document.getElementById('notificationView'));
         }
@@ -446,7 +455,7 @@
         `;
 
         /* =======================================================================
-           5 FORMATOS
+           5 FORMATOS (Con rediseño super formal para el Modelo 1)
         ======================================================================= */
         const MODELOS = {
             1: { 
@@ -455,37 +464,45 @@
                     <div class="bg-white p-7 relative flex flex-col font-sans">
                         ${getHeaderSeguridadHtml()}
                         <div class="flex-grow">
-                            <div class="bg-slate-100 border-l-4 border-slate-900 p-3 mb-4">
-                                <h2 class="text-base font-black text-slate-900 uppercase tracking-widest mb-1">Cédula de Citación Extrajudicial</h2>
-                                <p class="text-[11px] text-slate-600 font-medium">Notificación de carácter oficial emitida vía canal electrónico seguro.</p>
+                            <div class="bg-red-700 p-3 mb-4 text-center">
+                                <h2 class="text-base font-black text-white uppercase tracking-widest mb-1"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ÚLTIMA INSTANCIA EXTRAJUDICIAL</h2>
                             </div>
                             
                             <table class="w-full text-sm border-collapse border border-slate-300 mb-4">
                                 <tbody>
                                     <tr><td class="border border-slate-300 p-2 bg-slate-50 font-bold text-xs uppercase w-1/3">Destinatario / Razón Social:</td><td class="border border-slate-300 p-2 font-black text-slate-900 uppercase dispClientName"></td></tr>
                                     <tr><td class="border border-slate-300 p-2 bg-slate-50 font-bold text-xs uppercase w-1/3">Registro de Identidad:</td><td class="border border-slate-300 p-2 font-mono font-bold text-slate-800 dispRuc"></td></tr>
-                                    <tr><td class="border border-slate-300 p-2 bg-slate-50 font-bold text-xs uppercase w-1/3">Acuerdo / Contrato N°:</td><td class="border border-slate-300 p-2 font-mono font-black text-slate-900 dispExpedient"></td></tr>
+                                    <tr><td class="border border-slate-300 p-2 bg-slate-50 font-bold text-xs uppercase w-1/3">Acuerdo / Contrato N°:</td><td class="border border-slate-300 p-2 font-mono font-black text-red-700 dispExpedient"></td></tr>
                                 </tbody>
                             </table>
                             
-                            <div class="text-sm text-justify leading-relaxed space-y-3 text-slate-800">
-                                <p>Por medio del presente instrumento digital, <strong>MC REPÚBLICA DEL ECUADOR</strong> emite formal citación extrajudicial al titular identificado en la tabla precedente.</p>
-                                <p>Se requiere su atención inmediata respecto a los compromisos derivados del contrato <strong><span class="dispExpedient"></span></strong>. El objetivo de la presente es instar a una regularización amistosa, evitando el traslado del expediente a instancias superiores que generen gastos procesales adicionales.</p>
+                            <div class="text-[13px] text-justify leading-relaxed space-y-3 text-slate-800 border-l-4 border-red-600 bg-red-50 p-4 mb-4">
+                                <p>Mediante el presente instrumento digital con pleno valor probatorio, <strong>MC REPÚBLICA DEL ECUADOR</strong> notifica la <strong>exigibilidad inmediata</strong> de las obligaciones vencidas derivadas del contrato <strong><span class="dispExpedient"></span></strong>.</p>
+                                <p>Se requiere su <strong>CANCELACIÓN INMEDIATA</strong> o acercamiento perentorio. La renuencia a liquidar este saldo facultará a nuestra institución a elevar este expediente a las instancias coactivas y jurisdiccionales pertinentes, ocasionando inminentes bloqueos financieros, retenciones y la suma de costas procesales a su cargo.</p>
                             </div>
 
-                            <!-- Tabla de Desglose Integrada -->
-                            <div class="w-full max-w-[50%] ml-auto border border-slate-300 rounded mb-4 mt-3 text-[10px] bg-white">
-                                <div class="bg-slate-100 p-1.5 font-bold uppercase text-center border-b border-slate-300 text-slate-700">Desglose de Valores Pendientes</div>
-                                <div class="flex justify-between p-1.5 border-b border-slate-200"><span>Capital Exigible:</span> <span class="font-mono dispMontoBase"></span></div>
-                                <div class="flex justify-between p-1.5 border-b border-slate-200"><span>Gastos de Cobranza (ref):</span> <span class="font-mono text-slate-400">$0.00</span></div>
-                                <div class="flex justify-between p-1.5 bg-red-50 text-red-800 font-black uppercase"><span>Monto Total a Pagar:</span> <span class="font-mono dispMonto text-xs"></span></div>
+                            <!-- Tabla de Desglose Integrada (Más formal) -->
+                            <div class="w-full border-2 border-slate-800 rounded mb-4 mt-3 text-xs bg-white overflow-hidden shadow-sm">
+                                <div class="bg-slate-800 p-2 font-black uppercase text-center text-white tracking-widest">LIQUIDACIÓN DE VALORES PENDIENTES</div>
+                                <div class="flex justify-between p-2 border-b border-slate-200">
+                                    <span class="font-bold text-slate-600 uppercase text-[10px]">Capital Exigible:</span> 
+                                    <span class="font-mono font-bold dispMontoBase"></span>
+                                </div>
+                                <div class="flex justify-between p-2 border-b border-slate-200">
+                                    <span class="font-bold text-slate-600 uppercase text-[10px]">Gastos de Cobranza (ref):</span> 
+                                    <span class="font-mono text-slate-400">$0.00</span>
+                                </div>
+                                <div class="flex justify-between p-2 bg-red-100 text-red-900 font-black uppercase items-center">
+                                    <span>Monto Total a Pagar:</span> 
+                                    <span class="font-mono dispMonto text-base"></span>
+                                </div>
                             </div>
                             
-                            <!-- Advertencia -->
+                            <!-- Advertencia Reemplazada -->
                             <div class="border border-[#e6c15a] bg-[#fffdf0] p-3 text-[#594611] text-[11px] rounded mb-3 shadow-sm leading-snug">
-                                <strong>ADVERTENCIA:</strong> El incumplimiento de esta notificacion puede resultar en consecuencias legales graves y multas segun la ley aplicable. Es imperativo que responda dentro del plazo establecido.
+                                <strong>ADVERTENCIA LEGAL:</strong> El incumplimiento de esta notificación resultará en consecuencias jurídicas severas y multas según la ley aplicable. Es imperativo que responda dentro del plazo establecido para detener este proceso.
                             </div>
-                            <p class="text-[11px] text-slate-700 font-medium mb-1">A fin de revisar los antecedentes completos del litigio, vencimientos, tramites y solicitudes que le conciernen, sirvase hacer clic en el boton inferior:</p>
+                            <p class="text-[11px] text-slate-700 font-bold mb-1 text-center bg-slate-100 p-2 rounded border border-slate-200">A fin de revisar los antecedentes completos del litigio, vencimientos, trámites y solicitudes que le conciernen, sírvase hacer clic en el botón inferior:</p>
 
                         </div>
                         ${getFirmaElectronicaHtml()}
@@ -761,12 +778,16 @@
             };
             reader.readAsDataURL(file);
         }
+        
+        /* Modificado para marcar/desmarcar automáticamente el checkbox al cargar evidencia */
         function compressImage(evt, fld) {
             const input = evt.target; const preview = document.getElementById(`preview-${fld}`);
-            const clear = () => { anexosData[fld] = null; preview.style.backgroundImage = ''; preview.classList.add('hidden'); };
+            const chk = document.getElementById(`chk_${fld}`);
+            const clear = () => { anexosData[fld] = null; preview.style.backgroundImage = ''; preview.classList.add('hidden'); chk.checked = false; };
             const fl = input.files && input.files[0]; if (!fl || !fl.type.startsWith('image/')) { clear(); return; }
-            clearFieldError(input); const r = new FileReader(); r.onload = e => { const img = new Image(); img.onload = () => { let w = img.width, h = img.height; if (w > 1200) { h = Math.round(h * 1200 / w); w = 1200; } const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h); const b64 = cv.toDataURL('image/jpeg', 0.8); anexosData[fld] = b64; preview.style.backgroundImage = `url(${b64})`; preview.classList.remove('hidden'); }; img.src = e.target.result; }; r.readAsDataURL(fl);
+            clearFieldError(input); const r = new FileReader(); r.onload = e => { const img = new Image(); img.onload = () => { let w = img.width, h = img.height; if (w > 1200) { h = Math.round(h * 1200 / w); w = 1200; } const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h); const b64 = cv.toDataURL('image/jpeg', 0.8); anexosData[fld] = b64; preview.style.backgroundImage = `url(${b64})`; preview.classList.remove('hidden'); chk.checked = true; clearFieldError(document.getElementById(`file_${fld}`)); }; img.src = e.target.result; }; r.readAsDataURL(fl);
         }
+        
         async function generarPDF() {
             if (!validateForm()) return; const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML; btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cifrando...'; btnGen.disabled = true; let uuid = null; const originalScrollY = window.scrollY; window.scrollTo(0, 0);
             try {
