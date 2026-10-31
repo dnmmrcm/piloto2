@@ -16,9 +16,7 @@
         #lightboxModal { transition: opacity 0.3s ease-in-out; }
         .font-barcode { font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; }
         .bg-security-pattern { background-color: #f8fafc; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; }
-        /* Patrón de seguridad para la firma electrónica */
         .bg-crypto-pattern { background-image: radial-gradient(#94a3b8 1px, transparent 1px); background-size: 8px 8px; }
-        /* Exportación PDF: evita que la firma quede pegada al fondo por una altura mínima artificial. */
         .pdf-export-document {
             min-height: 0 !important;
             height: auto !important;
@@ -40,7 +38,6 @@
         .pdf-export-document .mt-4 { margin-top: 8px !important; }
         .pdf-export-document .mb-6 { margin-bottom: 12px !important; }
         .pdf-export-document .mb-5 { margin-bottom: 12px !important; }
-
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
@@ -185,16 +182,25 @@
             </div>
             
             <!-- PANEL DE INGRESO DE DATOS (FORMULARIO) -->
-            <div id="editorPanel" class="hidden border-t border-blue-900 bg-slate-900 px-4 py-5 shadow-inner">
-                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-5 text-sm">
-                    <div id="formErrorBox" class="hidden col-span-full bg-red-900/50 border border-red-500 text-red-200 rounded p-4 font-medium text-xs"></div>
+            <div id="editorPanel" class="hidden border-t border-blue-900 bg-slate-900 shadow-inner relative">
+                <!-- CABECERA DEL PANEL MINIMIZABLE -->
+                <div class="max-w-7xl mx-auto px-4 pt-3 flex justify-between items-center mb-1">
+                    <h3 class="text-amber-400 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-keyboard mr-1"></i> Panel de Emisión</h3>
+                    <button type="button" onclick="toggleEditorPanel()" class="text-slate-300 hover:text-white text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 transition">
+                        <i id="editorToggleIcon" class="fa-solid fa-chevron-up"></i> <span id="editorToggleText">Minimizar Panel</span>
+                    </button>
+                </div>
+
+                <div id="editorPanelGrid" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-6 gap-5 text-sm px-4 pb-5 transition-all duration-300 origin-top">
+                    <div id="formErrorBox" class="hidden col-span-full bg-red-900/50 border border-red-500 text-red-200 rounded p-4 font-medium text-xs mt-2"></div>
                     
-                    <div><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">Razón Social / Cliente <span class="text-amber-500">*</span></label><input type="text" id="inputClientName" placeholder="Ej. EMPRESA S.A." autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium"></div>
-                    <div><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">RUC / Cédula <span class="text-amber-500">*</span></label><input type="text" id="inputRuc" placeholder="Ej. 0992345678001" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium font-mono"></div>
-                    <div><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">Número de Contrato <span class="text-amber-500">*</span></label><input type="text" id="inputExpedient" placeholder="Ej. CT-2026-9041" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium font-mono"></div>
-                    <div><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">Fecha Radicación <span class="text-amber-500">*</span></label><input type="date" id="inputDate" style="color-scheme:dark" onchange="updateData(); clearFieldError(this)" class="cursor-pointer w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium"></div>
-                    <!-- NUEVO CAMPO: Nombre del Emisor -->
-                    <div><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">Nombre de Emisor <span class="text-amber-500">*</span></label><input type="text" id="inputEmisorName" placeholder="Ej. Abg. Juan Pérez" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium"></div>
+                    <div class="md:col-span-1"><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">Razón Social <span class="text-amber-500">*</span></label><input type="text" id="inputClientName" placeholder="Ej. EMPRESA S.A." autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium"></div>
+                    <div class="md:col-span-1"><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">RUC / Cédula <span class="text-amber-500">*</span></label><input type="text" id="inputRuc" placeholder="Ej. 0992345678001" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium font-mono"></div>
+                    <div class="md:col-span-1"><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">N° Contrato <span class="text-amber-500">*</span></label><input type="text" id="inputExpedient" placeholder="Ej. CT-2026-9041" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium font-mono"></div>
+                    <div class="md:col-span-1"><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">Fecha Radicación <span class="text-amber-500">*</span></label><input type="date" id="inputDate" style="color-scheme:dark" onchange="updateData(); clearFieldError(this)" class="cursor-pointer w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium"></div>
+                    <div class="md:col-span-1"><label class="block text-slate-300 font-bold mb-1.5 text-xs uppercase tracking-wide">Nombre Emisor <span class="text-amber-500">*</span></label><input type="text" id="inputEmisorName" placeholder="Ej. Abg. Juan Pérez" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium"></div>
+                    <!-- NUEVO CAMPO: Monto a pagar -->
+                    <div class="md:col-span-1"><label class="block text-slate-300 font-bold mb-1.5 text-[11px] uppercase tracking-wide">Monto a Pagar ($) <span class="text-amber-500">*</span></label><input type="number" step="0.01" id="inputMonto" placeholder="Ej. 1500.50" autocomplete="off" oninput="updateData(); clearFieldError(this)" class="w-full bg-slate-800 text-white p-2.5 rounded border border-slate-700 outline-none focus:border-amber-500 transition font-medium font-mono"></div>
 
                     <div class="col-span-full border-t border-slate-700 pt-4 mt-1">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
@@ -281,16 +287,39 @@
         function formatDateES(iso) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? `${parseInt(m[3], 10)} de ${MESES[parseInt(m[2], 10) - 1]} de ${m[1]}` : ''; }
         function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
         
+        // Función para minimizar/expandir el panel de edición
+        window.toggleEditorPanel = function() {
+            const grid = document.getElementById('editorPanelGrid');
+            const icon = document.getElementById('editorToggleIcon');
+            const text = document.getElementById('editorToggleText');
+            if(grid.classList.contains('hidden')) {
+                grid.classList.remove('hidden');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+                text.textContent = 'Minimizar Panel';
+            } else {
+                grid.classList.add('hidden');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+                text.textContent = 'Expandir Panel';
+            }
+        };
+
         function showFormError(msgs, title = 'Datos Incompletos:') {
             const box = document.getElementById('formErrorBox'); box.innerHTML = '';
             const t = document.createElement('div'); t.className = 'font-black mb-2 tracking-wide uppercase'; t.textContent = title;
             const ul = document.createElement('ul'); ul.className = 'list-disc pl-5 space-y-1';
             msgs.forEach(m => { const li = document.createElement('li'); li.textContent = m; ul.appendChild(li); });
             box.append(t, ul); box.classList.remove('hidden');
+            
+            // Si el panel está oculto, lo abrimos para que se vea el error
+            const grid = document.getElementById('editorPanelGrid');
+            if(grid.classList.contains('hidden')) toggleEditorPanel();
         }
         function clearFieldError(el) { if (el) el.classList.remove('field-error'); if (!document.querySelector('#editorPanel .field-error')) document.getElementById('formErrorBox').classList.add('hidden'); }
+        
         function resetEditorForm() {
-            ['inputClientName', 'inputRuc', 'inputExpedient', 'inputDate', 'inputEmisorName'].forEach(id => { const el = document.getElementById(id); el.value = ''; el.classList.remove('field-error'); });
+            ['inputClientName', 'inputRuc', 'inputExpedient', 'inputDate', 'inputEmisorName', 'inputMonto'].forEach(id => { const el = document.getElementById(id); el.value = ''; el.classList.remove('field-error'); });
             anexosData = { doc1: null, doc2: null, doc3: null, doc4: null };
             firmaData = null;
             const firmaInput = document.getElementById('inputFirma');
@@ -306,7 +335,7 @@
         function validateForm() {
             document.querySelectorAll('#editorPanel .field-error').forEach(el => el.classList.remove('field-error'));
             const errs = []; let first = null; const mark = (el, msg) => { el.classList.add('field-error'); errs.push(msg); if (!first) first = el; };
-            [['inputClientName', 'Nombre del destinatario'], ['inputRuc', 'Identificación / RUC'], ['inputExpedient', 'Número de Contrato'], ['inputDate', 'Fecha de radicación'], ['inputEmisorName', 'Nombre del Emisor']]
+            [['inputClientName', 'Nombre del destinatario'], ['inputRuc', 'Identificación / RUC'], ['inputExpedient', 'Número de Contrato'], ['inputDate', 'Fecha de radicación'], ['inputEmisorName', 'Nombre del Emisor'], ['inputMonto', 'Monto a Pagar']]
                 .forEach(([id, label]) => { const el = document.getElementById(id); if (!el.value.trim()) mark(el, label); });
             for (let i = 1; i <= 4; i++) { if (document.getElementById(`chk_doc${i}`).checked && !anexosData[`doc${i}`]) mark(document.getElementById(`file_doc${i}`), `Anexo Legal ${i}: Adjunte archivo o desmarque.`); }
             if (!firmaData) mark(document.getElementById('inputFirma'), 'Firma del emisor: adjunte una imagen.');
@@ -315,11 +344,6 @@
             document.getElementById('formErrorBox').classList.add('hidden'); return true;
         }
 
-        /* 
-           Firma visual e interfaz modificadas: 
-           - Botón de consulta cambiado a "VER MI CASO", color rojo y tamaño aumentado.
-           - Firma ampliada (max-h aumentada a 85px/90px y ancho ampliado).
-        */
         const getFirmaElectronicaHtml = () => `
             <div class="firma-electronica mt-6 mx-auto w-full max-w-sm text-center" style="break-inside:avoid;page-break-inside:avoid;">
                 <div class="h-[95px] flex items-end justify-center px-2">
@@ -350,7 +374,7 @@
         `;
 
         /* =======================================================================
-           5 FORMATOS (AJUSTADOS PARA NO SALTAR A 2 HOJAS)
+           5 FORMATOS (Se integró Advertencia + Desglose en Modelo 1)
         ======================================================================= */
         const MODELOS = {
             1: { 
@@ -359,12 +383,12 @@
                     <div class="bg-white p-7 relative flex flex-col font-sans">
                         ${getHeaderSeguridadHtml()}
                         <div class="flex-grow">
-                            <div class="bg-slate-100 border-l-4 border-slate-900 p-3 mb-5">
+                            <div class="bg-slate-100 border-l-4 border-slate-900 p-3 mb-4">
                                 <h2 class="text-base font-black text-slate-900 uppercase tracking-widest mb-1">Cédula de Citación Extrajudicial</h2>
                                 <p class="text-[11px] text-slate-600 font-medium">Notificación de carácter oficial emitida vía canal electrónico seguro.</p>
                             </div>
                             
-                            <table class="w-full text-sm border-collapse border border-slate-300 mb-5">
+                            <table class="w-full text-sm border-collapse border border-slate-300 mb-4">
                                 <tbody>
                                     <tr><td class="border border-slate-300 p-2 bg-slate-50 font-bold text-xs uppercase w-1/3">Destinatario / Razón Social:</td><td class="border border-slate-300 p-2 font-black text-slate-900 uppercase dispClientName"></td></tr>
                                     <tr><td class="border border-slate-300 p-2 bg-slate-50 font-bold text-xs uppercase w-1/3">Registro de Identidad:</td><td class="border border-slate-300 p-2 font-mono font-bold text-slate-800 dispRuc"></td></tr>
@@ -375,8 +399,22 @@
                             <div class="text-sm text-justify leading-relaxed space-y-3 text-slate-800">
                                 <p>Por medio del presente instrumento digital, <strong>MC REPÚBLICA DEL ECUADOR</strong> emite formal citación extrajudicial al titular identificado en la tabla precedente.</p>
                                 <p>Se requiere su atención inmediata respecto a los compromisos derivados del contrato <strong><span class="dispExpedient"></span></strong>. El objetivo de la presente es instar a una regularización amistosa, evitando el traslado del expediente a instancias superiores que generen gastos procesales adicionales.</p>
-                                <p class="font-bold">Plazo de atención sugerido: 48 horas a partir de la emisión electrónica (<span class="dispDate"></span>).</p>
                             </div>
+
+                            <!-- Tabla de Desglose Integrada -->
+                            <div class="w-full max-w-[50%] ml-auto border border-slate-300 rounded mb-4 mt-3 text-[10px] bg-white">
+                                <div class="bg-slate-100 p-1.5 font-bold uppercase text-center border-b border-slate-300 text-slate-700">Desglose de Valores Pendientes</div>
+                                <div class="flex justify-between p-1.5 border-b border-slate-200"><span>Capital Exigible:</span> <span class="font-mono dispMontoBase"></span></div>
+                                <div class="flex justify-between p-1.5 border-b border-slate-200"><span>Gastos de Cobranza (ref):</span> <span class="font-mono text-slate-400">$0.00</span></div>
+                                <div class="flex justify-between p-1.5 bg-red-50 text-red-800 font-black uppercase"><span>Monto Total a Pagar:</span> <span class="font-mono dispMonto text-xs"></span></div>
+                            </div>
+                            
+                            <!-- Advertencia Reemplazada -->
+                            <div class="border border-[#e6c15a] bg-[#fffdf0] p-3 text-[#594611] text-[11px] rounded mb-3 shadow-sm leading-snug">
+                                <strong>ADVERTENCIA:</strong> El incumplimiento de esta notificacion puede resultar en consecuencias legales graves y multas segun la ley aplicable. Es imperativo que responda dentro del plazo establecido.
+                            </div>
+                            <p class="text-[11px] text-slate-700 font-medium mb-1">A fin de revisar los antecedentes completos del litigio, vencimientos, tramites y solicitudes que le conciernen, sirvase hacer clic en el boton inferior:</p>
+
                         </div>
                         ${getFirmaElectronicaHtml()}
                     </div>` 
@@ -399,8 +437,8 @@
                                 <div><span class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Contrato Vinculante:</span><span class="font-mono font-black text-slate-900 dispExpedient"></span></div>
                             </div>
                             
-                            <div class="text-sm text-justify leading-relaxed text-slate-800 p-4 border-l-4 border-slate-900 bg-slate-50 font-medium">
-                                En virtud del registro de saldos pendientes asociados al contrato referenciado, se emite el presente <strong>requerimiento formal</strong>. Se exhorta al requerido a establecer contacto con nuestro departamento a la brevedad para generar una orden de arreglo. La omisión a esta notificación digital facultará el inicio de medidas correspondientes según la normativa civil y mercantil.
+                            <div class="text-sm text-justify leading-relaxed text-slate-800 p-4 border-l-4 border-slate-900 bg-slate-50 font-medium mb-4">
+                                En virtud del registro de saldos pendientes asociados al contrato referenciado, se emite el presente <strong>requerimiento formal</strong>. Se exhorta al requerido a establecer contacto con nuestro departamento a la brevedad para generar una orden de arreglo por el monto adeudado de <strong class="text-red-700 dispMonto"></strong>. La omisión a esta notificación digital facultará el inicio de medidas correspondientes según la normativa civil y mercantil.
                             </div>
                         </div>
                         ${getFirmaElectronicaHtml()}
@@ -419,7 +457,10 @@
                                     <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Parte Convocada</span><span class="font-black text-lg text-slate-800 uppercase dispClientName"></span></div>
                                     <div class="text-right"><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">RUC / Cédula</span><span class="font-mono font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded dispRuc"></span></div>
                                 </div>
-                                <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Identificador de Contrato / Base del Conflicto</span><span class="font-mono font-black text-slate-900 dispExpedient"></span></div>
+                                <div class="flex justify-between items-end">
+                                    <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Identificador de Contrato</span><span class="font-mono font-black text-slate-900 dispExpedient"></span></div>
+                                    <div class="text-right"><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Valor Vencido</span><span class="font-mono font-black text-red-700 dispMonto"></span></div>
+                                </div>
                             </div>
                             <div class="text-sm text-justify leading-relaxed text-slate-800 space-y-3 px-2">
                                 <p>Este centro extrajudicial extiende una formal invitación para procurar un <strong>acuerdo conciliatorio directo</strong>.</p>
@@ -442,7 +483,10 @@
                             <div class="grid grid-cols-2 gap-3 border-2 border-slate-900 p-4 bg-slate-50 mb-5">
                                 <div><span class="block font-bold text-[9px] uppercase text-slate-500 mb-1">Razón Social:</span><span class="font-bold dispClientName text-sm"></span></div>
                                 <div><span class="block font-bold text-[9px] uppercase text-slate-500 mb-1">RUC:</span><span class="font-bold dispRuc"></span></div>
-                                <div class="col-span-2 border-t border-slate-300 pt-2 mt-1"><span class="block font-bold text-[9px] uppercase text-slate-500 mb-1">Obligación / Contrato:</span><span class="font-bold dispExpedient"></span></div>
+                                <div class="col-span-2 border-t border-slate-300 pt-2 mt-1 flex justify-between">
+                                    <div><span class="block font-bold text-[9px] uppercase text-slate-500 mb-1">Obligación / Contrato:</span><span class="font-bold dispExpedient"></span></div>
+                                    <div class="text-right"><span class="block font-bold text-[9px] uppercase text-slate-500 mb-1">Adeudado:</span><span class="font-bold text-red-700 dispMonto text-base"></span></div>
+                                </div>
                             </div>
                             <p class="text-justify leading-relaxed">Se certifica mediante este canal electrónico el registro de <strong>INCUMPLIMIENTO</strong> respecto a las cláusulas comerciales pactadas en el contrato <span class="dispExpedient"></span>. A la fecha de emisión (<span class="dispDate"></span>), el sistema refleja saldos en mora. Se exige la comparecencia administrativa del representante legal o titular para regularizar el estatus mercantil antes de proceder con el registro en burós de crédito.</p>
                         </div>
@@ -461,7 +505,7 @@
                             </div>
                             <div class="flex-grow space-y-4 text-slate-900 text-sm leading-relaxed text-justify px-4">
                                 <p>En la jurisdicción provincial correspondiente, a los <strong><span class="dispDate"></span></strong>, se emite el presente manifiesto electrónico de notificación para <strong><span class="dispClientName uppercase font-bold"></span></strong>, con número de identificación <strong><span class="dispRuc font-bold"></span></strong>.</p>
-                                <p>Hacemos de su expreso y formal conocimiento que bajo el número de contrato <strong><span class="dispExpedient font-bold font-sans"></span></strong> radica un requerimiento activo que precisa de su intervención. Confiamos en su pronta respuesta para dar solución extrajudicial a este expediente, manteniendo el marco de cordialidad y respeto mutuo.</p>
+                                <p>Hacemos de su expreso y formal conocimiento que bajo el número de contrato <strong><span class="dispExpedient font-bold font-sans"></span></strong> radica un requerimiento activo por el valor exigible de <strong><span class="dispMonto font-bold font-sans text-red-700"></span></strong> que precisa de su intervención. Confiamos en su pronta respuesta para dar solución extrajudicial a este expediente, manteniendo el marco de cordialidad y respeto mutuo.</p>
                             </div>
                             <div class="font-sans mt-4">${getFirmaElectronicaHtml()}</div>
                         </div>
@@ -480,9 +524,18 @@
                     if(m) {
                         const contentDiv = document.getElementById('clientDocumentContent'); contentDiv.innerHTML = m.html();
                         const d = caseData.data;
-                        contentDiv.querySelectorAll('.dispClientName').forEach(el => el.textContent = d.clientName); contentDiv.querySelectorAll('.dispRuc').forEach(el => el.textContent = d.ruc);
-                        contentDiv.querySelectorAll('.dispExpedient').forEach(el => el.textContent = d.expedient); contentDiv.querySelectorAll('.dispDate').forEach(el => el.textContent = d.date);
+                        
+                        // Parsear monto para la vista pública
+                        const parsedMonto = parseFloat(d.monto) || 0;
+                        const formattedMonto = parsedMonto.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                        
+                        contentDiv.querySelectorAll('.dispClientName').forEach(el => el.textContent = d.clientName); 
+                        contentDiv.querySelectorAll('.dispRuc').forEach(el => el.textContent = d.ruc);
+                        contentDiv.querySelectorAll('.dispExpedient').forEach(el => el.textContent = d.expedient); 
+                        contentDiv.querySelectorAll('.dispDate').forEach(el => el.textContent = d.date);
                         contentDiv.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = d.emisorName);
+                        contentDiv.querySelectorAll('.dispMontoBase, .dispMonto').forEach(el => el.textContent = formattedMonto);
+
                         setFirmaImage(d.firmaImagen || null, contentDiv, false);
                         const btnPdf = contentDiv.querySelector('#btnAnexosPdf'); if(btnPdf) btnPdf.style.display = 'none';
                     }
@@ -541,10 +594,10 @@
         function openUserModal() { document.getElementById('formUser').reset(); document.getElementById('modalUser').classList.remove('hidden'); document.getElementById('modalUser').classList.add('flex'); }
         function closeUserModal() { document.getElementById('modalUser').classList.add('hidden'); document.getElementById('modalUser').classList.remove('flex'); }
         function handleRoleSelection() { const rol = document.getElementById('nu_rol').value; if(rol==='Auditor') { document.getElementById('div_nu_campana').classList.add('hidden'); document.getElementById('nu_campana').required=false; } else { document.getElementById('div_nu_campana').classList.remove('hidden'); document.getElementById('nu_campana').required=true; } }
-        async function saveUser(e) { e.preventDefault(); /* simplificado por espacio */ closeUserModal(); }
+        async function saveUser(e) { e.preventDefault(); closeUserModal(); }
         function openEditUserModal(id,n,r,c) { document.getElementById('eu_id').value=id; document.getElementById('eu_nombre').value=n; document.getElementById('eu_rol').value=r; document.getElementById('eu_campana').value=c; document.getElementById('modalEditUser').classList.remove('hidden'); document.getElementById('modalEditUser').classList.add('flex'); }
         function closeEditUserModal() { document.getElementById('modalEditUser').classList.add('hidden'); document.getElementById('modalEditUser').classList.remove('flex'); }
-        function handleEditRoleSelection() { /* simplificado */ }
+        function handleEditRoleSelection() { }
         async function updateUser(e) { e.preventDefault(); await supabaseClient.from('perfiles').update({ nombre: document.getElementById('eu_nombre').value, rol: document.getElementById('eu_rol').value, campana: document.getElementById('eu_campana').value }).eq('id', document.getElementById('eu_id').value); closeEditUserModal(); loadUsersList(); }
 
         /* --- APP ASESORES --- */
@@ -553,14 +606,31 @@
         async function registrarTiempoEnBD(est, id=null) { if (!auditoriaTracking.start) return; const s = Math.floor((new Date()-auditoriaTracking.start)/1000); try{ await supabaseClient.from('auditoria').insert([{ documento_id: id, usuario_id: currentUser.id, campana: currentUser.campana, modelo: auditoriaTracking.modelName, hora_inicio: auditoriaTracking.start.toISOString(), hora_fin: new Date().toISOString(), tiempo_segundos: s, estado: est }]); }catch(e){} auditoriaTracking.start=null; }
         async function selectModel(id) { await registrarTiempoEnBD('Cancelado'); selectedModelId = id; resetEditorForm(); document.getElementById('modelSelectorOverlay').classList.add('hidden'); document.getElementById('mainContainer').classList.remove('hidden'); document.getElementById('notificationView').classList.remove('hidden'); document.getElementById('editorPanel').classList.remove('hidden'); document.getElementById('btnGenerarPDF').classList.remove('hidden'); const m = MODELOS[selectedModelId]; document.getElementById('lblHeaderModelName').textContent = m.nombre; document.getElementById('notificationView').innerHTML = m.html(); updateData(); iniciarMedicionCrono(id, m.nombre); }
         function openModelSelector() { resetEditorForm(); registrarTiempoEnBD('Cancelado'); document.getElementById('notificationView').classList.add('hidden'); document.getElementById('mainContainer').classList.add('hidden'); document.getElementById('editorPanel').classList.add('hidden'); document.getElementById('btnGenerarPDF').classList.add('hidden'); document.getElementById('modelSelectorOverlay').classList.remove('hidden'); }
+        
         function updateData() {
             const v = id => document.getElementById(id).value.trim();
-            const d = { c: v('inputClientName') || 'DESTINATARIO NO ESPECIFICADO', r: v('inputRuc') || '0000000000', e: v('inputExpedient') || 'CT-00000', f: formatDateES(document.getElementById('inputDate').value) || '[Fecha de Emisión]', n: v('inputEmisorName') || 'FIRMADO ELECTRÓNICAMENTE' };
-            document.querySelectorAll('.dispClientName').forEach(el => el.textContent = d.c); document.querySelectorAll('.dispRuc').forEach(el => el.textContent = d.r);
-            document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = d.e); document.querySelectorAll('.dispDate').forEach(el => el.textContent = d.f);
+            const d = { 
+                c: v('inputClientName') || 'DESTINATARIO NO ESPECIFICADO', 
+                r: v('inputRuc') || '0000000000', 
+                e: v('inputExpedient') || 'CT-00000', 
+                f: formatDateES(document.getElementById('inputDate').value) || '[Fecha de Emisión]', 
+                n: v('inputEmisorName') || 'FIRMADO ELECTRÓNICAMENTE' 
+            };
+            
+            // Format monto
+            const rawMonto = parseFloat(v('inputMonto')) || 0;
+            const formattedMonto = rawMonto.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+            document.querySelectorAll('.dispClientName').forEach(el => el.textContent = d.c); 
+            document.querySelectorAll('.dispRuc').forEach(el => el.textContent = d.r);
+            document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = d.e); 
+            document.querySelectorAll('.dispDate').forEach(el => el.textContent = d.f);
             document.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = d.n);
+            document.querySelectorAll('.dispMontoBase, .dispMonto').forEach(el => el.textContent = formattedMonto);
+            
             setFirmaImage(firmaData, document.getElementById('notificationView'));
         }
+        
         function setFirmaImage(src, root = document, showPlaceholder = true) {
             if (!root || !root.querySelectorAll) return;
             root.querySelectorAll('.firma-imagen').forEach(img => {
@@ -630,7 +700,19 @@
             try {
                 if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre); updateData();
                 const val = id => document.getElementById(id).value.trim(); const cfg = n => ({ show: document.getElementById(`chk_doc${n}`).checked, data: anexosData[`doc${n}`] });
-                const caseData = { modelId: selectedModelId, clientName: val('inputClientName'), ruc: val('inputRuc'), expedient: val('inputExpedient'), date: formatDateES(document.getElementById('inputDate').value), emisorName: val('inputEmisorName'), firmaImagen: firmaData, anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) } };
+                
+                const caseData = { 
+                    modelId: selectedModelId, 
+                    clientName: val('inputClientName'), 
+                    ruc: val('inputRuc'), 
+                    expedient: val('inputExpedient'), 
+                    date: formatDateES(document.getElementById('inputDate').value), 
+                    emisorName: val('inputEmisorName'), 
+                    monto: val('inputMonto'), // Se almacena la cantidad 
+                    firmaImagen: firmaData, 
+                    anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) } 
+                };
+                
                 const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select(); if (error) throw error; uuid = data[0].id;
                 
                 const btnAnexos = document.getElementById('notificationView').querySelector('#btnAnexosPdf'); if (btnAnexos) { btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; btnAnexos.style.display = 'inline-block'; }
@@ -640,7 +722,6 @@
                 clone.classList.remove('hidden', 'shadow-2xl', 'mx-auto');
                 clone.style.cssText = 'width:760px;max-width:760px;margin:0;padding:0;display:block;background:#fff;box-shadow:none;position:static;transform:none;';
 
-                // Elimina la altura forzada y el espacio flexible que desplazaban la firma hasta el fondo.
                 const pdfRoot = clone.firstElementChild;
                 if (pdfRoot) {
                     pdfRoot.classList.add('pdf-export-document');
@@ -672,7 +753,18 @@
         /* --- PORTAL CLIENTE --- */
         async function getCaseData(uuid) { const { data } = await supabaseClient.from('casos').select('*').eq('id', uuid).single(); return data; }
         function populateClientView(cr) {
-            const cd = cr.data; document.querySelectorAll('.dispClientName').forEach(el => el.textContent = cd.clientName); document.querySelectorAll('.dispRuc').forEach(el => el.textContent = cd.ruc); document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = cd.expedient); document.querySelectorAll('.dispDate').forEach(el => el.textContent = cd.date); document.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = cd.emisorName);
+            const cd = cr.data; 
+            
+            // Format monto
+            const formattedMonto = (parseFloat(cd.monto) || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+            
+            document.querySelectorAll('.dispClientName').forEach(el => el.textContent = cd.clientName); 
+            document.querySelectorAll('.dispRuc').forEach(el => el.textContent = cd.ruc); 
+            document.querySelectorAll('.dispExpedient').forEach(el => el.textContent = cd.expedient); 
+            document.querySelectorAll('.dispDate').forEach(el => el.textContent = cd.date); 
+            document.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = cd.emisorName);
+            document.querySelectorAll('.dispMontoBase, .dispMonto').forEach(el => el.textContent = formattedMonto);
+
             const g = document.getElementById('galeriaAnexos'); g.innerHTML = ''; let hI = false; const seguro = x => typeof x === 'string' && /^data:image\/(jpeg|png|webp|gif);base64,/.test(x);
             ['doc1', 'doc2', 'doc3', 'doc4'].forEach((k, i) => { const c = cd.anexosConfig && cd.anexosConfig[k]; if (c && c.show && seguro(c.data)) { g.appendChild(crearTarjeta(`Anexo Legal ${i + 1}`, c.data)); hI = true; } });
             if (hI) document.getElementById('seccionEvidencias').classList.remove('hidden');
