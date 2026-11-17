@@ -42,9 +42,7 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
 
-    <!-- ========================================== -->
-    <!-- LOGIN DE ACCESO                            -->
-    <!-- ========================================== -->
+    <!-- LOGIN DE ACCESO -->
     <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
@@ -62,9 +60,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- SELECTOR DE CAMPAÑA PARA AUDITOR           -->
-    <!-- ========================================== -->
+    <!-- SELECTOR DE CAMPAÑA PARA AUDITOR -->
     <div id="auditorCampaignSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center">
             <div class="mb-6"><i class="fa-solid fa-chart-pie text-5xl text-blue-600 mb-4"></i><h2 class="text-2xl font-bold text-slate-900">Seleccionar Campaña</h2><p class="text-slate-500 text-sm mt-2">Elija el área operativa a auditar.</p></div>
@@ -76,9 +72,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- PANEL DE ADMINISTRACIÓN Y AUDITORÍA        -->
-    <!-- ========================================== -->
+    <!-- PANEL DE ADMINISTRACIÓN Y AUDITORÍA -->
     <div id="adminDashboardView" class="hidden flex-col min-h-screen bg-slate-100 w-full z-[80] absolute inset-0">
         <header class="bg-blue-950 text-white shadow-md border-b-4 border-amber-500">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -164,9 +158,7 @@
     <div id="modalUser" class="fixed inset-0 bg-slate-900/80 hidden z-[90] items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden border border-slate-300"><div class="bg-blue-900 text-white p-4 flex justify-between items-center border-b-4 border-amber-500"><h3 class="font-black tracking-wide">Alta de Nuevo Operador</h3><button onclick="closeUserModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="formUser" onsubmit="saveUser(event)" class="p-6 space-y-4 text-sm bg-slate-50"><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Nombre Legal</label><input type="text" id="nu_nombre" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Correo Electrónico (ID)</label><input type="email" id="nu_email" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Clave de Acceso</label><input type="password" id="nu_pass" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Perfil de Permisos</label><select id="nu_rol" onchange="handleRoleSelection()" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-blue-600 font-medium"><option value="Asesor">Operador / Asesor</option><option value="Auditor">Auditor Interno</option><option value="Sistemas">Sistemas / Root</option></select></div><div id="div_nu_campana"><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Asignación Operativa</label><select id="nu_campana" required class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-blue-600 font-medium"><option value="">Seleccionar área...</option><option value="Cobranza">Dpto. Cobranza</option><option value="Retención">Dpto. Retención</option></select></div><div class="pt-4"><button type="submit" id="btnSaveUser" class="w-full bg-blue-800 text-white font-black py-3 rounded hover:bg-blue-900 transition shadow uppercase tracking-widest">Crear Registro</button></div></form></div></div>
     <div id="modalEditUser" class="fixed inset-0 bg-slate-900/80 hidden z-[90] items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden border border-slate-300"><div class="bg-slate-800 text-white p-4 flex justify-between items-center border-b-4 border-emerald-500"><h3 class="font-black tracking-wide"><i class="fa-solid fa-user-pen mr-2"></i>Modificar Permisos</h3><button onclick="closeEditUserModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="formEditUser" onsubmit="updateUser(event)" class="p-6 space-y-4 text-sm bg-slate-50"><input type="hidden" id="eu_id"><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Nombre Legal</label><input type="text" id="eu_nombre" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-slate-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Perfil de Permisos</label><select id="eu_rol" onchange="handleEditRoleSelection()" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-slate-600 font-medium"><option value="Asesor">Operador / Asesor</option><option value="Auditor">Auditor Interno</option><option value="Sistemas">Sistemas / Root</option></select></div><div id="div_eu_campana"><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Asignación Operativa</label><select id="eu_campana" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-slate-600 font-medium"><option value="Cobranza">Dpto. Cobranza</option><option value="Retención">Dpto. Retención</option><option value="Sistemas / Administración">Sistemas Global</option></select></div><div class="pt-4 flex gap-3"><button type="button" onclick="closeEditUserModal()" class="w-1/3 bg-slate-200 text-slate-800 font-bold py-3 rounded hover:bg-slate-300 transition text-xs uppercase">Cancelar</button><button type="submit" id="btnUpdateUser" class="w-2/3 bg-emerald-700 text-white font-black py-3 rounded hover:bg-emerald-800 transition shadow uppercase tracking-widest">Aplicar Cambios</button></div></form></div></div>
 
-    <!-- ========================================== -->
-    <!-- APLICATIVO ASESORES (GENERACIÓN Y FORMATOS)-->
-    <!-- ========================================== -->
+    <!-- APLICATIVO ASESORES -->
     <div id="appContainer" class="hidden flex-col min-h-screen w-full relative bg-slate-200">
         <header class="no-print bg-blue-950 text-white shadow-xl sticky top-0 z-50 border-b-4 border-amber-500">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
@@ -181,7 +173,7 @@
                 </div>
             </div>
             
-            <!-- PANEL DE INGRESO DE DATOS (FORMULARIO) -->
+            <!-- PANEL DE INGRESO DE DATOS -->
             <div id="editorPanel" class="hidden border-t border-blue-900 bg-slate-900 shadow-inner relative">
                 <div class="max-w-7xl mx-auto px-4 pt-3 flex justify-between items-center mb-1">
                     <h3 class="text-amber-400 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-keyboard mr-1"></i> Panel de Emisión</h3>
@@ -205,7 +197,7 @@
                             <div class="md:col-span-2">
                                 <label for="inputFirma" class="block text-amber-400 font-black mb-2 uppercase tracking-wider text-xs"><i class="fa-solid fa-signature mr-2"></i>Firma del emisor (imagen para la página web) <span class="text-red-400">*</span></label>
                                 <input type="file" id="inputFirma" accept="image/*" onchange="compressFirma(event)" class="w-full text-slate-300 text-xs file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800 bg-slate-800 border border-slate-700 rounded p-2">
-                                <p class="text-[10px] text-slate-400 mt-2">Adjunta una imagen de la firma. Nota: No aparecerá en el PDF de aviso descargable; se mostrará únicamente al hacer clic e ingresar a la página del caso.</p>
+                                <p class="text-[10px] text-slate-400 mt-2">Adjunta una imagen de la firma. Nota: No se incluirá en el PDF de aviso, únicamente se mostrará al ingresar a la página web del caso.</p>
                             </div>
                             <div id="previewFirma" class="hidden min-h-[76px] bg-white rounded border border-slate-600 p-2 flex items-center justify-center">
                                 <img id="previewFirmaImage" alt="Vista previa de la firma" class="max-h-[85px] max-w-full object-contain">
@@ -631,13 +623,17 @@
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('id')) {
-                hideAllViews(); document.getElementById('caseDetailView').classList.remove('hidden'); document.getElementById('caseDetailView').classList.add('flex');
+                hideAllViews(); 
+                document.getElementById('caseDetailView').classList.remove('hidden'); 
+                document.getElementById('caseDetailView').classList.add('flex');
+                
                 const caseData = await getCaseData(urlParams.get('id'));
                 if (caseData) {
                     populateClientView(caseData);
                     const m = MODELOS[caseData.data.modelId];
                     if(m) {
-                        const contentDiv = document.getElementById('clientDocumentContent'); contentDiv.innerHTML = m.html();
+                        const contentDiv = document.getElementById('clientDocumentContent'); 
+                        contentDiv.innerHTML = m.html();
                         const d = caseData.data;
                         
                         const parsedMonto = parseFloat(d.monto) || 0;
@@ -650,18 +646,37 @@
                         contentDiv.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = d.emisorName);
                         contentDiv.querySelectorAll('.dispMontoBase, .dispMonto').forEach(el => el.textContent = formattedMonto);
 
-                        // EN LA PÁGINA WEB SÍ SE MUESTRA LA FIRMA DIGITADA/IMAGEN
+                        // MUESTRA LA FIRMA DIGITADA/IMAGEN EN LA PÁGINA WEB
                         setFirmaImage(d.firmaImagen || null, contentDiv, true);
-                        const btnPdf = contentDiv.querySelector('#btnAnexosPdf'); if(btnPdf) btnPdf.style.display = 'none';
+                        const btnPdf = contentDiv.querySelector('#btnAnexosPdf'); 
+                        if(btnPdf) btnPdf.style.display = 'none';
                     }
-                } else document.getElementById('caseDetailView').innerHTML = `<div class="w-full text-center mt-32"><i class="fa-solid fa-shield-xmark text-6xl text-slate-300 mb-4"></i><h2 class="font-black text-2xl text-slate-700 uppercase">Documento No Encontrado</h2></div>`;
+                } else {
+                    document.getElementById('caseDetailView').innerHTML = `<div class="w-full text-center mt-32"><i class="fa-solid fa-shield-xmark text-6xl text-slate-300 mb-4"></i><h2 class="font-black text-2xl text-slate-700 uppercase">Documento No Encontrado</h2></div>`;
+                }
                 return;
             }
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) await loadUserProfile(session.user.id); else document.getElementById('loginView').classList.remove('hidden');
+
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session && session.user) {
+                    await loadUserProfile(session.user.id);
+                } else {
+                    hideAllViews();
+                    document.getElementById('loginView').classList.remove('hidden');
+                }
+            } catch (err) {
+                hideAllViews();
+                document.getElementById('loginView').classList.remove('hidden');
+            }
         };
 
-        function hideAllViews() { document.querySelectorAll('#loginView, #adminDashboardView, #appContainer, #caseDetailView, #auditorCampaignSelectorOverlay').forEach(el => { el.classList.add('hidden'); if(el.id === 'adminDashboardView' || el.id === 'appContainer' || el.id === 'caseDetailView') el.classList.remove('flex'); }); }
+        function hideAllViews() { 
+            document.querySelectorAll('#loginView, #adminDashboardView, #appContainer, #caseDetailView, #auditorCampaignSelectorOverlay').forEach(el => { 
+                el.classList.add('hidden'); 
+                if(el.id === 'adminDashboardView' || el.id === 'appContainer' || el.id === 'caseDetailView') el.classList.remove('flex'); 
+            }); 
+        }
         
         async function handleLogin(e) {
             e.preventDefault(); 
@@ -674,13 +689,22 @@
             errBox.classList.add('hidden');
             
             try { 
+                const emailVal = document.getElementById('loginEmail').value.trim();
+                const passVal = document.getElementById('loginPassword').value.trim();
+
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ 
-                    email: document.getElementById('loginEmail').value.trim(), 
-                    password: document.getElementById('loginPassword').value.trim() 
+                    email: emailVal, 
+                    password: passVal 
                 }); 
+
                 if (error) throw error; 
-                await loadUserProfile(data.user.id); 
+                if (data && data.user) {
+                    await loadUserProfile(data.user.id); 
+                } else {
+                    throw new Error('No se pudo verificar la sesión.');
+                }
             } catch (err) { 
+                console.error('Error login:', err);
                 errText.textContent = err.message || 'Credenciales de acceso no válidas.';
                 errBox.classList.remove('hidden'); 
                 btn.innerHTML = 'Autenticar Sesión <i class="fa-solid fa-shield-halved"></i>'; 
@@ -688,7 +712,19 @@
             }
         }
 
-        async function handleLogout() { try { if (currentUser && String(currentUser.rol).trim().toLowerCase() === 'asesor') await registrarTiempoEnBD('Cancelado'); await supabaseClient.auth.signOut(); } catch (e) {} finally { localStorage.clear(); sessionStorage.clear(); window.location.replace(window.location.pathname); } }
+        async function handleLogout() { 
+            try { 
+                if (currentUser && String(currentUser.rol).trim().toLowerCase() === 'asesor') {
+                    await registrarTiempoEnBD('Cancelado'); 
+                }
+                await supabaseClient.auth.signOut(); 
+            } catch (e) {} 
+            finally { 
+                localStorage.clear(); 
+                sessionStorage.clear(); 
+                window.location.replace(window.location.pathname); 
+            } 
+        }
 
         async function loadUserProfile(userId) { 
             const errBox = document.getElementById('loginError');
@@ -696,22 +732,25 @@
             const btn = document.getElementById('btnLoginSubmit');
 
             try { 
-                const { data, error } = await supabaseClient.from('perfiles').select('*').eq('id', userId).single(); 
+                const { data, error } = await supabaseClient.from('perfiles').select('*').eq('id', userId).maybeSingle(); 
                 
                 if (error) {
-                    throw new Error('Error de lectura en perfiles: ' + error.message);
+                    throw new Error('Error al consultar tabla "perfiles": ' + error.message);
                 }
                 if (!data) {
-                    throw new Error('El usuario autenticado no existe en la tabla perfiles.');
+                    throw new Error('El usuario existe en Auth pero NO en la tabla "perfiles".');
                 }
                 if (!data.activo) {
                     throw new Error('Tu cuenta de usuario se encuentra inactiva en el sistema.');
                 }
 
+                const r = String(data.rol || '').trim().toLowerCase(); 
+                if (!['auditor', 'sistemas', 'administrador', 'asesor'].includes(r)) {
+                    throw new Error(`El rol asignado ('${data.rol}') no tiene una vista configurada.`);
+                }
+
                 currentUser = data; 
                 hideAllViews(); 
-                
-                const r = String(currentUser.rol || '').trim().toLowerCase(); 
                 
                 if (r === 'auditor') {
                     openAuditorCampaignSelector(); 
@@ -719,15 +758,27 @@
                     initAdminDashboard(); 
                 } else if (r === 'asesor') {
                     initAsesorApp(); 
-                } else {
-                    throw new Error(`El rol asignado ('${currentUser.rol}') no tiene una vista válida.`);
                 }
             } catch (err) { 
-                console.error('Error al cargar perfil:', err);
-                errText.textContent = err.message;
-                errBox.classList.remove('hidden');
-                btn.innerHTML = 'Autenticar Sesión <i class="fa-solid fa-shield-halved"></i>';
-                btn.disabled = false;
+                console.error('Fallo en autenticación/perfil:', err);
+                
+                // Cerrar sesión internamente para evitar reintentos infinitos
+                await supabaseClient.auth.signOut();
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // Mantener formulario visible con el error exacto
+                hideAllViews();
+                document.getElementById('loginView').classList.remove('hidden');
+                
+                if (errText && errBox) {
+                    errText.textContent = err.message;
+                    errBox.classList.remove('hidden');
+                }
+                if (btn) {
+                    btn.innerHTML = 'Autenticar Sesión <i class="fa-solid fa-shield-halved"></i>';
+                    btn.disabled = false;
+                }
             } 
         }
 
