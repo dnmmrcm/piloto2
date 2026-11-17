@@ -42,9 +42,7 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
 
-    <!-- ========================================== -->
-    <!-- LOGIN DE ACCESO                            -->
-    <!-- ========================================== -->
+    <!-- LOGIN DE ACCESO -->
     <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
@@ -62,9 +60,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- SELECTOR DE CAMPAÑA PARA AUDITOR           -->
-    <!-- ========================================== -->
+    <!-- SELECTOR DE CAMPAÑA PARA AUDITOR -->
     <div id="auditorCampaignSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center">
             <div class="mb-6"><i class="fa-solid fa-chart-pie text-5xl text-blue-600 mb-4"></i><h2 class="text-2xl font-bold text-slate-900">Seleccionar Campaña</h2><p class="text-slate-500 text-sm mt-2">Elija el área operativa a auditar.</p></div>
@@ -76,9 +72,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- PANEL DE ADMINISTRACIÓN Y AUDITORÍA        -->
-    <!-- ========================================== -->
+    <!-- PANEL DE ADMINISTRACIÓN Y AUDITORÍA -->
     <div id="adminDashboardView" class="hidden flex-col min-h-screen bg-slate-100 w-full z-[80] absolute inset-0">
         <header class="bg-blue-950 text-white shadow-md border-b-4 border-amber-500">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,13 +154,11 @@
         </main>
     </div>
 
-    <!-- Modales Usuario Ocultos (Crear/Editar) -->
+    <!-- Modales Usuario Ocultos -->
     <div id="modalUser" class="fixed inset-0 bg-slate-900/80 hidden z-[90] items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden border border-slate-300"><div class="bg-blue-900 text-white p-4 flex justify-between items-center border-b-4 border-amber-500"><h3 class="font-black tracking-wide">Alta de Nuevo Operador</h3><button onclick="closeUserModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="formUser" onsubmit="saveUser(event)" class="p-6 space-y-4 text-sm bg-slate-50"><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Nombre Legal</label><input type="text" id="nu_nombre" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Correo Electrónico (ID)</label><input type="email" id="nu_email" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Clave de Acceso</label><input type="password" id="nu_pass" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Perfil de Permisos</label><select id="nu_rol" onchange="handleRoleSelection()" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-blue-600 font-medium"><option value="Asesor">Operador / Asesor</option><option value="Auditor">Auditor Interno</option><option value="Sistemas">Sistemas / Root</option></select></div><div id="div_nu_campana"><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Asignación Operativa</label><select id="nu_campana" required class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-blue-600 font-medium"><option value="">Seleccionar área...</option><option value="Cobranza">Dpto. Cobranza</option><option value="Retención">Dpto. Retención</option></select></div><div class="pt-4"><button type="submit" id="btnSaveUser" class="w-full bg-blue-800 text-white font-black py-3 rounded hover:bg-blue-900 transition shadow uppercase tracking-widest">Crear Registro</button></div></form></div></div>
     <div id="modalEditUser" class="fixed inset-0 bg-slate-900/80 hidden z-[90] items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden border border-slate-300"><div class="bg-slate-800 text-white p-4 flex justify-between items-center border-b-4 border-emerald-500"><h3 class="font-black tracking-wide"><i class="fa-solid fa-user-pen mr-2"></i>Modificar Permisos</h3><button onclick="closeEditUserModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="formEditUser" onsubmit="updateUser(event)" class="p-6 space-y-4 text-sm bg-slate-50"><input type="hidden" id="eu_id"><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Nombre Legal</label><input type="text" id="eu_nombre" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-slate-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Perfil de Permisos</label><select id="eu_rol" onchange="handleEditRoleSelection()" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-slate-600 font-medium"><option value="Asesor">Operador / Asesor</option><option value="Auditor">Auditor Interno</option><option value="Sistemas">Sistemas / Root</option></select></div><div id="div_eu_campana"><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Asignación Operativa</label><select id="eu_campana" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-slate-600 font-medium"><option value="Cobranza">Dpto. Cobranza</option><option value="Retención">Dpto. Retención</option><option value="Sistemas / Administración">Sistemas Global</option></select></div><div class="pt-4 flex gap-3"><button type="button" onclick="closeEditUserModal()" class="w-1/3 bg-slate-200 text-slate-800 font-bold py-3 rounded hover:bg-slate-300 transition text-xs uppercase">Cancelar</button><button type="submit" id="btnUpdateUser" class="w-2/3 bg-emerald-700 text-white font-black py-3 rounded hover:bg-emerald-800 transition shadow uppercase tracking-widest">Aplicar Cambios</button></div></form></div></div>
 
-    <!-- ========================================== -->
-    <!-- APLICATIVO ASESORES (GENERACIÓN Y FORMATOS)-->
-    <!-- ========================================== -->
+    <!-- APLICATIVO ASESORES -->
     <div id="appContainer" class="hidden flex-col min-h-screen w-full relative bg-slate-200">
         <header class="no-print bg-blue-950 text-white shadow-xl sticky top-0 z-50 border-b-4 border-amber-500">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
@@ -176,14 +168,13 @@
                 </div>
                 <div class="flex items-center gap-2 text-sm">
                     <button onclick="openModelSelector()" class="bg-blue-900 hover:bg-blue-800 text-white border border-blue-700 px-4 py-2.5 rounded flex items-center gap-2 transition font-bold text-xs uppercase tracking-wide"><i class="fa-solid fa-file-contract"></i> Plantillas</button>
-                    <button id="btnGenerarPDF" onclick="generarPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded font-black transition flex items-center gap-2 shadow-md text-xs uppercase tracking-wide hidden"><i class="fa-solid fa-signature"></i> Firmar y Procesar</button>
+                    <button id="btnGenerarPDF" onclick="generarPDF()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded font-black transition flex items-center gap-2 shadow-md text-xs uppercase tracking-wide hidden"><i class="fa-solid fa-file-pdf"></i> Generar PDF Aviso</button>
                     <button onclick="handleLogout()" class="bg-red-700 hover:bg-red-600 text-white px-3 py-2.5 rounded transition ml-1 shadow border border-red-800"><i class="fa-solid fa-power-off"></i></button>
                 </div>
             </div>
             
-            <!-- PANEL DE INGRESO DE DATOS (FORMULARIO) -->
+            <!-- PANEL DE INGRESO DE DATOS -->
             <div id="editorPanel" class="hidden border-t border-blue-900 bg-slate-900 shadow-inner relative">
-                <!-- CABECERA DEL PANEL MINIMIZABLE -->
                 <div class="max-w-7xl mx-auto px-4 pt-3 flex justify-between items-center mb-1">
                     <h3 class="text-amber-400 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-keyboard mr-1"></i> Panel de Emisión</h3>
                     <button type="button" onclick="toggleEditorPanel()" class="text-slate-300 hover:text-white text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 transition">
@@ -204,9 +195,9 @@
                     <div class="col-span-full border-t border-slate-700 pt-4 mt-1">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                             <div class="md:col-span-2">
-                                <label for="inputFirma" class="block text-amber-400 font-black mb-2 uppercase tracking-wider text-xs"><i class="fa-solid fa-signature mr-2"></i>Firma del emisor (imagen) <span class="text-red-400">*</span></label>
+                                <label for="inputFirma" class="block text-amber-400 font-black mb-2 uppercase tracking-wider text-xs"><i class="fa-solid fa-signature mr-2"></i>Firma del emisor (imagen para la página web) <span class="text-red-400">*</span></label>
                                 <input type="file" id="inputFirma" accept="image/*" onchange="compressFirma(event)" class="w-full text-slate-300 text-xs file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800 bg-slate-800 border border-slate-700 rounded p-2">
-                                <p class="text-[10px] text-slate-400 mt-2">Adjunta una imagen de la firma manuscrita o digital (PNG, JPG o WEBP).</p>
+                                <p class="text-[10px] text-slate-400 mt-2">Adjunta una imagen de la firma. Nota: No se incluirá en el PDF de aviso, únicamente se mostrará al ingresar a la página web del caso.</p>
                             </div>
                             <div id="previewFirma" class="hidden min-h-[76px] bg-white rounded border border-slate-600 p-2 flex items-center justify-center">
                                 <img id="previewFirmaImage" alt="Vista previa de la firma" class="max-h-[85px] max-w-full object-contain">
@@ -217,7 +208,6 @@
                     <div class="col-span-full border-t border-slate-700 pt-5 mt-2">
                         <h3 class="text-amber-400 font-black mb-4 uppercase tracking-wider flex items-center gap-2 text-xs"><i class="fa-solid fa-paperclip"></i> Evidencia Documental de Respaldo <span class="text-slate-400 normal-case font-normal">(Opcional)</span></h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                            <!-- LOS CHECKBOXES INICIAN DESMARCADOS Y SE MARCAN AL SUBIR EVIDENCIA -->
                             <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 1</label><input type="file" id="file_doc1" accept="image/*" onchange="compressImage(event, 'doc1')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc1" onchange="clearFieldError(document.getElementById('file_doc1'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc1" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
                             <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 2</label><input type="file" id="file_doc2" accept="image/*" onchange="compressImage(event, 'doc2')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc2" onchange="clearFieldError(document.getElementById('file_doc2'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc2" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
                             <div class="bg-slate-800 p-4 rounded border border-slate-700 shadow-inner"><label class="block text-slate-300 font-bold text-[10px] uppercase tracking-widest mb-3">Anexo Legal 3</label><input type="file" id="file_doc3" accept="image/*" onchange="compressImage(event, 'doc3')" class="w-full text-slate-400 text-[10px] mb-3 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800"><label class="flex items-center text-slate-300 gap-2 cursor-pointer font-bold text-xs"><input type="checkbox" id="chk_doc3" onchange="clearFieldError(document.getElementById('file_doc3'))" class="accent-amber-500 w-4 h-4"> Adjuntar a folio</label><div id="preview-doc3" class="w-full h-24 bg-slate-950 rounded border border-slate-700 bg-contain bg-no-repeat bg-center mt-3 hidden"></div></div>
@@ -252,91 +242,124 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- VISTA PÚBLICA REDISEÑADA (MÁS PROFESIONAL) -->
+    <!-- VISTA PÚBLICA REDISEÑADA (MÁS PROFESIONAL & URGENTE) -->
     <!-- ========================================== -->
     <section id="caseDetailView" class="hidden flex-col flex-grow bg-slate-100 min-h-screen">
-        <header class="bg-slate-900 border-b-4 border-amber-500 shadow-md no-print py-4 px-6 relative z-20">
+        <header class="bg-slate-950 border-b-4 border-red-600 shadow-xl no-print py-4 px-6 relative z-20">
             <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-4 text-white">
-                    <i class="fa-solid fa-building-shield text-4xl text-amber-500"></i>
+                    <div class="bg-red-600 p-2.5 rounded-lg shadow-lg">
+                        <i class="fa-solid fa-building-shield text-3xl text-white"></i>
+                    </div>
                     <div>
-                        <h1 class="font-black text-xl tracking-wide uppercase leading-tight">MC República del Ecuador</h1>
-                        <p class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Sistema de Autenticación Documental</p>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-black text-xl tracking-wide uppercase leading-tight text-white">MC República del Ecuador</h1>
+                            <span class="bg-red-600/30 text-red-400 text-[10px] font-black px-2 py-0.5 rounded border border-red-500/40 uppercase tracking-widest animate-pulse">Urgente</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-mono tracking-widest uppercase mt-0.5">Sistema Central de Validación y Autenticación Documental</p>
                     </div>
                 </div>
-                <button onclick="window.print()" class="bg-white hover:bg-slate-100 text-slate-900 text-xs font-black uppercase tracking-wide px-5 py-2.5 rounded flex items-center gap-2 transition shadow"><i class="fa-solid fa-print text-amber-600"></i> Imprimir Expediente</button>
+                <div class="flex items-center gap-3">
+                    <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wide px-5 py-2.5 rounded flex items-center gap-2 transition shadow-lg border border-amber-400"><i class="fa-solid fa-print"></i> Imprimir Expediente</button>
+                </div>
             </div>
         </header>
 
-        <div class="max-w-6xl w-full mx-auto p-4 sm:p-6 mt-4 relative z-10">
+        <div class="max-w-6xl w-full mx-auto p-4 sm:p-6 mt-2 relative z-10">
             
-            <!-- BANNER DE REQUERIMIENTO URGENTE -->
-            <div class="bg-red-700 text-white p-4 sm:p-5 rounded shadow-lg flex items-center justify-between no-print mb-6 border-l-8 border-red-900">
-                <div class="flex items-center gap-4">
-                    <i class="fa-solid fa-triangle-exclamation text-3xl sm:text-4xl text-white animate-pulse"></i>
+            <!-- BANNER PRINCIPAL DE ALERTA DE EXIGIBILIDAD -->
+            <div class="bg-gradient-to-r from-red-800 via-red-700 to-red-900 text-white p-5 rounded-xl shadow-xl flex flex-col md:flex-row items-center justify-between no-print mb-6 border-l-8 border-red-950 border-r border-t border-b border-red-600">
+                <div class="flex items-center gap-4 mb-4 md:mb-0">
+                    <div class="bg-red-900/80 p-3.5 rounded-full border border-red-400/30 flex-shrink-0 shadow-inner">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-300 animate-pulse"></i>
+                    </div>
                     <div>
-                        <h2 class="font-black text-lg sm:text-xl uppercase tracking-wide">Aviso de Requerimiento Urgente</h2>
-                        <p class="text-[11px] sm:text-xs text-red-100 font-medium mt-1 leading-snug max-w-2xl">Este expediente se encuentra en fase extrajudicial activa. Se requiere regularización inmediata para evitar el inicio de acciones legales correspondientes.</p>
+                        <div class="flex items-center gap-2">
+                            <h2 class="font-black text-lg sm:text-xl uppercase tracking-wider text-white">REQUERIMIENTO EXTRAJUDICIAL PERENTORIO</h2>
+                            <span class="bg-amber-400 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest">Plazo Activo</span>
+                        </div>
+                        <p class="text-xs text-red-100 font-medium mt-1 leading-snug max-w-2xl">
+                            Este expediente digital legalmente notificado exige liquidación o regularización inmediata. La falta de pago faculta el inicio de acciones coactivas, bloqueos y demandas civiles de cobranza.
+                        </p>
                     </div>
                 </div>
-                <div class="hidden md:block bg-red-900/50 p-3 rounded border border-red-500/50 text-right min-w-[140px]">
-                    <span class="block text-[10px] font-bold text-red-200 uppercase tracking-widest mb-1">Monto Exigible</span>
-                    <span class="font-mono font-black text-2xl text-white dispMonto"></span>
+                <div class="bg-slate-950/80 p-4 rounded-lg border border-red-500/40 text-center md:text-right min-w-[200px] w-full md:w-auto shadow-inner">
+                    <span class="block text-[10px] font-bold text-red-300 uppercase tracking-widest mb-1">Monto Exigible Total</span>
+                    <span class="font-mono font-black text-3xl text-amber-400 dispMonto block"></span>
+                    <span class="text-[9px] text-slate-400 uppercase tracking-wider mt-1 block">Incluye Gastos de Tramitación</span>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- PANEL LATERAL DE ESTADO (URGENCIA) -->
+                <!-- PANEL LATERAL DE ESTADO E INSTRUCCIONES -->
                 <div class="lg:col-span-1 space-y-6 no-print">
                     
-                    <div class="bg-white rounded shadow-md border-t-4 border-amber-500 overflow-hidden">
-                        <div class="bg-slate-50 p-5 border-b border-slate-200 text-center relative overflow-hidden">
-                            <i class="fa-solid fa-scale-balanced text-4xl text-slate-700 mb-3 relative z-10"></i>
-                            <h3 class="font-black text-slate-800 uppercase tracking-tight text-lg relative z-10">Estado del Expediente</h3>
-                            <span class="inline-block mt-3 bg-red-100 text-red-800 text-xs font-black px-4 py-1.5 rounded uppercase tracking-wider border border-red-300 relative z-10 shadow-sm animate-pulse">EN MORA - FASE DE COBRO</span>
-                            <div class="absolute -right-4 -top-4 text-slate-200 opacity-50"><i class="fa-solid fa-gavel text-8xl"></i></div>
+                    <div class="bg-white rounded-xl shadow-md border-t-4 border-red-600 overflow-hidden border-x border-b border-slate-200">
+                        <div class="bg-slate-900 p-5 text-center relative overflow-hidden">
+                            <i class="fa-solid fa-gavel text-4xl text-amber-400 mb-2 relative z-10"></i>
+                            <h3 class="font-black text-white uppercase tracking-tight text-lg relative z-10">Estatus Procesal</h3>
+                            <div class="mt-3">
+                                <span class="inline-block bg-red-600 text-white text-xs font-black px-4 py-1.5 rounded uppercase tracking-wider shadow-md animate-pulse">
+                                    <i class="fa-solid fa-bell mr-1.5"></i> EN MORA CRÍTICA - FASE 1
+                                </span>
+                            </div>
+                            <div class="absolute -right-4 -top-4 text-slate-800 opacity-40"><i class="fa-solid fa-scale-balanced text-9xl"></i></div>
                         </div>
                         <div class="p-5 space-y-4 text-sm bg-white">
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
-                                <span class="text-slate-500 font-bold text-[11px] uppercase tracking-wider mt-0.5">Titular:</span>
-                                <span class="font-black text-slate-800 dispClientName text-right max-w-[65%] truncate uppercase"></span>
+                            <div class="flex justify-between border-b border-slate-100 pb-2.5">
+                                <span class="text-slate-500 font-bold text-[11px] uppercase tracking-wider mt-0.5">Destinatario:</span>
+                                <span class="font-black text-slate-900 dispClientName text-right max-w-[65%] truncate uppercase"></span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
-                                <span class="text-slate-500 font-bold text-[11px] uppercase tracking-wider">Identificación:</span>
+                            <div class="flex justify-between border-b border-slate-100 pb-2.5">
+                                <span class="text-slate-500 font-bold text-[11px] uppercase tracking-wider">Identificación / RUC:</span>
                                 <span class="font-mono font-bold text-slate-800 dispRuc"></span>
                             </div>
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
+                            <div class="flex justify-between border-b border-slate-100 pb-2.5">
                                 <span class="text-slate-500 font-bold text-[11px] uppercase tracking-wider">Contrato N°:</span>
-                                <span class="font-mono font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded dispExpedient"></span>
+                                <span class="font-mono font-black text-red-700 bg-red-50 px-2.5 py-1 rounded border border-red-200 dispExpedient"></span>
                             </div>
-                            <div class="flex justify-between bg-red-50 p-3 rounded border border-red-200 mt-4 items-center">
-                                <span class="text-red-800 font-black text-xs uppercase">Total Adeudado:</span>
+                            <div class="flex justify-between border-b border-slate-100 pb-2.5">
+                                <span class="text-slate-500 font-bold text-[11px] uppercase tracking-wider">Fecha Radicación:</span>
+                                <span class="font-bold text-slate-800 dispDate"></span>
+                            </div>
+                            <div class="flex justify-between bg-red-50 p-3.5 rounded-lg border border-red-200 mt-4 items-center">
+                                <span class="text-red-900 font-black text-xs uppercase">Saldo Pendiente:</span>
                                 <span class="font-mono font-black text-red-700 text-xl dispMonto"></span>
                             </div>
                         </div>
-                        <div class="bg-slate-900 p-4 text-center">
-                            <p class="text-[11px] text-slate-300 font-medium leading-snug">Para notificar un pago o buscar un acuerdo, comuníquese de inmediato con los canales de atención autorizados.</p>
+                        <div class="bg-slate-950 p-4 text-center border-t border-slate-800">
+                            <p class="text-[11px] text-slate-300 font-medium leading-snug">
+                                <i class="fa-solid fa-phone-volume text-amber-400 mr-1.5"></i> Para acordar su pago o requerir asistencia legal directa, contacte a nuestros asesores autorizados.
+                            </p>
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 border border-blue-200 p-5 rounded flex gap-4 shadow-sm">
-                        <i class="fa-solid fa-shield-check text-blue-600 text-3xl mt-1"></i>
-                        <div>
-                            <h4 class="font-black text-blue-900 text-xs uppercase tracking-wider mb-1">Certificación Digital</h4>
-                            <p class="text-[11px] text-blue-800 font-medium leading-relaxed">Documento electrónico certificado. Esta es una copia fiel del expediente alojado en los servidores seguros de la institución con plena validez probatoria.</p>
+                    <div class="bg-slate-900 text-white border border-slate-800 p-5 rounded-xl shadow-md">
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-shield-check text-emerald-400 text-3xl mt-1"></i>
+                            <div>
+                                <h4 class="font-black text-amber-400 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                                    Certificado Digital de Firma
+                                </h4>
+                                <p class="text-[11px] text-slate-300 font-medium leading-relaxed">
+                                    Documento validado y suscrito digitalmente por el emisor legal. La firma manifestada en este expediente cuenta con plena validez de prueba conforme a las normas de comercio electrónico y gestión judicial.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CONTENEDOR DEL DOCUMENTO Y EVIDENCIAS -->
+                <!-- CONTENEDOR DEL DOCUMENTO OFICIAL Y FIRMA MANIFESTADA -->
                 <div class="lg:col-span-2 space-y-6">
-                    <div id="clientDocumentPreview" class="bg-white shadow-xl border border-slate-300 p-6 sm:p-10 relative overflow-hidden">
+                    <div id="clientDocumentPreview" class="bg-white shadow-2xl rounded-lg border border-slate-300 p-6 sm:p-10 relative overflow-hidden">
                         <div class="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none z-0"><i class="fa-solid fa-building-columns text-[400px]"></i></div>
                         <div class="relative z-10" id="clientDocumentContent"></div>
                     </div>
                     
-                    <div id="seccionEvidencias" class="hidden bg-white p-6 rounded shadow-sm border border-slate-200 no-print">
-                        <h2 class="font-black text-slate-800 text-sm uppercase mb-4 flex items-center gap-2 border-b border-slate-200 pb-3"><i class="fa-solid fa-folder-tree text-amber-500 text-lg"></i> Soportes Digitales Certificados</h2>
+                    <div id="seccionEvidencias" class="hidden bg-white p-6 rounded-xl shadow-md border border-slate-200 no-print">
+                        <h2 class="font-black text-slate-800 text-sm uppercase mb-4 flex items-center gap-2 border-b border-slate-200 pb-3">
+                            <i class="fa-solid fa-folder-tree text-amber-500 text-lg"></i> Anexos y Soportes Certificados
+                        </h2>
                         <div id="galeriaAnexos" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                     </div>
                 </div>
@@ -345,7 +368,7 @@
     </section>
 
     <!-- LIGHTBOX -->
-    <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-[100] hidden items-center justify-center p-4 cursor-pointer backdrop-blur-sm" onclick="closeLightbox()"><div class="absolute top-6 right-8 text-white text-sm font-bold uppercase tracking-widest opacity-50"><i class="fa-solid fa-magnifying-glass mr-2"></i>Visor de Fojas</div><span class="absolute top-4 right-6 text-white text-4xl hover:text-red-400 transition">&times;</span><img id="lightboxImg" src="" class="max-w-full max-h-[90vh] object-contain rounded border border-slate-700 shadow-2xl"></div>
+    <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-[100] hidden items-center justify-center p-4 cursor-pointer backdrop-blur-sm" onclick="closeLightbox()"><div class="absolute top-6 right-8 text-white text-sm font-bold uppercase tracking-widest opacity-50"><i class="fa-solid fa-magnifying-glass mr-2"></i>Visor de Fojas</div><span class="absolute top-4 right-6 text-white text-4xl hover:text-red-400 transition">×</span><img id="lightboxImg" src="" class="max-w-full max-h-[90vh] object-contain rounded border border-slate-700 shadow-2xl"></div>
 
     <!-- SCRIPT PRINCIPAL -->
     <script>
@@ -358,9 +381,8 @@
         let firmaData = null;
         const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
         function formatDateES(iso) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? `${parseInt(m[3], 10)} de ${MESES[parseInt(m[2], 10) - 1]} de ${m[1]}` : ''; }
-        function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&', '<': '<', '>': '>', '"': '"', "'": ''' }[c])); }
         
-        // Función para minimizar/expandir el panel de edición
         window.toggleEditorPanel = function() {
             const grid = document.getElementById('editorPanelGrid');
             const icon = document.getElementById('editorToggleIcon');
@@ -385,7 +407,6 @@
             msgs.forEach(m => { const li = document.createElement('li'); li.textContent = m; ul.appendChild(li); });
             box.append(t, ul); box.classList.remove('hidden');
             
-            // Si el panel está oculto, lo abrimos para que se vea el error
             const grid = document.getElementById('editorPanelGrid');
             if(grid.classList.contains('hidden')) toggleEditorPanel();
         }
@@ -413,6 +434,7 @@
             document.getElementById('formErrorBox').classList.add('hidden');
             setFirmaImage(null, document.getElementById('notificationView'));
         }
+
         function validateForm() {
             document.querySelectorAll('#editorPanel .field-error').forEach(el => el.classList.remove('field-error'));
             const errs = []; let first = null; const mark = (el, msg) => { el.classList.add('field-error'); errs.push(msg); if (!first) first = el; };
@@ -429,13 +451,13 @@
             <div class="firma-electronica mt-6 mx-auto w-full max-w-sm text-center" style="break-inside:avoid;page-break-inside:avoid;">
                 <div class="h-[95px] flex items-end justify-center px-2">
                     <img class="firma-imagen hidden max-h-[85px] max-w-[280px] object-contain mx-auto" alt="Imagen de firma del emisor">
-                    <span class="firma-pendiente text-[10px] text-slate-400 italic">Firma pendiente de adjuntar</span>
+                    <span class="firma-pendiente text-[10px] text-slate-400 italic">Firma electrónica certificada</span>
                 </div>
                 <div class="border-t-2 border-slate-800 w-64 max-w-full mx-auto mt-1"></div>
                 <div class="dispEmisorName mt-1 text-xs font-bold uppercase tracking-wide text-slate-900"></div>
-                <div class="text-[9px] text-slate-600 uppercase tracking-widest mt-0.5 font-bold">Firma del emisor</div>
+                <div class="text-[9px] text-slate-600 uppercase tracking-widest mt-0.5 font-bold">Firma del Emisor / Autoridad</div>
                 <div class="text-center pt-4 pb-1">
-                    <a id="btnAnexosPdf" href="#" target="_blank" rel="noopener noreferrer" style="display:none;text-decoration:none;" class="bg-red-600 text-white font-black py-2.5 px-6 rounded text-[10px] uppercase tracking-widest shadow-lg border border-red-700 hover:bg-red-700 transition inline-block"><i class="fa-solid fa-folder-open mr-1.5"></i>VER MI CASO</a>
+                    <a id="btnAnexosPdf" href="#" target="_blank" rel="noopener noreferrer" style="display:none;text-decoration:none;" class="bg-red-700 hover:bg-red-800 text-white font-black py-3 px-8 rounded text-xs uppercase tracking-widest shadow-xl border border-red-900 transition inline-block"><i class="fa-solid fa-folder-open mr-2"></i>VER MI CASO E INGRESAR AL EXPEDIENTE</a>
                 </div>
             </div>
         `;
@@ -444,7 +466,7 @@
             <div class="flex justify-between items-start mb-4 border-b-2 border-slate-900 pb-3">
                 <div>
                     <h1 class="text-3xl font-black tracking-tighter uppercase text-slate-900 leading-none">MC REPÚBLICA DEL ECUADOR</h1>
-                    <p class="text-[9px] text-slate-500 tracking-widest uppercase font-bold mt-1">Dirección de Gestión Extrajudicial</p>
+                    <p class="text-[9px] text-slate-500 tracking-widest uppercase font-bold mt-1">Dirección de Gestión Extrajudicial & Coactiva</p>
                 </div>
                 <div class="text-right text-[9px] font-mono text-slate-700">
                     <div class="font-barcode text-xl mb-1 leading-none text-slate-500">||| || | |||| || |</div>
@@ -454,9 +476,6 @@
             </div>
         `;
 
-        /* =======================================================================
-           5 FORMATOS (Con rediseño super formal para el Modelo 1)
-        ======================================================================= */
         const MODELOS = {
             1: { 
                 nombre: "Citación Extrajudicial Laboral", 
@@ -464,8 +483,9 @@
                     <div class="bg-white p-7 relative flex flex-col font-sans">
                         ${getHeaderSeguridadHtml()}
                         <div class="flex-grow">
-                            <div class="bg-red-700 p-3 mb-4 text-center">
-                                <h2 class="text-base font-black text-white uppercase tracking-widest mb-1"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ÚLTIMA INSTANCIA EXTRAJUDICIAL</h2>
+                            <div class="bg-red-700 p-3 mb-4 text-center rounded border-b-4 border-red-900 shadow">
+                                <h2 class="text-base font-black text-white uppercase tracking-widest mb-0.5"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ÚLTIMA INSTANCIA EXTRAJUDICIAL PERENTORIA</h2>
+                                <p class="text-[10px] text-red-100 uppercase tracking-wider font-bold">Notificación Formal de Requerimiento de Pago</p>
                             </div>
                             
                             <table class="w-full text-sm border-collapse border border-slate-300 mb-4">
@@ -476,33 +496,31 @@
                                 </tbody>
                             </table>
                             
-                            <div class="text-[13px] text-justify leading-relaxed space-y-3 text-slate-800 border-l-4 border-red-600 bg-red-50 p-4 mb-4">
-                                <p>Mediante el presente instrumento digital con pleno valor probatorio, <strong>MC REPÚBLICA DEL ECUADOR</strong> notifica la <strong>exigibilidad inmediata</strong> de las obligaciones vencidas derivadas del contrato <strong><span class="dispExpedient"></span></strong>.</p>
+                            <div class="text-[13px] text-justify leading-relaxed space-y-3 text-slate-800 border-l-4 border-red-600 bg-red-50 p-4 mb-4 rounded-r shadow-sm">
+                                <p>Mediante el presente instrumento digital con pleno valor probatorio, <strong>MC REPÚBLICA DEL ECUADOR</strong> notifica formalmente la <strong>exigibilidad inmediata</strong> de las obligaciones vencidas derivadas del contrato <strong><span class="dispExpedient"></span></strong>.</p>
                                 <p>Se requiere su <strong>CANCELACIÓN INMEDIATA</strong> o acercamiento perentorio. La renuencia a liquidar este saldo facultará a nuestra institución a elevar este expediente a las instancias coactivas y jurisdiccionales pertinentes, ocasionando inminentes bloqueos financieros, retenciones y la suma de costas procesales a su cargo.</p>
                             </div>
 
-                            <!-- Tabla de Desglose Integrada (Más formal) -->
                             <div class="w-full border-2 border-slate-800 rounded mb-4 mt-3 text-xs bg-white overflow-hidden shadow-sm">
                                 <div class="bg-slate-800 p-2 font-black uppercase text-center text-white tracking-widest">LIQUIDACIÓN DE VALORES PENDIENTES</div>
-                                <div class="flex justify-between p-2 border-b border-slate-200">
+                                <div class="flex justify-between p-2.5 border-b border-slate-200">
                                     <span class="font-bold text-slate-600 uppercase text-[10px]">Capital Exigible:</span> 
                                     <span class="font-mono font-bold dispMontoBase"></span>
                                 </div>
-                                <div class="flex justify-between p-2 border-b border-slate-200">
-                                    <span class="font-bold text-slate-600 uppercase text-[10px]">Gastos de Cobranza (ref):</span> 
+                                <div class="flex justify-between p-2.5 border-b border-slate-200">
+                                    <span class="font-bold text-slate-600 uppercase text-[10px]">Gastos de Cobranza & Gestión:</span> 
                                     <span class="font-mono text-slate-400">$0.00</span>
                                 </div>
-                                <div class="flex justify-between p-2 bg-red-100 text-red-900 font-black uppercase items-center">
+                                <div class="flex justify-between p-3 bg-red-100 text-red-950 font-black uppercase items-center border-t border-red-300">
                                     <span>Monto Total a Pagar:</span> 
-                                    <span class="font-mono dispMonto text-base"></span>
+                                    <span class="font-mono dispMonto text-lg"></span>
                                 </div>
                             </div>
                             
-                            <!-- Advertencia Reemplazada -->
                             <div class="border border-[#e6c15a] bg-[#fffdf0] p-3 text-[#594611] text-[11px] rounded mb-3 shadow-sm leading-snug">
-                                <strong>ADVERTENCIA LEGAL:</strong> El incumplimiento de esta notificación resultará en consecuencias jurídicas severas y multas según la ley aplicable. Es imperativo que responda dentro del plazo establecido para detener este proceso.
+                                <strong>ADVERTENCIA LEGAL PERENTORIA:</strong> El incumplimiento de esta notificación resultará en consecuencias jurídicas severas y de coacción según la normativa aplicable. Es imperativo que acceda a su expediente virtual para validar las opciones de arreglo.
                             </div>
-                            <p class="text-[11px] text-slate-700 font-bold mb-1 text-center bg-slate-100 p-2 rounded border border-slate-200">A fin de revisar los antecedentes completos del litigio, vencimientos, trámites y solicitudes que le conciernen, sírvase hacer clic en el botón inferior:</p>
+                            <p class="text-[11px] text-slate-700 font-bold mb-1 text-center bg-slate-100 p-2 rounded border border-slate-300">Para revisar el expediente formal, antecedentes y realizar su pago en línea con firma certificada, presione el siguiente botón:</p>
 
                         </div>
                         ${getFirmaElectronicaHtml()}
@@ -512,11 +530,11 @@
                 nombre: "Requerimiento Extrajudicial", 
                 html: () => `
                     <div class="bg-white p-7 relative flex flex-col font-sans border-4 border-slate-900 m-2">
-                        <div class="absolute top-0 right-0 bg-slate-900 text-white font-black text-[9px] uppercase tracking-widest px-4 py-1">Prioridad: Alta</div>
+                        <div class="absolute top-0 right-0 bg-red-700 text-white font-black text-[9px] uppercase tracking-widest px-4 py-1">Urgencia: Máxima</div>
                         ${getHeaderSeguridadHtml()}
                         <div class="flex-grow mt-2">
                             <div class="text-center mb-6">
-                                <i class="fa-solid fa-circle-exclamation text-3xl text-slate-900 mb-2"></i>
+                                <i class="fa-solid fa-circle-exclamation text-4xl text-red-700 mb-2"></i>
                                 <h2 class="text-xl font-black text-slate-900 uppercase tracking-tight">Requerimiento Extrajudicial de Pago</h2>
                             </div>
                             
@@ -526,8 +544,8 @@
                                 <div><span class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Contrato Vinculante:</span><span class="font-mono font-black text-slate-900 dispExpedient"></span></div>
                             </div>
                             
-                            <div class="text-sm text-justify leading-relaxed text-slate-800 p-4 border-l-4 border-slate-900 bg-slate-50 font-medium mb-4">
-                                En virtud del registro de saldos pendientes asociados al contrato referenciado, se emite el presente <strong>requerimiento formal</strong>. Se exhorta al requerido a establecer contacto con nuestro departamento a la brevedad para generar una orden de arreglo por el monto adeudado de <strong class="text-red-700 dispMonto"></strong>. La omisión a esta notificación digital facultará el inicio de medidas correspondientes según la normativa civil y mercantil.
+                            <div class="text-sm text-justify leading-relaxed text-slate-800 p-4 border-l-4 border-red-700 bg-red-50 font-medium mb-4 rounded-r">
+                                En virtud del registro de saldos vencidos vinculados al contrato referenciado, se emite este <strong>REQUERIMIENTO FORMAL DE PAGO URGENTE</strong>. Se exige al titular establecer contacto inmediato para regularizar el monto adeudado de <strong class="text-red-700 dispMonto"></strong> antes de derivar la causa a instancia judicial.
                             </div>
                         </div>
                         ${getFirmaElectronicaHtml()}
@@ -540,7 +558,7 @@
                         <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none"><i class="fa-solid fa-handshake text-[400px]"></i></div>
                         ${getHeaderSeguridadHtml()}
                         <div class="flex-grow relative z-10">
-                            <h2 class="text-lg font-black text-slate-900 uppercase text-center mb-6 tracking-wide">Convocatoria a Mediación Extrajudicial</h2>
+                            <h2 class="text-lg font-black text-slate-900 uppercase text-center mb-6 tracking-wide">Convocatoria URGENTE a Mediación Extrajudicial</h2>
                             <div class="border-2 border-slate-200 rounded p-5 bg-white shadow-sm mb-5">
                                 <div class="flex justify-between items-end border-b border-slate-100 pb-3 mb-3">
                                     <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Parte Convocada</span><span class="font-black text-lg text-slate-800 uppercase dispClientName"></span></div>
@@ -548,12 +566,12 @@
                                 </div>
                                 <div class="flex justify-between items-end">
                                     <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Identificador de Contrato</span><span class="font-mono font-black text-slate-900 dispExpedient"></span></div>
-                                    <div class="text-right"><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Valor Vencido</span><span class="font-mono font-black text-red-700 dispMonto"></span></div>
+                                    <div class="text-right"><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Valor Vencido Exigible</span><span class="font-mono font-black text-red-700 dispMonto"></span></div>
                                 </div>
                             </div>
                             <div class="text-sm text-justify leading-relaxed text-slate-800 space-y-3 px-2">
-                                <p>Este centro extrajudicial extiende una formal invitación para procurar un <strong>acuerdo conciliatorio directo</strong>.</p>
-                                <p>El objetivo es brindar facilidades de negociación sobre el contrato <span class="font-mono font-bold dispExpedient"></span>, amparando los derechos de ambas partes y formulando un plan de pago o regularización que evite reportes negativos o acciones ulteriores.</p>
+                                <p>Este centro extrajudicial extiende una última oportunidad para concretar un <strong>acuerdo conciliatorio directo</strong>.</p>
+                                <p>El objetivo es brindar facilidades de negociación sobre el contrato <span class="font-mono font-bold dispExpedient"></span>, evitando medidas de coacción financiera o embargo de activos.</p>
                             </div>
                         </div>
                         <div class="relative z-10">${getFirmaElectronicaHtml()}</div>
@@ -562,13 +580,13 @@
             4: { 
                 nombre: "Incumplimiento Mercantil", 
                 html: () => `
-                    <div class="bg-white p-7 relative flex flex-col font-mono text-sm text-slate-900 border-x-[12px] border-slate-900">
+                    <div class="bg-white p-7 relative flex flex-col font-mono text-sm text-slate-900 border-x-[12px] border-red-800">
                         <div class="border-b-4 border-slate-900 pb-3 mb-6 flex justify-between items-end">
-                            <div><h1 class="text-xl font-black uppercase">MC REPÚBLICA DEL ECUADOR</h1><p class="text-[9px] uppercase font-bold mt-1">División de Operaciones Mercantiles</p></div>
+                            <div><h1 class="text-xl font-black uppercase">MC REPÚBLICA DEL ECUADOR</h1><p class="text-[9px] uppercase font-bold mt-1 text-red-700">División de Incumplimientos Mercantiles - ALERTA</p></div>
                             <div class="text-right"><div class="font-barcode text-2xl leading-none">||| || | |||| ||</div><div class="text-[9px] uppercase font-bold mt-1">Ref: <span class="dispExpedient"></span></div></div>
                         </div>
                         <div class="flex-grow">
-                            <h2 class="text-center font-black text-base underline uppercase mb-5">Aviso de Incumplimiento Mercantil</h2>
+                            <h2 class="text-center font-black text-base underline uppercase mb-5 text-red-700">Aviso de Incumplimiento Mercantil Crítico</h2>
                             <div class="grid grid-cols-2 gap-3 border-2 border-slate-900 p-4 bg-slate-50 mb-5">
                                 <div><span class="block font-bold text-[9px] uppercase text-slate-500 mb-1">Razón Social:</span><span class="font-bold dispClientName text-sm"></span></div>
                                 <div><span class="block font-bold text-[9px] uppercase text-slate-500 mb-1">RUC:</span><span class="font-bold dispRuc"></span></div>
@@ -577,7 +595,7 @@
                                     <div class="text-right"><span class="block font-bold text-[9px] uppercase text-slate-500 mb-1">Adeudado:</span><span class="font-bold text-red-700 dispMonto text-base"></span></div>
                                 </div>
                             </div>
-                            <p class="text-justify leading-relaxed">Se certifica mediante este canal electrónico el registro de <strong>INCUMPLIMIENTO</strong> respecto a las cláusulas comerciales pactadas en el contrato <span class="dispExpedient"></span>. A la fecha de emisión (<span class="dispDate"></span>), el sistema refleja saldos en mora. Se exige la comparecencia administrativa del representante legal o titular para regularizar el estatus mercantil antes de proceder con el registro en burós de crédito.</p>
+                            <p class="text-justify leading-relaxed">Se certifica formalmente el registro de <strong>INCUMPLIMIENTO GRAVE</strong> respecto a las cláusulas comerciales pactadas en el contrato <span class="dispExpedient"></span>. A la fecha de emisión (<span class="dispDate"></span>), se constata el vencimiento del plazo. Se solicita acceso inmediato al portal para regularización.</p>
                         </div>
                         ${getFirmaElectronicaHtml()}
                     </div>` 
@@ -586,15 +604,15 @@
                 nombre: "Citación Provincial Extrajudicial", 
                 html: () => `
                     <div class="bg-white p-7 relative flex flex-col font-serif">
-                        <div class="border-4 border-double border-slate-900 p-8 h-full flex flex-col">
+                        <div class="border-4 border-double border-red-900 p-8 h-full flex flex-col">
                             <div class="text-center border-b border-slate-400 pb-5 mb-6">
                                 <h1 class="text-xl font-bold tracking-[0.2em] uppercase text-slate-900">MC REPÚBLICA DEL ECUADOR</h1>
-                                <p class="text-[10px] text-slate-600 tracking-widest uppercase mt-2 font-bold font-sans">Delegación Provincial Extrajudicial</p>
+                                <p class="text-[10px] text-red-800 tracking-widest uppercase mt-2 font-bold font-sans">Delegación Provincial - Notificación de Urgencia</p>
                                 <div class="font-barcode text-lg mt-2 text-slate-400">||| | ||| || ||| |</div>
                             </div>
                             <div class="flex-grow space-y-4 text-slate-900 text-sm leading-relaxed text-justify px-4">
-                                <p>En la jurisdicción provincial correspondiente, a los <strong><span class="dispDate"></span></strong>, se emite el presente manifiesto electrónico de notificación para <strong><span class="dispClientName uppercase font-bold"></span></strong>, con número de identificación <strong><span class="dispRuc font-bold"></span></strong>.</p>
-                                <p>Hacemos de su expreso y formal conocimiento que bajo el número de contrato <strong><span class="dispExpedient font-bold font-sans"></span></strong> radica un requerimiento activo por el valor exigible de <strong><span class="dispMonto font-bold font-sans text-red-700"></span></strong> que precisa de su intervención. Confiamos en su pronta respuesta para dar solución extrajudicial a este expediente, manteniendo el marco de cordialidad y respeto mutuo.</p>
+                                <p>En la jurisdicción provincial correspondiente, a los <strong><span class="dispDate"></span></strong>, se emite el presente manifiesto perentorio de notificación para <strong><span class="dispClientName uppercase font-bold"></span></strong>, con número de identificación <strong><span class="dispRuc font-bold"></span></strong>.</p>
+                                <p>Hacemos de su conocimiento que radica bajo el contrato <strong><span class="dispExpedient font-bold font-sans"></span></strong> un requerimiento legal urgente por la suma vencida de <strong><span class="dispMonto font-bold font-sans text-red-700"></span></strong>.</p>
                             </div>
                             <div class="font-sans mt-4">${getFirmaElectronicaHtml()}</div>
                         </div>
@@ -614,7 +632,6 @@
                         const contentDiv = document.getElementById('clientDocumentContent'); contentDiv.innerHTML = m.html();
                         const d = caseData.data;
                         
-                        // Parsear monto para la vista pública
                         const parsedMonto = parseFloat(d.monto) || 0;
                         const formattedMonto = parsedMonto.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
                         
@@ -625,7 +642,8 @@
                         contentDiv.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = d.emisorName);
                         contentDiv.querySelectorAll('.dispMontoBase, .dispMonto').forEach(el => el.textContent = formattedMonto);
 
-                        setFirmaImage(d.firmaImagen || null, contentDiv, false);
+                        // EN LA PÁGINA WEB SE MUESTRA LA FIRMA
+                        setFirmaImage(d.firmaImagen || null, contentDiv, true);
                         const btnPdf = contentDiv.querySelector('#btnAnexosPdf'); if(btnPdf) btnPdf.style.display = 'none';
                     }
                 } else document.getElementById('caseDetailView').innerHTML = `<div class="w-full text-center mt-32"><i class="fa-solid fa-shield-xmark text-6xl text-slate-300 mb-4"></i><h2 class="font-black text-2xl text-slate-700 uppercase">Documento No Encontrado</h2></div>`;
@@ -706,7 +724,6 @@
                 n: v('inputEmisorName') || 'FIRMADO ELECTRÓNICAMENTE' 
             };
             
-            // Format monto
             const rawMonto = parseFloat(v('inputMonto')) || 0;
             const formattedMonto = rawMonto.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
@@ -717,7 +734,8 @@
             document.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = d.n);
             document.querySelectorAll('.dispMontoBase, .dispMonto').forEach(el => el.textContent = formattedMonto);
             
-            setFirmaImage(firmaData, document.getElementById('notificationView'));
+            // En la vista previa local no se muestra la firma como imagen si es para PDF de aviso
+            setFirmaImage(firmaData, document.getElementById('notificationView'), true);
         }
         
         function setFirmaImage(src, root = document, showPlaceholder = true) {
@@ -730,6 +748,7 @@
                 el.classList.toggle('hidden', Boolean(src) || !showPlaceholder);
             });
         }
+
         function compressFirma(evt) {
             const input = evt.target;
             const file = input.files && input.files[0];
@@ -779,7 +798,6 @@
             reader.readAsDataURL(file);
         }
         
-        /* Modificado para marcar/desmarcar automáticamente el checkbox al cargar evidencia */
         function compressImage(evt, fld) {
             const input = evt.target; const preview = document.getElementById(`preview-${fld}`);
             const chk = document.getElementById(`chk_${fld}`);
@@ -788,11 +806,23 @@
             clearFieldError(input); const r = new FileReader(); r.onload = e => { const img = new Image(); img.onload = () => { let w = img.width, h = img.height; if (w > 1200) { h = Math.round(h * 1200 / w); w = 1200; } const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h); const b64 = cv.toDataURL('image/jpeg', 0.8); anexosData[fld] = b64; preview.style.backgroundImage = `url(${b64})`; preview.classList.remove('hidden'); chk.checked = true; clearFieldError(document.getElementById(`file_${fld}`)); }; img.src = e.target.result; }; r.readAsDataURL(fl);
         }
         
+        /* GENERAR PDF DE AVISO (SIN LA FIRMA IMAGEN EN EL CLON) */
         async function generarPDF() {
-            if (!validateForm()) return; const btnGen = document.getElementById('btnGenerarPDF'); const oldText = btnGen.innerHTML; btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cifrando...'; btnGen.disabled = true; let uuid = null; const originalScrollY = window.scrollY; window.scrollTo(0, 0);
+            if (!validateForm()) return; 
+            const btnGen = document.getElementById('btnGenerarPDF'); 
+            const oldText = btnGen.innerHTML; 
+            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando PDF Aviso...'; 
+            btnGen.disabled = true; 
+            let uuid = null; 
+            const originalScrollY = window.scrollY; 
+            window.scrollTo(0, 0);
+
             try {
-                if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre); updateData();
-                const val = id => document.getElementById(id).value.trim(); const cfg = n => ({ show: document.getElementById(`chk_doc${n}`).checked, data: anexosData[`doc${n}`] });
+                if (!auditoriaTracking.start) iniciarMedicionCrono(selectedModelId, MODELOS[selectedModelId].nombre); 
+                updateData();
+                
+                const val = id => document.getElementById(id).value.trim(); 
+                const cfg = n => ({ show: document.getElementById(`chk_doc${n}`).checked, data: anexosData[`doc${n}`] });
                 
                 const caseData = { 
                     modelId: selectedModelId, 
@@ -801,19 +831,37 @@
                     expedient: val('inputExpedient'), 
                     date: formatDateES(document.getElementById('inputDate').value), 
                     emisorName: val('inputEmisorName'), 
-                    monto: val('inputMonto'), // Se almacena la cantidad 
-                    firmaImagen: firmaData, 
+                    monto: val('inputMonto'), 
+                    firmaImagen: firmaData, // Se guarda en BD para mostrar en la web
                     anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) } 
                 };
                 
-                const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select(); if (error) throw error; uuid = data[0].id;
+                const { data, error } = await supabaseClient.from('casos').insert([{ data: caseData, creado_por: currentUser.id, campana: currentUser.campana }]).select(); 
+                if (error) throw error; 
+                uuid = data[0].id;
                 
-                const btnAnexos = document.getElementById('notificationView').querySelector('#btnAnexosPdf'); if (btnAnexos) { btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; btnAnexos.style.display = 'inline-block'; }
+                const btnAnexos = document.getElementById('notificationView').querySelector('#btnAnexosPdf'); 
+                if (btnAnexos) { 
+                    btnAnexos.href = `${window.location.origin}${window.location.pathname}?id=${uuid}`; 
+                    btnAnexos.style.display = 'inline-block'; 
+                }
+                
                 if (document.fonts && document.fonts.ready) await document.fonts.ready;
+                
+                // Crear clon para PDF y OCULTAR LA FIRMA EN EL PDF
                 const clone = document.getElementById('notificationView').cloneNode(true);
                 clone.removeAttribute('id');
                 clone.classList.remove('hidden', 'shadow-2xl', 'mx-auto');
                 clone.style.cssText = 'width:760px;max-width:760px;margin:0;padding:0;display:block;background:#fff;box-shadow:none;position:static;transform:none;';
+
+                // OCULTAR FIRMA EN EL CLON DEL PDF (SOLO QUEDA COMO AVISO CON BOTÓN)
+                clone.querySelectorAll('.firma-imagen').forEach(img => {
+                    img.style.display = 'none';
+                    img.removeAttribute('src');
+                });
+                clone.querySelectorAll('.firma-pendiente').forEach(el => {
+                    el.style.display = 'none';
+                });
 
                 const pdfRoot = clone.firstElementChild;
                 if (pdfRoot) {
@@ -832,23 +880,33 @@
 
                 const opt = {
                     margin: [0.2, 0.25, 0.2, 0.25],
-                    filename: `${caseData.expedient}.pdf`,
+                    filename: `AVISO_${caseData.expedient}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
                     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
                 };
+                
                 await html2pdf().set(opt).from(clone).save();
                 await registrarTiempoEnBD('Finalizado', uuid);
-            } catch (e) { await registrarTiempoEnBD('Error', uuid); alert('Error.'); } finally { const btnAnexos = document.getElementById('notificationView').querySelector('#btnAnexosPdf'); if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; } window.scrollTo(0, originalScrollY); btnGen.innerHTML = oldText; btnGen.disabled = false; }
+            } catch (e) { 
+                await registrarTiempoEnBD('Error', uuid); 
+                alert('Error al generar aviso.'); 
+            } finally { 
+                const btnAnexos = document.getElementById('notificationView').querySelector('#btnAnexosPdf'); 
+                if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; } 
+                window.scrollTo(0, originalScrollY); 
+                btnGen.innerHTML = oldText; 
+                btnGen.disabled = false; 
+            }
         }
 
         /* --- PORTAL CLIENTE --- */
         async function getCaseData(uuid) { const { data } = await supabaseClient.from('casos').select('*').eq('id', uuid).single(); return data; }
+        
         function populateClientView(cr) {
             const cd = cr.data; 
             
-            // Format monto
             const formattedMonto = (parseFloat(cd.monto) || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
             
             document.querySelectorAll('.dispClientName').forEach(el => el.textContent = cd.clientName); 
@@ -862,6 +920,7 @@
             ['doc1', 'doc2', 'doc3', 'doc4'].forEach((k, i) => { const c = cd.anexosConfig && cd.anexosConfig[k]; if (c && c.show && seguro(c.data)) { g.appendChild(crearTarjeta(`Anexo Legal ${i + 1}`, c.data)); hI = true; } });
             if (hI) document.getElementById('seccionEvidencias').classList.remove('hidden');
         }
+
         function crearTarjeta(tit, src) { const card = document.createElement('div'); card.className = 'border border-slate-200 rounded p-4 bg-slate-50 text-center cursor-pointer hover:shadow transition'; card.addEventListener('click', () => openLightbox(src)); const img = document.createElement('img'); img.src = src; img.className = 'mx-auto max-h-48'; card.append(img); return card; }
         function openLightbox(s) { document.getElementById('lightboxImg').src = s; document.getElementById('lightboxModal').classList.remove('hidden'); document.getElementById('lightboxModal').classList.add('flex'); }
         function closeLightbox() { document.getElementById('lightboxModal').classList.add('hidden'); document.getElementById('lightboxModal').classList.remove('flex'); }
