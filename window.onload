@@ -43,8 +43,8 @@
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
 
     <!-- LOGIN DE ACCESO -->
-    <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden">
+    <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] hidden items-center justify-center p-4">    
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
             <div class="text-center mb-8">
                 <i class="fa-solid fa-building-columns text-5xl text-blue-800 mb-4"></i>
@@ -616,7 +616,7 @@
             }
         };
 
-        window.onload = async function() {
+       document.addEventListener('DOMContentLoaded', async function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('id')) {
                 hideAllViews(); 
@@ -664,7 +664,7 @@
                 hideAllViews();
                 document.getElementById('loginView').classList.remove('hidden');
             }
-        };
+        });
 
         function hideAllViews() { 
             document.querySelectorAll('#loginView, #adminDashboardView, #appContainer, #caseDetailView, #auditorCampaignSelectorOverlay').forEach(el => { 
