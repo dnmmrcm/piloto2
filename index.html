@@ -42,7 +42,9 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
 
-    <!-- LOGIN DE ACCESO -->
+    <!-- ========================================== -->
+    <!-- LOGIN DE ACCESO                            -->
+    <!-- ========================================== -->
     <div id="loginView" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
@@ -60,7 +62,9 @@
         </div>
     </div>
 
-    <!-- SELECTOR DE CAMPAÑA PARA AUDITOR -->
+    <!-- ========================================== -->
+    <!-- SELECTOR DE CAMPAÑA PARA AUDITOR           -->
+    <!-- ========================================== -->
     <div id="auditorCampaignSelectorOverlay" class="fixed inset-0 bg-slate-900/95 z-[90] hidden items-center justify-center p-4">
         <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center">
             <div class="mb-6"><i class="fa-solid fa-chart-pie text-5xl text-blue-600 mb-4"></i><h2 class="text-2xl font-bold text-slate-900">Seleccionar Campaña</h2><p class="text-slate-500 text-sm mt-2">Elija el área operativa a auditar.</p></div>
@@ -72,7 +76,9 @@
         </div>
     </div>
 
-    <!-- PANEL DE ADMINISTRACIÓN Y AUDITORÍA -->
+    <!-- ========================================== -->
+    <!-- PANEL DE ADMINISTRACIÓN Y AUDITORÍA        -->
+    <!-- ========================================== -->
     <div id="adminDashboardView" class="hidden flex-col min-h-screen bg-slate-100 w-full z-[80] absolute inset-0">
         <header class="bg-blue-950 text-white shadow-md border-b-4 border-amber-500">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -158,7 +164,9 @@
     <div id="modalUser" class="fixed inset-0 bg-slate-900/80 hidden z-[90] items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden border border-slate-300"><div class="bg-blue-900 text-white p-4 flex justify-between items-center border-b-4 border-amber-500"><h3 class="font-black tracking-wide">Alta de Nuevo Operador</h3><button onclick="closeUserModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="formUser" onsubmit="saveUser(event)" class="p-6 space-y-4 text-sm bg-slate-50"><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Nombre Legal</label><input type="text" id="nu_nombre" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Correo Electrónico (ID)</label><input type="email" id="nu_email" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Clave de Acceso</label><input type="password" id="nu_pass" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-blue-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Perfil de Permisos</label><select id="nu_rol" onchange="handleRoleSelection()" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-blue-600 font-medium"><option value="Asesor">Operador / Asesor</option><option value="Auditor">Auditor Interno</option><option value="Sistemas">Sistemas / Root</option></select></div><div id="div_nu_campana"><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Asignación Operativa</label><select id="nu_campana" required class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-blue-600 font-medium"><option value="">Seleccionar área...</option><option value="Cobranza">Dpto. Cobranza</option><option value="Retención">Dpto. Retención</option></select></div><div class="pt-4"><button type="submit" id="btnSaveUser" class="w-full bg-blue-800 text-white font-black py-3 rounded hover:bg-blue-900 transition shadow uppercase tracking-widest">Crear Registro</button></div></form></div></div>
     <div id="modalEditUser" class="fixed inset-0 bg-slate-900/80 hidden z-[90] items-center justify-center p-4 backdrop-blur-sm"><div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden border border-slate-300"><div class="bg-slate-800 text-white p-4 flex justify-between items-center border-b-4 border-emerald-500"><h3 class="font-black tracking-wide"><i class="fa-solid fa-user-pen mr-2"></i>Modificar Permisos</h3><button onclick="closeEditUserModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-xmark text-xl"></i></button></div><form id="formEditUser" onsubmit="updateUser(event)" class="p-6 space-y-4 text-sm bg-slate-50"><input type="hidden" id="eu_id"><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Nombre Legal</label><input type="text" id="eu_nombre" required class="w-full border border-slate-300 p-2.5 rounded focus:ring-2 focus:ring-slate-600 outline-none"></div><div><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Perfil de Permisos</label><select id="eu_rol" onchange="handleEditRoleSelection()" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-slate-600 font-medium"><option value="Asesor">Operador / Asesor</option><option value="Auditor">Auditor Interno</option><option value="Sistemas">Sistemas / Root</option></select></div><div id="div_eu_campana"><label class="block font-bold text-slate-700 mb-1 text-xs uppercase">Asignación Operativa</label><select id="eu_campana" class="w-full border border-slate-300 p-2.5 rounded bg-white focus:ring-2 focus:ring-slate-600 font-medium"><option value="Cobranza">Dpto. Cobranza</option><option value="Retención">Dpto. Retención</option><option value="Sistemas / Administración">Sistemas Global</option></select></div><div class="pt-4 flex gap-3"><button type="button" onclick="closeEditUserModal()" class="w-1/3 bg-slate-200 text-slate-800 font-bold py-3 rounded hover:bg-slate-300 transition text-xs uppercase">Cancelar</button><button type="submit" id="btnUpdateUser" class="w-2/3 bg-emerald-700 text-white font-black py-3 rounded hover:bg-emerald-800 transition shadow uppercase tracking-widest">Aplicar Cambios</button></div></form></div></div>
 
-    <!-- APLICATIVO ASESORES -->
+    <!-- ========================================== -->
+    <!-- APLICATIVO ASESORES (GENERACIÓN Y FORMATOS)-->
+    <!-- ========================================== -->
     <div id="appContainer" class="hidden flex-col min-h-screen w-full relative bg-slate-200">
         <header class="no-print bg-blue-950 text-white shadow-xl sticky top-0 z-50 border-b-4 border-amber-500">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
@@ -173,7 +181,7 @@
                 </div>
             </div>
             
-            <!-- PANEL DE INGRESO DE DATOS -->
+            <!-- PANEL DE INGRESO DE DATOS (FORMULARIO) -->
             <div id="editorPanel" class="hidden border-t border-blue-900 bg-slate-900 shadow-inner relative">
                 <div class="max-w-7xl mx-auto px-4 pt-3 flex justify-between items-center mb-1">
                     <h3 class="text-amber-400 font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-keyboard mr-1"></i> Panel de Emisión</h3>
@@ -197,7 +205,7 @@
                             <div class="md:col-span-2">
                                 <label for="inputFirma" class="block text-amber-400 font-black mb-2 uppercase tracking-wider text-xs"><i class="fa-solid fa-signature mr-2"></i>Firma del emisor (imagen para la página web) <span class="text-red-400">*</span></label>
                                 <input type="file" id="inputFirma" accept="image/*" onchange="compressFirma(event)" class="w-full text-slate-300 text-xs file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-blue-900 file:text-blue-200 hover:file:bg-blue-800 bg-slate-800 border border-slate-700 rounded p-2">
-                                <p class="text-[10px] text-slate-400 mt-2">Adjunta una imagen de la firma. Nota: No se incluirá en el PDF de aviso, únicamente se mostrará al ingresar a la página web del caso.</p>
+                                <p class="text-[10px] text-slate-400 mt-2">Adjunta una imagen de la firma. Nota: No aparecerá en el PDF de aviso descargable; se mostrará únicamente al hacer clic e ingresar a la página del caso.</p>
                             </div>
                             <div id="previewFirma" class="hidden min-h-[76px] bg-white rounded border border-slate-600 p-2 flex items-center justify-center">
                                 <img id="previewFirmaImage" alt="Vista previa de la firma" class="max-h-[85px] max-w-full object-contain">
@@ -291,7 +299,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- PANEL LATERAL DE ESTADO E INSTRUCCIONES -->
+                <!-- PANEL LATERAL DE ESTADO -->
                 <div class="lg:col-span-1 space-y-6 no-print">
                     
                     <div class="bg-white rounded-xl shadow-md border-t-4 border-red-600 overflow-hidden border-x border-b border-slate-200">
@@ -642,7 +650,7 @@
                         contentDiv.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = d.emisorName);
                         contentDiv.querySelectorAll('.dispMontoBase, .dispMonto').forEach(el => el.textContent = formattedMonto);
 
-                        // EN LA PÁGINA WEB SE MUESTRA LA FIRMA
+                        // EN LA PÁGINA WEB SÍ SE MUESTRA LA FIRMA DIGITADA/IMAGEN
                         setFirmaImage(d.firmaImagen || null, contentDiv, true);
                         const btnPdf = contentDiv.querySelector('#btnAnexosPdf'); if(btnPdf) btnPdf.style.display = 'none';
                     }
@@ -656,11 +664,72 @@
         function hideAllViews() { document.querySelectorAll('#loginView, #adminDashboardView, #appContainer, #caseDetailView, #auditorCampaignSelectorOverlay').forEach(el => { el.classList.add('hidden'); if(el.id === 'adminDashboardView' || el.id === 'appContainer' || el.id === 'caseDetailView') el.classList.remove('flex'); }); }
         
         async function handleLogin(e) {
-            e.preventDefault(); const btn = document.getElementById('btnLoginSubmit'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...'; btn.disabled = true; document.getElementById('loginError').classList.add('hidden');
-            try { const { data, error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value }); if (error) throw error; await loadUserProfile(data.user.id); } catch (err) { document.getElementById('loginError').classList.remove('hidden'); btn.innerHTML = 'Autenticar Sesión <i class="fa-solid fa-shield-halved"></i>'; btn.disabled = false; }
+            e.preventDefault(); 
+            const btn = document.getElementById('btnLoginSubmit'); 
+            const errBox = document.getElementById('loginError');
+            const errText = document.getElementById('loginErrorText');
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...'; 
+            btn.disabled = true; 
+            errBox.classList.add('hidden');
+            
+            try { 
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ 
+                    email: document.getElementById('loginEmail').value.trim(), 
+                    password: document.getElementById('loginPassword').value.trim() 
+                }); 
+                if (error) throw error; 
+                await loadUserProfile(data.user.id); 
+            } catch (err) { 
+                errText.textContent = err.message || 'Credenciales de acceso no válidas.';
+                errBox.classList.remove('hidden'); 
+                btn.innerHTML = 'Autenticar Sesión <i class="fa-solid fa-shield-halved"></i>'; 
+                btn.disabled = false; 
+            }
         }
+
         async function handleLogout() { try { if (currentUser && String(currentUser.rol).trim().toLowerCase() === 'asesor') await registrarTiempoEnBD('Cancelado'); await supabaseClient.auth.signOut(); } catch (e) {} finally { localStorage.clear(); sessionStorage.clear(); window.location.replace(window.location.pathname); } }
-        async function loadUserProfile(userId) { try { const { data, error } = await supabaseClient.from('perfiles').select('*').eq('id', userId).single(); if (error || !data || !data.activo) throw new Error(); currentUser = data; hideAllViews(); const r = String(currentUser.rol).trim().toLowerCase(); if (r === 'auditor') openAuditorCampaignSelector(); else if (r === 'sistemas' || r === 'administrador') initAdminDashboard(); else if (r === 'asesor') initAsesorApp(); } catch (err) { await handleLogout(); } }
+
+        async function loadUserProfile(userId) { 
+            const errBox = document.getElementById('loginError');
+            const errText = document.getElementById('loginErrorText');
+            const btn = document.getElementById('btnLoginSubmit');
+
+            try { 
+                const { data, error } = await supabaseClient.from('perfiles').select('*').eq('id', userId).single(); 
+                
+                if (error) {
+                    throw new Error('Error de lectura en perfiles: ' + error.message);
+                }
+                if (!data) {
+                    throw new Error('El usuario autenticado no existe en la tabla perfiles.');
+                }
+                if (!data.activo) {
+                    throw new Error('Tu cuenta de usuario se encuentra inactiva en el sistema.');
+                }
+
+                currentUser = data; 
+                hideAllViews(); 
+                
+                const r = String(currentUser.rol || '').trim().toLowerCase(); 
+                
+                if (r === 'auditor') {
+                    openAuditorCampaignSelector(); 
+                } else if (r === 'sistemas' || r === 'administrador') {
+                    initAdminDashboard(); 
+                } else if (r === 'asesor') {
+                    initAsesorApp(); 
+                } else {
+                    throw new Error(`El rol asignado ('${currentUser.rol}') no tiene una vista válida.`);
+                }
+            } catch (err) { 
+                console.error('Error al cargar perfil:', err);
+                errText.textContent = err.message;
+                errBox.classList.remove('hidden');
+                btn.innerHTML = 'Autenticar Sesión <i class="fa-solid fa-shield-halved"></i>';
+                btn.disabled = false;
+            } 
+        }
 
         /* --- AUDITOR --- */
         function openAuditorCampaignSelector() { hideAllViews(); document.getElementById('auditorCampaignSelectorOverlay').classList.remove('hidden'); document.getElementById('auditorCampaignSelectorOverlay').classList.add('flex'); }
@@ -734,7 +803,6 @@
             document.querySelectorAll('.dispEmisorName').forEach(el => el.textContent = d.n);
             document.querySelectorAll('.dispMontoBase, .dispMonto').forEach(el => el.textContent = formattedMonto);
             
-            // En la vista previa local no se muestra la firma como imagen si es para PDF de aviso
             setFirmaImage(firmaData, document.getElementById('notificationView'), true);
         }
         
@@ -806,12 +874,12 @@
             clearFieldError(input); const r = new FileReader(); r.onload = e => { const img = new Image(); img.onload = () => { let w = img.width, h = img.height; if (w > 1200) { h = Math.round(h * 1200 / w); w = 1200; } const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h); const b64 = cv.toDataURL('image/jpeg', 0.8); anexosData[fld] = b64; preview.style.backgroundImage = `url(${b64})`; preview.classList.remove('hidden'); chk.checked = true; clearFieldError(document.getElementById(`file_${fld}`)); }; img.src = e.target.result; }; r.readAsDataURL(fl);
         }
         
-        /* GENERAR PDF DE AVISO (SIN LA FIRMA IMAGEN EN EL CLON) */
+        /* GENERAR PDF DE AVISO (EXCLUYENDO LA FIRMA IMAGEN EN EL CLON) */
         async function generarPDF() {
             if (!validateForm()) return; 
             const btnGen = document.getElementById('btnGenerarPDF'); 
             const oldText = btnGen.innerHTML; 
-            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando PDF Aviso...'; 
+            btnGen.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando PDF...'; 
             btnGen.disabled = true; 
             let uuid = null; 
             const originalScrollY = window.scrollY; 
@@ -832,7 +900,7 @@
                     date: formatDateES(document.getElementById('inputDate').value), 
                     emisorName: val('inputEmisorName'), 
                     monto: val('inputMonto'), 
-                    firmaImagen: firmaData, // Se guarda en BD para mostrar en la web
+                    firmaImagen: firmaData, // Se guarda en Supabase para verse únicamente en la web
                     anexosConfig: { doc1: cfg(1), doc2: cfg(2), doc3: cfg(3), doc4: cfg(4) } 
                 };
                 
@@ -848,13 +916,13 @@
                 
                 if (document.fonts && document.fonts.ready) await document.fonts.ready;
                 
-                // Crear clon para PDF y OCULTAR LA FIRMA EN EL PDF
+                // Clonar vista para generar PDF sin la imagen de firma
                 const clone = document.getElementById('notificationView').cloneNode(true);
                 clone.removeAttribute('id');
                 clone.classList.remove('hidden', 'shadow-2xl', 'mx-auto');
                 clone.style.cssText = 'width:760px;max-width:760px;margin:0;padding:0;display:block;background:#fff;box-shadow:none;position:static;transform:none;';
 
-                // OCULTAR FIRMA EN EL CLON DEL PDF (SOLO QUEDA COMO AVISO CON BOTÓN)
+                // OCULTAR LA FIRMA IMAGEN Y TEXTO PENDIENTE EN EL CLON DEL PDF DE AVISO
                 clone.querySelectorAll('.firma-imagen').forEach(img => {
                     img.style.display = 'none';
                     img.removeAttribute('src');
@@ -891,7 +959,7 @@
                 await registrarTiempoEnBD('Finalizado', uuid);
             } catch (e) { 
                 await registrarTiempoEnBD('Error', uuid); 
-                alert('Error al generar aviso.'); 
+                alert('Error al generar aviso PDF.'); 
             } finally { 
                 const btnAnexos = document.getElementById('notificationView').querySelector('#btnAnexosPdf'); 
                 if (btnAnexos) { btnAnexos.style.display = 'none'; btnAnexos.href = '#'; } 
