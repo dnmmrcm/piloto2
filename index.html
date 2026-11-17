@@ -370,8 +370,15 @@
         let firmaData = null;
         const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
         function formatDateES(iso) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? `${parseInt(m[3], 10)} de ${MESES[parseInt(m[2], 10) - 1]} de ${m[1]}` : ''; }
-        function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&', '<': '<', '>': '>', '"': '"', "'": ''' }[c])); }
-        
+       function esc(v) {
+    return String(v ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[c]));
+}
         window.toggleEditorPanel = function() {
             const grid = document.getElementById('editorPanelGrid');
             const icon = document.getElementById('editorToggleIcon');
