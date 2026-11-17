@@ -361,7 +361,7 @@
 
     <!-- SCRIPT PRINCIPAL -->
     <script>
-       const SUPABASE_URL = 'https://crrlfrlczhihuwxljwru.supabase.co'; 
+        const SUPABASE_URL = 'https://crrlfrlczhihuwxljwru.supabase.co'; 
         const SUPABASE_ANON_KEY = 'sb_publishable_FXr6tBfiK_sWqb57FlZ4Fg_d2n4Byi_';
         let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -370,7 +370,7 @@
         let firmaData = null;
         const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
         function formatDateES(iso) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? `${parseInt(m[3], 10)} de ${MESES[parseInt(m[2], 10) - 1]} de ${m[1]}` : ''; }
-        function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&', '<': '<', '>': '>', '"': '"', "'": ''' }[c])); }
         
         window.toggleEditorPanel = function() {
             const grid = document.getElementById('editorPanelGrid');
@@ -438,15 +438,15 @@
 
         const getFirmaElectronicaHtml = () => `
             <div class="firma-electronica mt-6 mx-auto w-full max-w-sm text-center" style="break-inside:avoid;page-break-inside:avoid;">
-                <div class="h-[95px] flex items-end justify-center px-2">
+                <div class="firma-contenedor-img h-[95px] flex items-end justify-center px-2">
                     <img class="firma-imagen hidden max-h-[85px] max-w-[280px] object-contain mx-auto" alt="Imagen de firma del emisor">
                     <span class="firma-pendiente text-[10px] text-slate-400 italic">Firma electrónica certificada</span>
                 </div>
-                <div class="border-t-2 border-slate-800 w-64 max-w-full mx-auto mt-1"></div>
+                <div class="firma-linea border-t-2 border-slate-800 w-64 max-w-full mx-auto mt-1"></div>
                 <div class="dispEmisorName mt-1 text-xs font-bold uppercase tracking-wide text-slate-900"></div>
-                <div class="text-[9px] text-slate-600 uppercase tracking-widest mt-0.5 font-bold">Firma del Emisor / Autoridad</div>
+                <div class="firma-titulo text-[9px] text-slate-600 uppercase tracking-widest mt-0.5 font-bold">Firma del Emisor / Autoridad</div>
                 <div class="text-center pt-4 pb-1">
-                    <a id="btnAnexosPdf" href="#" target="_blank" rel="noopener noreferrer" style="display:none;text-decoration:none;" class="bg-red-700 hover:bg-red-800 text-white font-black py-3 px-8 rounded text-xs uppercase tracking-widest shadow-xl border border-red-900 transition inline-block"><i class="fa-solid fa-folder-open mr-2"></i>VER MI CASO E INGRESAR AL EXPEDIENTE</a>
+                    <a id="btnAnexosPdf" href="#" target="_blank" rel="noopener noreferrer" style="display:none;text-decoration:none;" class="bg-red-700 hover:bg-red-800 text-white font-black py-3 px-8 rounded text-xs uppercase tracking-widest shadow-xl border border-red-900 transition inline-block"><i class="fa-solid fa-folder-open mr-2"></i>VER MI CASO</a>
                 </div>
             </div>
         `;
@@ -958,11 +958,8 @@
                 clone.classList.remove('hidden', 'shadow-2xl', 'mx-auto');
                 clone.style.cssText = 'width:760px;max-width:760px;margin:0;padding:0;display:block;background:#fff;box-shadow:none;position:static;transform:none;';
 
-                clone.querySelectorAll('.firma-imagen').forEach(img => {
-                    img.style.display = 'none';
-                    img.removeAttribute('src');
-                });
-                clone.querySelectorAll('.firma-pendiente').forEach(el => {
+                // Ocultar firma, línea, nombre y título de firma exclusivamente en el PDF generado
+                clone.querySelectorAll('.firma-imagen, .firma-pendiente, .firma-contenedor-img, .firma-linea, .dispEmisorName, .firma-titulo').forEach(el => {
                     el.style.display = 'none';
                 });
 
